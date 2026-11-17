@@ -36,7 +36,7 @@ Each artboard is a 1440×2400 page of card grids nested 8 levels deep, with Tail
 | `zoom to fit from 100%`                | From a click on Zoom to fit, after the pan, to every artboard showing again.                                                                                                                                        |
 | `zoom to fit from 100%, longest frame` | The longest frame meanwhile, from `requestAnimationFrame`.                                                                                                                                                          |
 
-Times include Playwright's round trips, a few ms each, so compare runs on the same machine rather than reading them as absolute costs. Close other heavy apps first: the numbers move by 10–20% with background load.
+Times include Playwright's round trips, a few ms each, so compare runs on the same machine rather than reading them as absolute costs. Close other heavy apps first: the numbers move by 10–20% with background load. CI doesn't run the benchmark, because shared runners are too slow and noisy for fixed budgets: run it before and after any change to drawing, saving or the canvas, and put both tables in the pull request.
 
 ## Profile a slow metric
 
