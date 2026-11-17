@@ -20,19 +20,19 @@ export async function runEdit(
   change: (document: VisionDocument) => EditOutcome,
 ): Promise<CallToolResult> {
   const existed = await fileExists(file);
-  let applied = undefined as Applied | undefined;
+  const run: { applied?: Applied } = {};
   try {
     await editDesign(file, (before) => {
       const outcome = change(before);
-      applied = { before, outcome };
+      run.applied = { before, outcome };
       return outcome.document;
     });
   } catch (error) {
     if (error instanceof EditError) return errorResult(error.message);
     throw error;
   }
-  if (applied === undefined) throw new Error(`The edit of ${file} finished without running`);
-  const { before, outcome } = applied;
+  if (run.applied === undefined) throw new Error(`The edit of ${file} finished without running`);
+  const { before, outcome } = run.applied;
   const lines = [
     ...(existed ? [] : [`Created ${file} with page "page-1" and artboard "desktop".`]),
     outcome.summary,
