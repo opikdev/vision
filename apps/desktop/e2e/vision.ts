@@ -1,4 +1,10 @@
-import { _electron, test as base, type ElectronApplication, type Page } from '@playwright/test';
+import {
+  _electron,
+  test as base,
+  expect,
+  type ElectronApplication,
+  type Page,
+} from '@playwright/test';
 import { copyFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -32,16 +38,26 @@ export const test = base.extend<{
   },
   launch: async ({ dir, activitySocket }, use) => {
     const apps: ElectronApplication[] = [];
+    const cspViolations: string[] = [];
+    const watch = (page: Page) => {
+      page.on('console', (message) => {
+        if (message.text().includes('Content Security Policy')) cspViolations.push(message.text());
+      });
+    };
     await use(async (...files) => {
       const app = await _electron.launch({
         args: [appDir, `--user-data-dir=${join(dir, 'user-data')}`, ...files],
         env: { ...process.env, VISION_ACTIVITY_SOCKET: activitySocket },
       });
       apps.push(app);
-      return { app, window: await app.firstWindow() };
+      app.on('window', watch);
+      const window = await app.firstWindow();
+      watch(window);
+      return { app, window };
     });
     for (const app of apps) await app.close();
+    expect(cspViolations).toEqual([]);
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect };
