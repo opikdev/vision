@@ -9,7 +9,7 @@ checkout.vis         the design
 checkout.assets/     images referenced by the design (optional)
 ```
 
-- Vision writes files deterministically: keys in a fixed order, 2-space indentation, and a trailing newline. Writes are atomic (temp file, then rename).
+- Vision writes files deterministically: keys in a fixed order, tokens sorted by name, 2-space indentation, and a trailing newline. Empty optional fields (`name`, `class`, `alt`, a frame's `children`) are left out. Writes are atomic (temp file, then rename).
 - Unknown fields are errors, so typos never pass silently.
 
 ## Document
@@ -101,7 +101,7 @@ Tokens become Tailwind theme variables, so each one creates classes:
 | `spacing` | `"gutter": "24px"`                       | `p-gutter`, `gap-gutter`                          |
 
 - Token names match `[a-z0-9]+(-[a-z0-9]+)*`.
-- Values are CSS values: colors in any CSS color syntax, lengths with units.
+- Values are CSS values: colors in any CSS color syntax, lengths with units (`text`, `radius` and `spacing` need a unit, such as `12px`). Values can't contain `;`, `{`, `}` or `/*`.
 - Tokens extend Tailwind's default theme. A token with a default's name (such as `color.red-500`) replaces it.
 - Fonts must be installed on the machine that views the design; list fallbacks.
 
