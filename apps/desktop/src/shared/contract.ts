@@ -3,15 +3,8 @@ import type { Diagnostic, VisionDocument } from '@vision/format';
 export const appCommands = ['new-design', 'open', 'show-in-finder', 'copy-path', 'quit'] as const;
 export type AppCommand = (typeof appCommands)[number];
 
-export const viewCommands = [
-  'toggle-sidebar',
-  'zoom-in',
-  'zoom-out',
-  'zoom-reset',
-  'zoom-fit',
-  'connect-ai',
-] as const;
-export type ViewCommand = (typeof viewCommands)[number];
+export type ViewCommand =
+  'toggle-sidebar' | 'zoom-in' | 'zoom-out' | 'zoom-reset' | 'zoom-fit' | 'connect-ai';
 
 export type DocumentStatus = 'ok' | 'invalid' | 'missing' | 'read-error';
 
