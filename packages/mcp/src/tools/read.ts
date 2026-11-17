@@ -1,0 +1,128 @@
+import type { McpServer } from '@modelcontextprotocol/server';
+import { findById, outline, tokenGroups, type Located, type VisionDocument } from '@vision/format';
+import { readDesign } from '@vision/format/node';
+import { z } from 'zod';
+import { inspectDesign, invalidText, missingText, problemCounts } from '../design';
+import { guide } from '../guide';
+import { errorResult, textResult } from '../results';
+import { file, id } from '../schemas';
+
+const readOnly = { readOnlyHint: true, idempotentHint: true } as const;
+
+export function registerReadTools(server: McpServer): void {
+  server.registerTool(
+    'get_guide',
+    {
+      title: 'Read the format guide',
+      description:
+        'Call this first, once per session. Explains .vis designs: nodes, Tailwind classes, tokens, the HTML that write_html accepts and a good working loop.',
+      inputSchema: z.object({ file }),
+      annotations: readOnly,
+    },
+    () => textResult(guide),
+  );
+
+  server.registerTool(
+    'get_overview',
+    {
+      title: 'Get an overview',
+      description:
+        "List the design's pages and artboards (ids, names, sizes, positions), its tokens and how many errors and warnings it has.",
+      inputSchema: z.object({ file }),
+      annotations: readOnly,
+    },
+    async ({ file }) => {
+      const { exists, document, diagnostics } = await inspectDesign(file);
+      if (!exists) return textResult(missingText(file));
+      if (document === undefined) return textResult(invalidText(file, diagnostics));
+      return textResult(
+        [
+          file,
+          '',
+          ...pagesOverview(document),
+          '',
+          ...tokensOverview(document),
+          '',
+          `Problems: ${problemCounts(diagnostics)}${diagnostics.length > 0 ? '. Call validate for details.' : '.'}`,
+        ].join('\n'),
+      );
+    },
+  );
+
+  server.registerTool(
+    'get_tree',
+    {
+      title: 'Get the node tree',
+      description:
+        "Show an indented outline of the design, or of one page, artboard or frame: each node's type, id, name, classes and text.",
+      inputSchema: z.object({
+        file,
+        id: id(
+          'Id of the page, artboard or frame to outline. Leave it out to outline the whole design.',
+        ).exactOptional(),
+      }),
+      annotations: readOnly,
+    },
+    async ({ file, id }) => {
+      const { result } = await readDesign(file);
+      if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
+      if (id !== undefined && findById(result.document, id) === undefined) {
+        return errorResult(notFound(id));
+      }
+      return textResult(outline(result.document, id));
+    },
+  );
+
+  server.registerTool(
+    'get_node',
+    {
+      title: 'Get a node',
+      description: 'Get one node, artboard or page as JSON, with all its fields and children.',
+      inputSchema: z.object({ file, id: id('Id of the node, artboard or page.') }),
+      annotations: readOnly,
+    },
+    async ({ file, id }) => {
+      const { result } = await readDesign(file);
+      if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
+      const located = findById(result.document, id);
+      if (located === undefined) return errorResult(notFound(id));
+      return textResult(JSON.stringify(valueOf(located), null, 2));
+    },
+  );
+}
+
+function pagesOverview(document: VisionDocument): string[] {
+  return [
+    'Pages:',
+    ...document.pages.flatMap((page) => [
+      `- page ${page.id} ${JSON.stringify(page.name)}`,
+      ...page.artboards.map(
+        (artboard) =>
+          `  - artboard ${artboard.id} ${JSON.stringify(artboard.name)} ${artboard.width}x${artboard.height} at ${artboard.x},${artboard.y}`,
+      ),
+    ]),
+  ];
+}
+
+function tokensOverview(document: VisionDocument): string[] {
+  const lines = tokenGroups.flatMap((group) => {
+    const names = Object.keys(document.tokens?.[group] ?? {});
+    return names.length === 0 ? [] : [`- ${group}: ${names.join(', ')}`];
+  });
+  return lines.length === 0 ? ['Tokens: none'] : ['Tokens:', ...lines];
+}
+
+function valueOf(located: Located): unknown {
+  switch (located.kind) {
+    case 'page':
+      return located.page;
+    case 'artboard':
+      return located.artboard;
+    case 'node':
+      return located.node;
+  }
+}
+
+function notFound(id: string): string {
+  return `No page, artboard or node has id "${id}". Call get_tree to see the ids.`;
+}
