@@ -139,10 +139,34 @@ async function measure(
   record('layers, expand every artboard (ms)', await expandArtboards(window, design));
 
   await pause(window, settleMs);
+  const stopFrames = await recordFrameTimes(window);
   const fitStarted = performance.now();
   await window.getByRole('button', { name: 'Zoom to fit' }).click();
   await waitForVisibleArtboards(window, design);
   record('zoom to fit from 100% (ms)', performance.now() - fitStarted);
+  record('zoom to fit from 100%, longest frame (ms)', Math.max(...(await stopFrames())));
+}
+
+async function recordFrameTimes(window: Page): Promise<() => Promise<number[]>> {
+  await window.evaluate(() => {
+    const frames: number[] = [];
+    let previous = performance.now();
+    let recording = true;
+    const tick = (now: number) => {
+      frames.push(now - previous);
+      previous = now;
+      if (recording) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    Object.assign(window, {
+      stopFrames: () => {
+        recording = false;
+        return frames;
+      },
+    });
+  });
+  return () =>
+    window.evaluate(() => (window as unknown as { stopFrames: () => number[] }).stopFrames());
 }
 
 interface Shown {
