@@ -1,5 +1,6 @@
 import type { Diagnostic, VisionDocument } from '@vision/format';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { styleKey } from './style-key';
 import { tailwindEngine } from './tailwind-engine';
 
 export interface CompiledDesign {
@@ -11,14 +12,16 @@ export function useCompiledDesign(
   document: VisionDocument | null,
   onError: (error: unknown) => void = logCompileError,
 ): CompiledDesign | null {
-  const [compiled, setCompiled] = useState<CompiledDesign | null>(null);
+  const [compiled, setCompiled] = useState<(CompiledDesign & { key: string }) | null>(null);
+  const key = useMemo(() => (document === null ? null : styleKey(document)), [document]);
+  const stale = key !== null && key !== compiled?.key;
   useEffect(() => {
-    if (document === null) return;
+    if (document === null || key === null || !stale) return;
     let current = true;
     tailwindEngine
       .css(document)
       .then((css) => {
-        if (current) setCompiled({ document, css });
+        if (current) setCompiled({ key, document, css });
       })
       .catch((error: unknown) => {
         if (current) onError(error);
@@ -26,8 +29,11 @@ export function useCompiledDesign(
     return () => {
       current = false;
     };
-  }, [document, onError]);
-  return compiled;
+  }, [document, key, stale, onError]);
+  return useMemo(() => {
+    if (compiled === null || document === null || stale) return compiled;
+    return compiled.document === document ? compiled : { document, css: compiled.css };
+  }, [compiled, document, stale]);
 }
 
 function logCompileError(error: unknown): void {

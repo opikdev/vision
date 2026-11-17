@@ -24,7 +24,7 @@ import { WindowFrame } from './WindowFrame';
 
 export function DesignWindow({ state }: { state: DocumentState }) {
   const compiled = useCompiledDesign(state.document);
-  const classWarnings = useClassWarnings(state.document);
+  const classWarnings = useClassWarnings(compiled?.document ?? null);
   const tracker = useAgentActivity();
   useReveal(compiled?.document ?? null, tracker);
   const agentWorking = useLatestAgent() !== null;
