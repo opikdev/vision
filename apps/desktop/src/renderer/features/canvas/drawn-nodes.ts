@@ -6,10 +6,14 @@ export interface Placed {
   y: number;
 }
 
-export function drawnNode(artboardId: string, id: string): Element | null {
-  const frame = document.querySelector<HTMLIFrameElement>(
+export function drawnArtboard(artboardId: string): HTMLIFrameElement | null {
+  return document.querySelector<HTMLIFrameElement>(
     `iframe[data-artboard-id="${CSS.escape(artboardId)}"]`,
   );
+}
+
+export function drawnNode(artboardId: string, id: string): Element | null {
+  const frame = drawnArtboard(artboardId);
   return frame?.contentDocument?.querySelector(`[data-node-id="${CSS.escape(id)}"]`) ?? null;
 }
 

@@ -9,6 +9,8 @@ import { Canvas } from '../features/canvas/Canvas';
 import { pageIn } from '../features/canvas/current-page';
 import { EmptyDesignHint } from '../features/canvas/EmptyDesignHint';
 import { useSyncLayers } from '../features/layers/layer-store';
+import { LayerOverlays } from '../features/layers/LayerOverlays';
+import { useLayerKeys } from '../features/layers/use-layer-keys';
 import { BlockedState } from '../features/problems/BlockedState';
 import { ErrorStrip } from '../features/problems/ErrorStrip';
 import { SaveStatus } from '../features/problems/SaveStatus';
@@ -29,6 +31,7 @@ export function DesignWindow({ state }: { state: DocumentState }) {
     state.status === 'ok' ? [...state.diagnostics, ...classWarnings] : state.diagnostics;
   const shownPage = pageIn(compiled?.document ?? null, pageId);
   useSyncLayers(pageIn(state.document, pageId));
+  useLayerKeys();
   const isEmpty = state.document?.pages.every((page) =>
     page.artboards.every((artboard) => artboard.children.length === 0),
   );
@@ -67,6 +70,7 @@ export function DesignWindow({ state }: { state: DocumentState }) {
                     displayPath={state.displayPath}
                   />
                 )}
+                {shownPage !== undefined && <LayerOverlays page={shownPage} viewport={viewport} />}
                 <AgentCursors page={shownPage} viewport={viewport} />
               </>
             )}

@@ -4,6 +4,7 @@ import { cn } from 'cn';
 import { ArtboardFrame } from '../../design/ArtboardFrame';
 import { useViewStore, type Viewport } from '../../stores/view-store';
 import { fitPage, resizeCanvas } from './canvas-commands';
+import { useLayerPointer } from '../layers/use-layer-pointer';
 import { useCanvasGestures } from './use-canvas-gestures';
 import { labelRoom } from './viewport';
 
@@ -26,7 +27,8 @@ export function Canvas({
     page === undefined ? undefined : store.viewports[page.id],
   );
   const fitViewport = useViewStore((store) => store.fitViewport);
-  const { handlers, cursor } = useCanvasGestures(container);
+  const { handlers, cursor, grabbing } = useCanvasGestures(container);
+  const layers = useLayerPointer(page, grabbing);
   const viewport = stored ?? (page !== undefined && size !== null ? fitPage(page, size) : null);
 
   useLayoutEffect(() => {
@@ -64,7 +66,20 @@ export function Canvas({
       tabIndex={-1}
       className={cn('dot-grid absolute inset-0 overflow-hidden outline-none', cursor)}
       style={{ backgroundPosition: `${x}px ${y}px` }}
-      {...handlers}
+      onPointerDown={(event) => {
+        handlers.onPointerDown(event);
+        layers.onPointerDown(event);
+      }}
+      onPointerMove={(event) => {
+        handlers.onPointerMove(event);
+        layers.onPointerMove(event);
+      }}
+      onPointerUp={(event) => {
+        handlers.onPointerUp();
+        layers.onPointerUp(event);
+      }}
+      onPointerCancel={handlers.onPointerCancel}
+      onPointerLeave={layers.onPointerLeave}
     >
       {viewport !== null && css !== null && (
         <>
@@ -82,7 +97,8 @@ export function Canvas({
           {artboards.map((artboard) => (
             <div
               key={artboard.id}
-              className="pointer-events-none absolute flex h-4 items-center gap-2 overflow-hidden whitespace-nowrap"
+              data-artboard-label={artboard.id}
+              className="absolute flex h-4 items-center gap-2 overflow-hidden whitespace-nowrap"
               style={{
                 left: Math.round(x + artboard.x * zoom),
                 top: Math.round(y + artboard.y * zoom) - 24,

@@ -98,5 +98,9 @@ export function useCanvasGestures(container: RefObject<HTMLElement | null>) {
   };
 
   const cursor = panning ? 'cursor-grabbing' : spaceHeld ? 'cursor-grab' : undefined;
-  return { handlers: { ...handlers, onPointerCancel: handlers.onPointerUp }, cursor };
+  return {
+    handlers: { ...handlers, onPointerCancel: handlers.onPointerUp },
+    cursor,
+    grabbing: spaceHeld || panning,
+  };
 }
