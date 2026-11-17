@@ -130,14 +130,6 @@
   -webkit-app-region: no-drag;
 }
 
-@utility no-scrollbar {
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 @utility dot-grid {
   background-image: radial-gradient(circle, var(--color-accent) 1px, transparent 1.5px);
   background-size: 18px 18px;

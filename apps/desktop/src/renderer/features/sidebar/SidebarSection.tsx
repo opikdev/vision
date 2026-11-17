@@ -1,23 +1,18 @@
 import { useId, type ReactNode } from 'react';
-import { cx } from '../../ui/cx';
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
 
-export function SidebarSection({
-  title,
-  className,
-  children,
-}: {
-  title: string;
-  className?: string;
-  children: ReactNode;
-}) {
+export function SidebarSection({ title, children }: { title: string; children: ReactNode }) {
   const id = useId();
   return (
-    <section aria-labelledby={id} className={className}>
-      <h2 id={id} className="flex h-8 items-center px-2 text-xs text-muted-foreground">
-        {title}
-      </h2>
+    <SidebarGroup role="group" aria-labelledby={id}>
+      <SidebarGroupLabel render={<h2 id={id} />}>{title}</SidebarGroupLabel>
       {children}
-    </section>
+    </SidebarGroup>
   );
 }
 
@@ -25,31 +20,26 @@ export function SidebarRow({
   icon,
   label,
   trailing,
-  current,
-  className,
+  current = false,
   onClick,
 }: {
   icon: ReactNode;
   label: string;
   trailing?: ReactNode;
   current?: boolean;
-  className?: string;
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      aria-current={current === true ? 'true' : undefined}
-      className={cx(
-        'flex h-8 w-full items-center gap-2.5 rounded-md px-2 text-left hover:bg-accent active:bg-active',
-        current === true && 'bg-active hover:bg-active',
-        className,
-      )}
-      onClick={onClick}
-    >
-      {icon}
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      {trailing}
-    </button>
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={current}
+        aria-current={current ? 'true' : undefined}
+        onClick={onClick}
+      >
+        {icon}
+        <span className="min-w-0 flex-1 truncate">{label}</span>
+        {trailing}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }

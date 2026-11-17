@@ -1,5 +1,6 @@
 import { Cursor02Icon, FrameIcon, Note01Icon } from '@hugeicons/core-free-icons';
 import type { Artboard, Diagnostic, VisionDocument } from '@vision/format';
+import { SidebarMenu } from '@/components/ui/sidebar';
 import { useViewStore } from '../../stores/view-store';
 import { Icon } from '../../ui/Icon';
 import { useAgentOn } from '../agents/agent-store';
@@ -22,33 +23,37 @@ export function DesignSidebar({
   return (
     <>
       <SidebarSection title="Pages">
-        {document.pages.map((candidate) => (
-          <SidebarRow
-            key={candidate.id}
-            icon={<Icon icon={Note01Icon} className="shrink-0 text-muted-foreground" />}
-            label={candidate.name}
-            current={candidate.id === page?.id}
-            onClick={() => {
-              selectPage(candidate.id);
-            }}
-          />
-        ))}
+        <SidebarMenu>
+          {document.pages.map((candidate) => (
+            <SidebarRow
+              key={candidate.id}
+              icon={<Icon icon={Note01Icon} className="shrink-0 text-muted-foreground" />}
+              label={candidate.name}
+              current={candidate.id === page?.id}
+              onClick={() => {
+                selectPage(candidate.id);
+              }}
+            />
+          ))}
+        </SidebarMenu>
       </SidebarSection>
-      <SidebarSection title="Artboards" className="mt-3">
+      <SidebarSection title="Artboards">
         {page?.artboards.length === 0 && (
           <p className="px-2 text-xs text-muted-foreground">This page has no artboards yet.</p>
         )}
-        {page?.artboards.map((artboard) => (
-          <SidebarRow
-            key={artboard.id}
-            icon={<Icon icon={FrameIcon} className="shrink-0 text-muted-foreground" />}
-            label={artboard.name}
-            trailing={<ArtboardMeta artboard={artboard} errors={errors.get(artboard.id) ?? 0} />}
-            onClick={() => {
-              zoomToBounds(artboard);
-            }}
-          />
-        ))}
+        <SidebarMenu>
+          {page?.artboards.map((artboard) => (
+            <SidebarRow
+              key={artboard.id}
+              icon={<Icon icon={FrameIcon} className="shrink-0 text-muted-foreground" />}
+              label={artboard.name}
+              trailing={<ArtboardMeta artboard={artboard} errors={errors.get(artboard.id) ?? 0} />}
+              onClick={() => {
+                zoomToBounds(artboard);
+              }}
+            />
+          ))}
+        </SidebarMenu>
       </SidebarSection>
     </>
   );
