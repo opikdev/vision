@@ -28,7 +28,7 @@ export function BlockedState({
       <Centered title={`Can't find ${state.name}`}>
         <p className="mt-1 text-ink-subtle select-text">
           It was moved, renamed or deleted. Vision draws it again as soon as it's back at{' '}
-          <code className="text-[12px] text-ink">{state.displayPath}</code>.
+          <code className="text-sm text-ink">{state.displayPath}</code>.
         </p>
       </Centered>
     );

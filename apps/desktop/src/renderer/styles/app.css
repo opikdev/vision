@@ -57,8 +57,7 @@
     cursor: default;
   }
 
-  code,
-  kbd {
+  code {
     font-family: var(--font-mono);
     letter-spacing: 0;
   }

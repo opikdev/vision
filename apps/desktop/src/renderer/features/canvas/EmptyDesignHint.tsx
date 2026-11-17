@@ -35,8 +35,8 @@ export function EmptyDesignHint({
       <div className="min-w-0 flex-1">
         <h2 id="empty-design-title">This design is empty</h2>
         <p className="text-ink-subtle">
-          Edit <code className="text-[12px] text-ink select-text">{displayPath}</code> with an AI
-          agent or a text editor. It redraws here on save.
+          Edit <code className="text-sm text-ink select-text">{displayPath}</code> with an AI agent
+          or a text editor. It redraws here on save.
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-1.5">

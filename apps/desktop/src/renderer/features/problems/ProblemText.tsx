@@ -4,7 +4,7 @@ import { describeProblem, splitCode } from './problems';
 function Rich({ text }: { text: string }) {
   return splitCode(text).map((part, index) =>
     part.code ? (
-      <code key={index} className="text-[12px]">
+      <code key={index} className="text-sm">
         {part.text}
       </code>
     ) : (

@@ -78,7 +78,7 @@ function Snippet({
       <pre
         className={cx(
           'mt-1 max-h-48 overflow-auto rounded-md border border-line bg-bg px-3 py-2 whitespace-pre-wrap select-text [overflow-wrap:anywhere]',
-          prose ? 'font-sans' : 'font-mono text-[12px] leading-[18px] tracking-normal',
+          prose ? 'font-sans' : 'font-mono text-sm tracking-normal',
         )}
       >
         {text}

@@ -13,7 +13,7 @@ The rules for Vision's own interface (not for the designs it shows). The approve
 
 ## Rules
 
-- **Type**: Inter (bundled, not from the network) with `letter-spacing: -0.15px` everywhere; 13px base, 12px for secondary text. JetBrains Mono, with no letter spacing, for paths, ids and token names. Tabular figures for numbers.
+- **Type**: Inter (bundled, not from the network) with `letter-spacing: -0.15px` everywhere; 13px base, 12px for secondary text, 17px semibold for screen titles (`text-title`). Use the `text-sm`, `text-base` and `text-title` sizes, not arbitrary ones. JetBrains Mono, with no letter spacing, for paths, ids and token names. Tabular figures for numbers.
 - **Color**: these tokens only.
 
   | Token         | Value     | Use                               |
