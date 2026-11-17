@@ -142,6 +142,44 @@ describe('htmlToNodes', () => {
     ]);
   });
 
+  it('keeps data-name, aria-label or title as the node name', () => {
+    const html = `
+      <section data-name="Order  summary" aria-label="Summary" class="p-6">
+        <button aria-label="Remove Cortado"><svg data-name="Trash" viewBox="0 0 24 24"></svg></button>
+        <a title=" Back to cart ">Back</a>
+        <img src="hero.jpg" title="Hero" alt="Latte">
+        <input aria-label="Promo code" placeholder="FIRSTCUP">
+        <p data-name="  ">Total</p>
+      </section>`;
+    expect(htmlToNodes(html, none)).toEqual([
+      {
+        type: 'frame',
+        id: 'section-1',
+        name: 'Order summary',
+        class: 'p-6',
+        children: [
+          {
+            type: 'frame',
+            id: 'button-1',
+            name: 'Remove Cortado',
+            children: [
+              { type: 'svg', id: 'svg-1', name: 'Trash', svg: '<svg viewBox="0 0 24 24"></svg>' },
+            ],
+          },
+          { type: 'text', id: 'a-1', name: 'Back to cart', text: 'Back' },
+          { type: 'image', id: 'img-1', name: 'Hero', src: 'hero.jpg', alt: 'Latte' },
+          {
+            type: 'frame',
+            id: 'input-1',
+            name: 'Promo code',
+            children: [{ type: 'text', id: 'text-1', text: 'FIRSTCUP' }],
+          },
+          { type: 'text', id: 'p-1', text: 'Total' },
+        ],
+      },
+    ]);
+  });
+
   it('turns top-level text into a text node and ignores comments', () => {
     expect(htmlToNodes('<!-- note --> Hello ', none)).toEqual([
       { type: 'text', id: 'text-1', text: 'Hello' },

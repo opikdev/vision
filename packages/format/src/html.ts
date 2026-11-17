@@ -121,7 +121,13 @@ function convertElement(element: Element, taken: Set<string>): Node {
     return frameNode(element, convertChildren(element.childNodes, taken), taken);
   if (textTags.has(tag)) {
     return isPlainText(element)
-      ? textNode(idFor(element, taken), classOf(element), textContent(element), taken)
+      ? textNode(
+          idFor(element, taken),
+          classOf(element),
+          textContent(element),
+          taken,
+          nameOf(element),
+        )
       : frameNode(element, convertChildren(element.childNodes, taken), taken);
   }
   if (tag === 'img') return imageNode(element, taken);
@@ -133,6 +139,8 @@ function convertElement(element: Element, taken: Set<string>): Node {
 
 function frameNode(element: Element, children: Node[], taken: Set<string>): FrameNode {
   const node: FrameNode = { type: 'frame', id: idFor(element, taken) };
+  const name = nameOf(element);
+  if (name !== undefined) node.name = name;
   const className = classOf(element);
   if (className !== undefined) node.class = className;
   if (children.length > 0) node.children = children;
@@ -144,11 +152,16 @@ function textNode(
   className: string | undefined,
   text: string,
   taken: Set<string>,
+  name?: string,
 ): TextNode {
   taken.add(id);
-  return className === undefined
-    ? { type: 'text', id, text }
-    : { type: 'text', id, class: className, text };
+  return {
+    type: 'text',
+    id,
+    ...(name === undefined ? {} : { name }),
+    ...(className === undefined ? {} : { class: className }),
+    text,
+  };
 }
 
 function imageNode(element: Element, taken: Set<string>): Node {
@@ -160,9 +173,11 @@ function imageNode(element: Element, taken: Set<string>): Node {
   }
   const alt = attribute(element, 'alt');
   const className = classOf(element);
+  const name = nameOf(element);
   return {
     type: 'image',
     id: idFor(element, taken),
+    ...(name === undefined ? {} : { name }),
     ...(className === undefined ? {} : { class: className }),
     src,
     ...(alt === undefined || alt === '' ? {} : { alt }),
@@ -171,12 +186,19 @@ function imageNode(element: Element, taken: Set<string>): Node {
 
 function svgNode(element: Element, taken: Set<string>): Node {
   const id = idFor(element, taken);
+  const name = nameOf(element);
   const className = classOf(element);
-  element.attrs = element.attrs.filter((attr) => attr.name !== 'id' && attr.name !== 'class');
+  element.attrs = element.attrs.filter(
+    (attr) => attr.name !== 'id' && attr.name !== 'class' && attr.name !== 'data-name',
+  );
   const svg = sanitizeSvg(serializeOuter(element));
-  return className === undefined
-    ? { type: 'svg', id, svg }
-    : { type: 'svg', id, class: className, svg };
+  return {
+    type: 'svg',
+    id,
+    ...(name === undefined ? {} : { name }),
+    ...(className === undefined ? {} : { class: className }),
+    svg,
+  };
 }
 
 function fieldNode(element: Element, taken: Set<string>): FrameNode {
@@ -244,6 +266,12 @@ function idFor(element: Element, taken: Set<string>): string {
   const id = attribute(element, 'id') ?? uniqueId(element.tagName, taken);
   taken.add(id);
   return id;
+}
+
+function nameOf(element: Element): string | undefined {
+  return ['data-name', 'aria-label', 'title']
+    .map((name) => attribute(element, name)?.trim().replace(/\s+/g, ' ') ?? '')
+    .find((value) => value !== '');
 }
 
 function classOf(element: Element): string | undefined {

@@ -156,7 +156,7 @@ Warnings don't stop drawing:
 | `svg`                                                                                                       | `svg` (its markup)                                   |
 | `input`, `textarea`, `select`                                                                               | `frame` showing the `placeholder` or `value` as text |
 
-`class` and `id` attributes are kept; other attributes are dropped. Missing ids are generated from the tag (`div-1`, `h1-2`), and an `id` that's already used is an error. Whitespace collapses as in a browser.
+`class` and `id` attributes are kept, and `data-name`, `aria-label` or `title` (the first one set) becomes the node's `name`; other attributes are dropped. Missing ids are generated from the tag (`div-1`, `h1-2`), and an `id` that's already used is an error. Whitespace collapses as in a browser.
 
 - A frame's bare text becomes a text node.
 - Inline formatting inside text (`b`, `i`, `u`, `s`, `code`, `mark`, `sub`, `sup`, `time`) keeps only its text; on its own it becomes a text node like `span`.
