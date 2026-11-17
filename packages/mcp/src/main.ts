@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { socketPath } from '@vision/activity';
+import { socketPath } from '@vision/activity/node';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { ActivityReporter } from './activity/reporter';
 import { createServer } from './server';

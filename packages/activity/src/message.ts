@@ -31,7 +31,7 @@ export type ActivityMessage = z.infer<typeof activityMessageSchema>;
 
 export function encodeActivity(message: ActivityMessage): string | undefined {
   const line = `${JSON.stringify(message)}\n`;
-  return Buffer.byteLength(line) > maxLineBytes ? undefined : line;
+  return new TextEncoder().encode(line).length > maxLineBytes ? undefined : line;
 }
 
 export function parseActivity(line: string): ActivityMessage | undefined {

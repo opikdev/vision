@@ -9,4 +9,3 @@ export {
   type Activity,
   type ActivityMessage,
 } from './message';
-export { socketPath } from './socket';
