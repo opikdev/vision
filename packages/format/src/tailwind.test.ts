@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { loadTailwindStylesheets } from './node/tailwind';
 import { createTailwindEngine, type TailwindEngine } from './tailwind';
 import type { VisionDocument } from './schema';
 import { docWith } from './test-fixtures';
+import { loadTailwindStylesheets } from './test-tailwind';
 
 let engine: TailwindEngine;
 

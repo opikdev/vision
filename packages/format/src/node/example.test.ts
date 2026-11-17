@@ -4,7 +4,7 @@ import { outline } from '../query';
 import { serializeDocument } from '../serialize';
 import { createTailwindEngine } from '../tailwind';
 import { readDesign } from './read';
-import { loadTailwindStylesheets } from './tailwind';
+import { loadTailwindStylesheets } from '../test-tailwind';
 
 const examplePath = fileURLToPath(
   new URL('../../../../examples/larkspur-checkout.vis', import.meta.url),

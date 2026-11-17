@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import type { TailwindStylesheets } from '../tailwind';
+import type { TailwindStylesheets } from './tailwind';
 
 export async function loadTailwindStylesheets(): Promise<TailwindStylesheets> {
   const require = createRequire(import.meta.url);
