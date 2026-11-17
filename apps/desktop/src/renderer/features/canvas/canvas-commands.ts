@@ -19,9 +19,16 @@ export function viewportFor(page: Page, size: Size): Viewport {
   return useViewStore.getState().viewports[page.id] ?? fitPage(page, size);
 }
 
+export function resizeCanvas(size: Size): void {
+  const { setCanvasSize, fitted, fitViewport } = useViewStore.getState();
+  setCanvasSize(size);
+  const page = currentPage();
+  if (page !== undefined && fitted[page.id] === true) fitViewport(page.id, fitPage(page, size));
+}
+
 export function runCanvasCommand(command: CanvasCommand): void {
   const page = currentPage();
-  const { canvasSize, setViewport } = useViewStore.getState();
+  const { canvasSize, setViewport, fitViewport } = useViewStore.getState();
   if (page === undefined || canvasSize === null) return;
   const viewport = viewportFor(page, canvasSize);
   const center = { x: canvasSize.width / 2, y: canvasSize.height / 2 };
@@ -36,7 +43,7 @@ export function runCanvasCommand(command: CanvasCommand): void {
       setViewport(page.id, zoomAt(viewport, 1, center));
       return;
     case 'zoom-fit':
-      setViewport(page.id, fitPage(page, canvasSize));
+      fitViewport(page.id, fitPage(page, canvasSize));
       return;
   }
 }

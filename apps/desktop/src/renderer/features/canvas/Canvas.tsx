@@ -3,7 +3,7 @@ import { memo, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { ArtboardFrame } from '../../design/ArtboardFrame';
 import { useViewStore, type Viewport } from '../../stores/view-store';
 import { cx } from '../../ui/cx';
-import { fitPage } from './canvas-commands';
+import { fitPage, resizeCanvas } from './canvas-commands';
 import { useCanvasGestures } from './use-canvas-gestures';
 import { labelRoom } from './viewport';
 
@@ -25,8 +25,7 @@ export function Canvas({
   const stored = useViewStore((store) =>
     page === undefined ? undefined : store.viewports[page.id],
   );
-  const setViewport = useViewStore((store) => store.setViewport);
-  const setCanvasSize = useViewStore((store) => store.setCanvasSize);
+  const fitViewport = useViewStore((store) => store.fitViewport);
   const { handlers, cursor } = useCanvasGestures(container);
   const viewport = stored ?? (page !== undefined && size !== null ? fitPage(page, size) : null);
 
@@ -34,7 +33,7 @@ export function Canvas({
     const element = container.current;
     if (element === null) return;
     const measure = () => {
-      setCanvasSize({ width: element.clientWidth, height: element.clientHeight });
+      resizeCanvas({ width: element.clientWidth, height: element.clientHeight });
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -42,12 +41,12 @@ export function Canvas({
     return () => {
       observer.disconnect();
     };
-  }, [setCanvasSize]);
+  }, []);
 
   useLayoutEffect(() => {
     if (page !== undefined && stored === undefined && viewport !== null)
-      setViewport(page.id, viewport);
-  }, [page, stored, viewport, setViewport]);
+      fitViewport(page.id, viewport);
+  }, [page, stored, viewport, fitViewport]);
 
   const x = Math.round(viewport?.x ?? 0);
   const y = Math.round(viewport?.y ?? 0);

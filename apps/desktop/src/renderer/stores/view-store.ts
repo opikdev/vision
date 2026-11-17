@@ -17,11 +17,13 @@ interface ViewStore {
   sidebarVisible: boolean;
   pageId: string | null;
   viewports: Record<string, Viewport>;
+  fitted: Record<string, boolean>;
   canvasSize: Size | null;
   dialog: DialogName | null;
   toggleSidebar: () => void;
   selectPage: (pageId: string) => void;
   setViewport: (pageId: string, viewport: Viewport) => void;
+  fitViewport: (pageId: string, viewport: Viewport) => void;
   setCanvasSize: (size: Size) => void;
   openDialog: (dialog: DialogName) => void;
   closeDialog: () => void;
@@ -31,6 +33,7 @@ export const useViewStore = create<ViewStore>()((set) => ({
   sidebarVisible: true,
   pageId: null,
   viewports: {},
+  fitted: {},
   canvasSize: null,
   dialog: null,
   toggleSidebar: () => {
@@ -40,7 +43,16 @@ export const useViewStore = create<ViewStore>()((set) => ({
     set({ pageId });
   },
   setViewport: (pageId, viewport) => {
-    set(({ viewports }) => ({ viewports: { ...viewports, [pageId]: viewport } }));
+    set(({ viewports, fitted }) => ({
+      viewports: { ...viewports, [pageId]: viewport },
+      fitted: { ...fitted, [pageId]: false },
+    }));
+  },
+  fitViewport: (pageId, viewport) => {
+    set(({ viewports, fitted }) => ({
+      viewports: { ...viewports, [pageId]: viewport },
+      fitted: { ...fitted, [pageId]: true },
+    }));
   },
   setCanvasSize: (canvasSize) => {
     set({ canvasSize });
