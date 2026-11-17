@@ -88,9 +88,9 @@ export function AppMenu() {
     <MenuButton
       label="Vision menu"
       entries={entries}
-      className="no-drag flex h-8 items-center gap-1 rounded-sm pr-1.5 pl-1 text-ink-subtle hover:bg-hover active:bg-active"
+      className="no-drag flex h-8 items-center gap-1 rounded-sm pr-1.5 pl-1 text-muted-foreground hover:bg-accent active:bg-active"
     >
-      <span className="flex size-6 items-center justify-center rounded-sm bg-ink text-bg">
+      <span className="flex size-6 items-center justify-center rounded-sm bg-foreground text-background">
         <Icon icon={CenterFocusIcon} />
       </span>
       <Icon icon={ArrowDown01Icon} size={12} />

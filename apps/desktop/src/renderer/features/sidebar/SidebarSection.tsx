@@ -13,7 +13,7 @@ export function SidebarSection({
   const id = useId();
   return (
     <section aria-labelledby={id} className={className}>
-      <h2 id={id} className="flex h-8 items-center px-2 text-sm text-ink-subtle">
+      <h2 id={id} className="flex h-8 items-center px-2 text-xs text-muted-foreground">
         {title}
       </h2>
       {children}
@@ -41,7 +41,7 @@ export function SidebarRow({
       type="button"
       aria-current={current === true ? 'true' : undefined}
       className={cx(
-        'flex h-8 w-full items-center gap-2.5 rounded-md px-2 text-left hover:bg-hover active:bg-active',
+        'flex h-8 w-full items-center gap-2.5 rounded-md px-2 text-left hover:bg-accent active:bg-active',
         current === true && 'bg-active hover:bg-active',
         className,
       )}

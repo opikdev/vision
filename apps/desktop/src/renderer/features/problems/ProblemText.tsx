@@ -4,7 +4,7 @@ import { describeProblem, splitCode } from './problems';
 function Rich({ text }: { text: string }) {
   return splitCode(text).map((part, index) =>
     part.code ? (
-      <code key={index} className="text-sm">
+      <code key={index} className="text-xs">
         {part.text}
       </code>
     ) : (
@@ -23,15 +23,15 @@ export function ProblemText({
   const { line, place, message, hint } = describeProblem(diagnostic, document);
   return (
     <>
-      {line !== null && <span className="font-medium text-ink">Line {line}</span>}
-      {line !== null && place !== null && <span className="text-ink-subtle">, </span>}
-      {place !== null && <span className="text-ink-subtle">{place}</span>}
-      {(line !== null || place !== null) && <span className="text-ink-subtle">: </span>}
-      <span className="text-ink">
+      {line !== null && <span className="font-medium text-foreground">Line {line}</span>}
+      {line !== null && place !== null && <span className="text-muted-foreground">, </span>}
+      {place !== null && <span className="text-muted-foreground">{place}</span>}
+      {(line !== null || place !== null) && <span className="text-muted-foreground">: </span>}
+      <span className="text-foreground">
         <Rich text={message} />.
       </span>
       {hint !== null && (
-        <span className="text-ink-subtle">
+        <span className="text-muted-foreground">
           {' '}
           <Rich text={hint} />
         </span>

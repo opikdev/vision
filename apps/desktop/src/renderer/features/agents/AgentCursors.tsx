@@ -92,8 +92,12 @@ function AgentCursor({
             transform: `scale(${1 / viewport.zoom}) translate(${shift.x - tip}px, ${shift.y - tip}px)`,
           }}
         >
-          <Icon icon={Cursor02Icon} size={18} className="shrink-0 fill-bg text-ink" />
-          <span className="mt-3.5 flex h-5 items-center rounded-sm border border-line-strong bg-bg px-1.5 text-sm font-medium whitespace-nowrap">
+          <Icon
+            icon={Cursor02Icon}
+            size={18}
+            className="shrink-0 fill-background text-foreground"
+          />
+          <span className="mt-3.5 flex h-5 items-center rounded-sm border border-border-strong bg-background px-1.5 text-xs font-medium whitespace-nowrap">
             {presence.agent}
           </span>
         </div>
@@ -125,7 +129,7 @@ function EdgePill({
       type="button"
       aria-label={`Go to ${artboardName}, where ${presence.agent} is working`}
       className={cx(
-        'absolute flex h-8 items-center gap-2 rounded-md border border-line-strong bg-popover pr-1.5 pl-2.5 text-sm whitespace-nowrap text-ink-subtle shadow-popover transition-opacity duration-200 starting:opacity-0 hover:bg-active hover:text-ink active:bg-active',
+        'absolute flex h-8 items-center gap-2 rounded-md border border-border-strong bg-popover pr-1.5 pl-2.5 text-xs whitespace-nowrap text-muted-foreground shadow-popover transition-opacity duration-200 starting:opacity-0 hover:bg-active hover:text-foreground active:bg-active',
         presence.leaving && 'opacity-0',
       )}
       style={edgePosition[placement.edge](placement.offset)}
@@ -135,7 +139,7 @@ function EdgePill({
     >
       <Icon icon={Cursor02Icon} size={14} className="shrink-0" />
       <span>
-        <span className="font-medium text-ink">{presence.agent}</span> on {artboardName}
+        <span className="font-medium text-foreground">{presence.agent}</span> on {artboardName}
       </span>
       <Icon icon={arrows[placement.edge]} className="shrink-0" />
     </button>

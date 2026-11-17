@@ -6,15 +6,15 @@ import { Kbd } from './Kbd';
 type Variant = 'primary' | 'secondary' | 'quiet';
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-ink text-bg hover:bg-ink/90 active:bg-ink/80',
-  secondary: 'bg-hover text-ink hover:bg-active active:bg-line-strong',
-  quiet: 'text-ink-subtle hover:bg-hover hover:text-ink active:bg-active',
+  primary: 'bg-foreground text-background hover:bg-foreground/90 active:bg-foreground/80',
+  secondary: 'bg-accent text-foreground hover:bg-active active:bg-border-strong',
+  quiet: 'text-muted-foreground hover:bg-accent hover:text-foreground active:bg-active',
 };
 
 const shortcutColors: Record<Variant, string> = {
-  primary: 'text-bg/60',
-  secondary: 'text-ink-subtle',
-  quiet: 'text-ink-subtle',
+  primary: 'text-background/60',
+  secondary: 'text-muted-foreground',
+  quiet: 'text-muted-foreground',
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

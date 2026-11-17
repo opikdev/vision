@@ -20,9 +20,9 @@ export function ErrorStrip({
   return (
     <div
       aria-live="polite"
-      className="absolute top-3 left-4 z-20 flex h-10 max-w-[calc(100%-32px)] items-center gap-3 rounded-md border border-line-strong bg-popover pr-1 pl-3 shadow-popover"
+      className="absolute top-3 left-4 z-20 flex h-10 max-w-[calc(100%-32px)] items-center gap-3 rounded-md border border-border-strong bg-popover pr-1 pl-3 shadow-popover"
     >
-      <Icon icon={Alert02Icon} className="shrink-0 text-red" />
+      <Icon icon={Alert02Icon} className="shrink-0 text-destructive" />
       <p className="min-w-0 truncate">
         <ProblemText diagnostic={first} document={document} />
       </p>
@@ -31,7 +31,7 @@ export function ErrorStrip({
         diagnostics={diagnostics}
         document={document}
         label="Details"
-        className="h-7 shrink-0 rounded-sm px-2 text-ink-subtle hover:bg-hover hover:text-ink active:bg-active"
+        className="h-7 shrink-0 rounded-sm px-2 text-muted-foreground hover:bg-accent hover:text-foreground active:bg-active"
         panelClassName="top-full left-0 mt-1.5"
       />
       <IconButton

@@ -14,11 +14,11 @@ export function DocumentTitle({
   return (
     <>
       <h1 className="flex min-w-0 items-center gap-2">
-        <Icon icon={Note01Icon} className="shrink-0 text-ink-subtle" />
-        <span className="truncate text-ink-subtle">{name}</span>
+        <Icon icon={Note01Icon} className="shrink-0 text-muted-foreground" />
+        <span className="truncate text-muted-foreground">{name}</span>
         {pageName !== undefined && (
           <>
-            <span aria-hidden="true" className="text-ink-subtle">
+            <span aria-hidden="true" className="text-muted-foreground">
               /
             </span>
             <span className="truncate">{pageName}</span>

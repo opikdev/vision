@@ -19,7 +19,7 @@ export function ConnectAiDialog() {
 
   return (
     <Dialog title="Connect an AI" onClose={close}>
-      <p className="text-ink-subtle">
+      <p className="text-muted-foreground">
         Add Vision's MCP server to your AI tool once, then ask it to design in any .vis file while
         you watch it redraw here.
       </p>
@@ -63,7 +63,7 @@ function Snippet({
   return (
     <section>
       <div className="flex h-7 items-center justify-between">
-        <h3 className="text-sm text-ink-subtle">{title}</h3>
+        <h3 className="text-xs text-muted-foreground">{title}</h3>
         <Button
           size="sm"
           variant="quiet"
@@ -77,8 +77,8 @@ function Snippet({
       </div>
       <pre
         className={cx(
-          'mt-1 max-h-48 overflow-auto rounded-md border border-line bg-bg px-3 py-2 whitespace-pre-wrap select-text [overflow-wrap:anywhere]',
-          prose ? 'font-sans' : 'font-mono text-sm tracking-normal',
+          'mt-1 max-h-48 overflow-auto rounded-md border border-border bg-background px-3 py-2 whitespace-pre-wrap select-text [overflow-wrap:anywhere]',
+          prose ? 'font-sans' : 'font-mono text-xs tracking-normal',
         )}
       >
         {text}

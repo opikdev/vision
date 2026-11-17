@@ -9,7 +9,7 @@ export function AgentStatus() {
     <span
       role="status"
       className={cx(
-        'flex min-w-0 items-center gap-1.5 text-sm text-ink-subtle transition-opacity duration-200',
+        'flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground transition-opacity duration-200',
         presence?.leaving === true && 'opacity-0',
       )}
     >
@@ -17,7 +17,7 @@ export function AgentStatus() {
         <>
           <Icon icon={Cursor02Icon} size={14} className="shrink-0" />
           <span className="truncate">
-            <span className="font-medium text-ink">{presence.agent}</span> {presence.summary}
+            <span className="font-medium text-foreground">{presence.agent}</span> {presence.summary}
           </span>
         </>
       )}

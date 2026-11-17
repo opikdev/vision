@@ -32,7 +32,7 @@ export function WindowFrame({
           <div
             className={cx(
               'relative h-full overflow-hidden rounded-lg bg-canvas',
-              dropActive && 'outline-2 -outline-offset-2 outline-focus',
+              dropActive && 'outline-2 -outline-offset-2 outline-ring',
             )}
           >
             {children}

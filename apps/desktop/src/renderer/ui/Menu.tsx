@@ -166,11 +166,11 @@ function MenuList({
       aria-label={label}
       tabIndex={-1}
       onKeyDown={onKeyDown}
-      className="no-drag w-61 rounded-lg border border-line-strong bg-popover p-1 shadow-popover outline-none focus-visible:outline-none"
+      className="no-drag w-61 rounded-lg border border-border-strong bg-popover p-1 shadow-popover outline-none focus-visible:outline-none"
     >
       {entries.map((entry, index) => {
         if (entry.type === 'separator') {
-          return <div key={index} role="separator" className="mx-2 my-1 h-px bg-line-strong" />;
+          return <div key={index} role="separator" className="mx-2 my-1 h-px bg-border-strong" />;
         }
         const isSubmenu = entry.type === 'submenu';
         const isOpen = submenu?.index === index;
@@ -193,7 +193,7 @@ function MenuList({
               aria-haspopup={isSubmenu ? 'menu' : undefined}
               aria-expanded={isSubmenu ? isOpen : undefined}
               aria-keyshortcuts={entry.type === 'item' ? entry.shortcut : undefined}
-              className="flex h-8 w-full items-center gap-2.5 rounded-md px-2 text-left text-ink outline-none hover:bg-active focus:bg-active focus-visible:outline-none disabled:opacity-50"
+              className="flex h-8 w-full items-center gap-2.5 rounded-md px-2 text-left text-foreground outline-none hover:bg-active focus:bg-active focus-visible:outline-none disabled:opacity-50"
               onPointerMove={(event) => {
                 event.currentTarget.focus();
               }}
@@ -212,12 +212,12 @@ function MenuList({
                 entry.onSelect();
               }}
             >
-              {entry.icon && <Icon icon={entry.icon} className="shrink-0 text-ink-subtle" />}
+              {entry.icon && <Icon icon={entry.icon} className="shrink-0 text-muted-foreground" />}
               <span className="min-w-0 flex-1 truncate">{entry.label}</span>
               {entry.type === 'item' && entry.shortcut && (
-                <Kbd keys={entry.shortcut} className="text-ink-subtle" />
+                <Kbd keys={entry.shortcut} className="text-muted-foreground" />
               )}
-              {isSubmenu && <Icon icon={ArrowRight01Icon} className="text-ink-subtle" />}
+              {isSubmenu && <Icon icon={ArrowRight01Icon} className="text-muted-foreground" />}
             </button>
             {entry.type === 'submenu' && isOpen && (
               <div className="absolute -top-[5px] left-full ml-1.5">

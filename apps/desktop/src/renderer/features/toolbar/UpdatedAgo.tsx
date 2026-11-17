@@ -12,7 +12,7 @@ export function UpdatedAgo({ mtimeMs }: { mtimeMs: number }) {
     };
   }, []);
   return (
-    <span className="shrink-0 text-ink-subtle tabular-nums">
+    <span className="shrink-0 text-muted-foreground tabular-nums">
       Updated {relativeTime(mtimeMs, now)}
     </span>
   );

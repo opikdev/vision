@@ -29,14 +29,14 @@ export function EmptyDesignHint({
   return (
     <section
       aria-labelledby="empty-design-title"
-      className="absolute flex items-center gap-4 rounded-lg border border-line bg-bg py-3 pr-3 pl-4"
+      className="absolute flex items-center gap-4 rounded-lg border border-border bg-background py-3 pr-3 pl-4"
       style={position}
     >
       <div className="min-w-0 flex-1">
         <h2 id="empty-design-title">This design is empty</h2>
-        <p className="text-ink-subtle">
-          Edit <code className="text-sm text-ink select-text">{displayPath}</code> with an AI agent
-          or a text editor. It redraws here on save.
+        <p className="text-muted-foreground">
+          Edit <code className="text-xs text-foreground select-text">{displayPath}</code> with an AI
+          agent or a text editor. It redraws here on save.
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-1.5">

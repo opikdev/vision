@@ -50,7 +50,7 @@ export function SaveStatus({
             diagnostics={diagnostics}
             document={state.document}
             label={plural(warnings, 'warning')}
-            className="no-drag h-7 rounded-sm px-2 text-ink-subtle tabular-nums hover:bg-hover hover:text-ink active:bg-active"
+            className="no-drag h-7 rounded-sm px-2 text-muted-foreground tabular-nums hover:bg-accent hover:text-foreground active:bg-active"
             panelClassName="top-full left-0 mt-1.5"
           />
         </span>
@@ -61,7 +61,7 @@ export function SaveStatus({
 
 function Badge({ children }: { children: string }) {
   return (
-    <span className="flex h-[22px] shrink-0 items-center gap-1.5 rounded-sm bg-red-tint px-2 text-red">
+    <span className="flex h-[22px] shrink-0 items-center gap-1.5 rounded-sm bg-destructive-tint px-2 text-destructive">
       <Icon icon={Alert02Icon} size={14} />
       {children}
     </span>
@@ -69,5 +69,5 @@ function Badge({ children }: { children: string }) {
 }
 
 function Note({ children }: { children: string }) {
-  return <span className="truncate text-ink-subtle">{children}</span>;
+  return <span className="truncate text-muted-foreground">{children}</span>;
 }

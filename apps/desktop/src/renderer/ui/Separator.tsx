@@ -5,7 +5,7 @@ export function Separator({ className }: { className?: string }) {
     <div
       role="separator"
       aria-orientation="vertical"
-      className={cx('h-4 w-px shrink-0 bg-line-strong', className)}
+      className={cx('h-4 w-px shrink-0 bg-border-strong', className)}
     />
   );
 }

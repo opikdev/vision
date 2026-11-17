@@ -90,7 +90,7 @@ export function Canvas({
               }}
             >
               <span className="truncate">{artboard.name}</span>
-              <span className="text-ink-subtle tabular-nums">
+              <span className="text-muted-foreground tabular-nums">
                 {artboard.width}×{artboard.height}
               </span>
             </div>

@@ -29,7 +29,7 @@ export function IconButton({
         aria-label={label}
         aria-keyshortcuts={keyShortcuts}
         className={cx(
-          'no-drag inline-flex size-7 shrink-0 items-center justify-center rounded-sm text-ink-subtle hover:bg-hover hover:text-ink active:bg-active disabled:pointer-events-none disabled:opacity-40',
+          'no-drag inline-flex size-7 shrink-0 items-center justify-center rounded-sm text-muted-foreground hover:bg-accent hover:text-foreground active:bg-active disabled:pointer-events-none disabled:opacity-40',
           className,
         )}
         {...tooltip.triggerProps}

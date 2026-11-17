@@ -58,14 +58,14 @@ export function Tooltip({
     <span
       aria-hidden="true"
       className={cx(
-        'pointer-events-none absolute top-full z-50 mt-1.5 flex items-center gap-2 rounded-sm border border-line-strong bg-popover px-2 py-1 text-sm whitespace-nowrap text-ink shadow-popover',
+        'pointer-events-none absolute top-full z-50 mt-1.5 flex items-center gap-2 rounded-sm border border-border-strong bg-popover px-2 py-1 text-xs whitespace-nowrap text-foreground shadow-popover',
         align === 'center' && 'left-1/2 -translate-x-1/2',
         align === 'start' && 'left-0',
         align === 'end' && 'right-0',
       )}
     >
       {label}
-      {shortcut && <Kbd keys={shortcut} className="text-ink-subtle" />}
+      {shortcut && <Kbd keys={shortcut} className="text-muted-foreground" />}
     </span>
   );
 }

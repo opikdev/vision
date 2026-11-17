@@ -18,12 +18,12 @@ export function ProblemList({
     <div className="flex min-h-0 flex-col">
       <ul className="min-h-0 overflow-y-auto select-text">
         {errorsFirst(diagnostics).map((diagnostic, index) => (
-          <li key={index} className="flex gap-2.5 border-b border-line py-2.5 last:border-b-0">
+          <li key={index} className="flex gap-2.5 border-b border-border py-2.5 last:border-b-0">
             <span className="pt-0.5">
               {diagnostic.severity === 'error' ? (
-                <Icon icon={Alert02Icon} className="text-red" />
+                <Icon icon={Alert02Icon} className="text-destructive" />
               ) : (
-                <Icon icon={InformationCircleIcon} className="text-ink-subtle" />
+                <Icon icon={InformationCircleIcon} className="text-muted-foreground" />
               )}
             </span>
             <p className="min-w-0 flex-1 break-words">

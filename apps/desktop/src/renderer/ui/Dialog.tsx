@@ -30,10 +30,10 @@ export function Dialog({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="no-drag m-auto max-h-[calc(100vh-64px)] w-[560px] max-w-[calc(100vw-32px)] overflow-y-auto rounded-lg border border-line-strong bg-popover p-0 text-ink shadow-popover backdrop:bg-bg/70"
+      className="no-drag m-auto max-h-[calc(100vh-64px)] w-[560px] max-w-[calc(100vw-32px)] overflow-y-auto rounded-lg border border-border-strong bg-popover p-0 text-foreground shadow-popover backdrop:bg-background/70"
     >
       <div className="flex items-center justify-between px-5 pt-4 pb-1">
-        <h2 id={titleId} className="text-base font-semibold">
+        <h2 id={titleId} className="text-sm font-semibold">
           {title}
         </h2>
         <IconButton icon={Cancel01Icon} label="Close" keyShortcuts="Escape" onClick={onClose} />

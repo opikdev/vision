@@ -30,7 +30,7 @@ export function ZoomControls({ disabled }: { disabled: boolean }) {
           aria-label={`Zoom ${percent}, reset to 100%`}
           aria-keyshortcuts="Meta+0"
           disabled={disabled}
-          className="no-drag h-7 w-12 rounded-sm text-center text-ink-subtle tabular-nums hover:bg-hover hover:text-ink active:bg-active disabled:opacity-40"
+          className="no-drag h-7 w-12 rounded-sm text-center text-muted-foreground tabular-nums hover:bg-accent hover:text-foreground active:bg-active disabled:opacity-40"
           onClick={() => {
             runCanvasCommand('zoom-reset');
           }}

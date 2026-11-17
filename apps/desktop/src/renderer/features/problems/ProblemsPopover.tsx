@@ -54,11 +54,11 @@ export function ProblemsPopover({
           role="dialog"
           aria-label={title}
           className={cx(
-            'no-drag absolute z-30 flex max-h-[min(480px,calc(100vh-120px))] w-[min(560px,calc(100vw-48px))] flex-col rounded-lg border border-line-strong bg-popover px-4 pt-3 pb-3 shadow-popover',
+            'no-drag absolute z-30 flex max-h-[min(480px,calc(100vh-120px))] w-[min(560px,calc(100vw-48px))] flex-col rounded-lg border border-border-strong bg-popover px-4 pt-3 pb-3 shadow-popover',
             panelClassName,
           )}
         >
-          <h2 className="pb-1 text-sm text-ink-subtle">{title}</h2>
+          <h2 className="pb-1 text-xs text-muted-foreground">{title}</h2>
           <ProblemList diagnostics={diagnostics} document={document} />
         </div>
       )}
