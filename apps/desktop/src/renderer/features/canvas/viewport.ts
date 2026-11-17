@@ -28,6 +28,14 @@ export function zoomAt(viewport: Viewport, zoom: number, point: Point): Viewport
   };
 }
 
+export function centerOn(viewport: Viewport, point: Point, size: Size): Viewport {
+  return {
+    x: size.width / 2 - point.x * viewport.zoom,
+    y: size.height / 2 - point.y * viewport.zoom,
+    zoom: viewport.zoom,
+  };
+}
+
 export function nextZoomStep(zoom: number, direction: 1 | -1): number {
   const minimumChange = 1.05;
   const step =

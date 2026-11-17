@@ -1,7 +1,15 @@
 import type { Page } from '@vision/format';
 import { useViewStore, type Size, type Viewport } from '../../stores/view-store';
 import { currentPage } from './current-page';
-import { fitBounds, nextZoomStep, unionBounds, zoomAt, type Bounds } from './viewport';
+import {
+  centerOn,
+  fitBounds,
+  nextZoomStep,
+  unionBounds,
+  zoomAt,
+  type Bounds,
+  type Point,
+} from './viewport';
 
 const fitPadding = 64;
 const emptyHintSpace = 120;
@@ -53,5 +61,13 @@ export function zoomToBounds(bounds: Bounds): void {
   const { canvasSize, setViewport } = useViewStore.getState();
   if (page !== undefined && canvasSize !== null) {
     setViewport(page.id, fitBounds(bounds, canvasSize, fitPadding));
+  }
+}
+
+export function panTo(point: Point): void {
+  const page = currentPage();
+  const { canvasSize, setViewport } = useViewStore.getState();
+  if (page !== undefined && canvasSize !== null) {
+    setViewport(page.id, centerOn(viewportFor(page, canvasSize), point, canvasSize));
   }
 }

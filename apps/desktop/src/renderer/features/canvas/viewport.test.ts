@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  centerOn,
   clampZoom,
   fitBounds,
   labelRoom,
@@ -31,6 +32,18 @@ describe('zoomAt', () => {
       x: -100,
       y: -100,
       zoom: 8,
+    });
+  });
+});
+
+describe('centerOn', () => {
+  it('pans so the point is in the middle without zooming', () => {
+    expect(
+      centerOn({ x: 10, y: 20, zoom: 0.5 }, { x: 2000, y: 100 }, { width: 800, height: 600 }),
+    ).toEqual({
+      x: -600,
+      y: 250,
+      zoom: 0.5,
     });
   });
 });
