@@ -35,7 +35,7 @@ apps/desktop/src/
     ui/           primitives: Button, IconButton, Menu, Tooltip, Kbd
 ```
 
-- **Security.** `contextIsolation`, `sandbox` and a strict CSP are on, and `nodeIntegration` is off. The renderer reaches the system only through `window.vision`, and main validates every IPC payload with zod. Navigation and new windows are blocked.
+- **Security.** `contextIsolation`, `sandbox` and a strict CSP are on, and `nodeIntegration` is off. The renderer reaches the system only through `window.vision`, and main validates every IPC payload with zod. Navigation and new windows are blocked. The CSP, not the SVG sanitizer, is what limits what a design can load: scripts only from the app, and images only from the app, `vision-asset:`, `data:`, `blob:` and `https:`. Remote `https:` images are allowed by design, so opening a design can make requests to the hosts it names.
 - **One file per window** ([ADR 003](decisions/003-one-file-per-window.md)). Main keeps a registry from file path to window, so opening a file that's already open focuses its window.
 - **Watching.** Main watches the file's folder, so saves that rename a temp file over the original are seen, and its assets folder, so added or changed images redraw; it debounces events. Each change is read, parsed and validated in main, then sent to the renderer as `{ document, diagnostics, status }`. When the new version has errors or can't be read (`read-error`, with the reason), `document` stays the last valid one. A file that can't be read when it's opened isn't opened, and the error is shown.
 - **Drawing** ([ADR 002](decisions/002-tailwind-in-sandboxed-iframes.md)). The renderer compiles Tailwind CSS at runtime for the classes in the document, with the tokens as theme variables. Each artboard is an `<iframe sandbox="allow-same-origin">` sized to the artboard, so responsive variants follow its width, its styles can't leak into the app, and nothing inside it can run scripts. React renders the nodes into each iframe through a portal.
@@ -46,7 +46,7 @@ apps/desktop/src/
 
 - Every tool takes the `.vis` path ([ADR 004](decisions/004-mcp-tools-take-the-file.md)), so one registration serves every design.
 - **Writes** go through `@vision/format`:
-  1. Read the file; a missing file is an empty design.
+  1. Read the file; a missing file starts as a new design with page `page-1` and a 1440×900 artboard `desktop`.
   2. Apply the edit in memory.
   3. Validate, and reject the edit if it adds an error the file didn't already have.
   4. Serialize deterministically to a temp file beside the real file (following a symlink, keeping its permissions), then rename it over the original. If the file changed since step 1, the edit is rejected instead.

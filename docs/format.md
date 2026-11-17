@@ -74,13 +74,13 @@ checkout.assets/     images referenced by the design (optional)
 | `svg`   | `id`, `name`?, `class`?, `svg`         | Inline SVG markup, for icons and illustrations. |
 
 - `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_][A-Za-z0-9_-]*`: letters, digits, `-` and `_`, not starting with `-`.
-- `name` is an optional label shown in Vision's layer list.
+- `name` is an optional label for people and AIs reading the file.
 - `src` is a path inside the assets folder (`photos/hero.jpg` means `checkout.assets/photos/hero.jpg`) or an `https:` URL. Paths can't leave the assets folder.
 - `svg` must be a single `<svg>` element. Scripts, styles, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon.
 
 ## Classes
 
-`class` takes [Tailwind CSS v4](https://tailwindcss.com/docs) utility classes, exactly as in HTML. Everything Tailwind ships works, including arbitrary values (`w-[320px]`, `bg-[#F4F1EA]`), responsive variants (`md:`, `lg:`, which follow the artboard's width) and `dark:` (which follows the theme Vision shows).
+`class` takes [Tailwind CSS v4](https://tailwindcss.com/docs) utility classes, exactly as in HTML. Everything Tailwind ships works, including arbitrary values (`w-[320px]`, `bg-[#F4F1EA]`) and responsive variants (`md:`, `lg:`, which follow the artboard's width). `dark:` variants are accepted but Vision v1 draws designs in light mode.
 
 - Layout is real CSS. Use `flex`, `grid`, `gap-*`, `p-*`, `w-*`, `h-*` and so on, just like a web page.
 - Give an artboard's top frame `h-full` or `min-h-full` when it should fill the artboard.
@@ -116,35 +116,35 @@ Errors make the file invalid. Vision keeps showing the last valid version, and M
 - a missing or wrong field, or an unknown field;
 - a duplicate or malformed id;
 - a malformed token name or value;
-- an image `src` that leaves the assets folder.
+- an image `src` that isn't a usable path inside the assets folder or an `https:` URL (for example, it leaves the folder or contains control characters).
 
 Warnings don't stop drawing:
 
 - a class Tailwind doesn't recognise;
-- an image file that doesn't exist;
+- an image file that doesn't exist or can't be read;
 - an `svg` that isn't a single `<svg>` element (it isn't drawn);
 - overlapping artboards.
 
 ## Writing designs with MCP
 
-`vision-mcp` is a stdio MCP server. Every tool takes `file`, the absolute path of a `.vis` file. The file doesn't need to exist yet; the first edit creates it.
+`vision-mcp` is a stdio MCP server. Every tool except `get_guide` takes `file`, the absolute path of a `.vis` file. The file doesn't need to exist yet: the first edit creates it with page `page-1` and a 1440×900 artboard `desktop`, then applies the edit.
 
-| Tool              | Purpose                                                                        |
-| ----------------- | ------------------------------------------------------------------------------ |
-| `get_guide`       | This page.                                                                     |
-| `get_overview`    | Pages, artboards, tokens and problem counts.                                   |
-| `get_tree`        | An outline of a page or an artboard.                                           |
-| `get_node`        | One node, page or artboard as JSON.                                            |
-| `create_page`     | Add a page.                                                                    |
-| `create_artboard` | Add an artboard, placed to the right of the others unless `x`/`y` are given.   |
-| `update_artboard` | Rename, move, resize or restyle an artboard.                                   |
-| `write_html`      | Convert HTML with Tailwind classes into nodes inside an artboard or frame.     |
-| `update_node`     | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`.                |
-| `move_node`       | Move a node to another parent or position.                                     |
-| `delete`          | Remove a node, artboard or page by id.                                         |
-| `set_tokens`      | Merge tokens; `null` deletes one.                                              |
-| `validate`        | List every error and warning.                                                  |
-| `screenshot`      | A PNG of an artboard, rendered by Vision, at most 2000 px on its longest side. |
+| Tool              | Purpose                                                                                            |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| `get_guide`       | This page.                                                                                         |
+| `get_overview`    | Pages, artboards, tokens and problem counts.                                                       |
+| `get_tree`        | An outline of the design (3 levels deep unless `depth` is given), or of a page, artboard or frame. |
+| `get_node`        | One node, page or artboard as JSON.                                                                |
+| `create_page`     | Add a page.                                                                                        |
+| `create_artboard` | Add an artboard, placed to the right of the others unless `x`/`y` are given.                       |
+| `update_artboard` | Rename, move, resize or restyle an artboard.                                                       |
+| `write_html`      | Convert HTML with Tailwind classes into nodes inside an artboard or frame.                         |
+| `update_node`     | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`.                                    |
+| `move_node`       | Move a node to another parent or position.                                                         |
+| `delete`          | Remove a node, artboard or page by id.                                                             |
+| `set_tokens`      | Merge tokens; `null` deletes one.                                                                  |
+| `validate`        | List every error and warning.                                                                      |
+| `screenshot`      | A PNG of an artboard, rendered by Vision, at most 2000 px on its longest side.                     |
 
 ### HTML for `write_html`
 
@@ -168,5 +168,5 @@ Warnings don't stop drawing:
 
 1. Call `get_guide` once, then `get_overview`.
 2. Set colors, fonts, radii and shadows with `set_tokens`.
-3. Add an artboard with `create_artboard`, then build it section by section with `write_html`.
-4. Check with `validate` and `screenshot`, then refine with `update_node`.
+3. Build the first screen in the starting artboard `desktop`: rename or resize it with `update_artboard` if it should be something else, such as a 390×844 phone screen. Add more screens with `create_artboard`. Build each artboard section by section with `write_html`.
+4. Check with `validate` and `screenshot`, then refine with `update_node`. Screenshots are scaled down to at most 2000 px on the longest side, so check tall pages section by section, or as narrower artboards.

@@ -60,7 +60,7 @@ export function registerNodeTools(server: McpServer): void {
         ),
         alt: field('Alternative text of an image node.'),
         svg: field('SVG markup of an svg node: a single <svg> element.'),
-        name: field("Label shown in Vision's layer list."),
+        name: field('Optional label for people and AIs reading the file.'),
       }),
       annotations: { destructiveHint: false, idempotentHint: true },
     },
