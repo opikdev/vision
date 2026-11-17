@@ -45,6 +45,22 @@ export {
   type Tokens,
   type VisionDocument,
 } from './schema';
+export { reviewDesign, score as reviewScore, severityWeights } from './review/review';
+export {
+  findingSchema,
+  layoutSchema,
+  measuredBoxSchema,
+  reviewReportSchema,
+  reviewRules,
+  type ArtboardReview,
+  type Finding,
+  type Layout,
+  type MeasuredBox,
+  type ReviewReport,
+  type ReviewRule,
+  type ReviewSeverity,
+  type Rgba,
+} from './review/schema';
 export { serializeDocument } from './serialize';
 export { sanitizeSvg, SvgError } from './svg';
 export { createTailwindEngine, type TailwindEngine, type TailwindStylesheets } from './tailwind';
