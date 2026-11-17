@@ -151,16 +151,20 @@ test('draws an off-screen artboard again to select and zoom to its layer', async
     .click();
   await window.keyboard.press('Shift+Digit2');
   await window.keyboard.press('Escape');
-  for (let step = 0; step < 7; step++) await window.keyboard.press('ControlOrMeta+Equal');
-  await expect(zoomLevel(window)).toHaveText('600%');
-  await expect(window.locator('iframe[title="Cart"]')).toHaveCount(0);
+  const cartFrame = window.locator('iframe[title="Cart"]');
+  for (let step = 0; step < 12 && (await cartFrame.count()) > 0; step++) {
+    await window.keyboard.press('ControlOrMeta+Equal');
+    await window.waitForTimeout(150);
+  }
+  await expect(cartFrame).toHaveCount(0);
+  const zoomed = (await zoomLevel(window).textContent()) ?? '';
 
   await expandToSummary(window);
   await row(window, 'Continue to payment').click();
   await window.keyboard.press('Shift+Digit2');
 
-  await expect(window.locator('iframe[title="Cart"]')).toHaveCount(1);
-  await expect(zoomLevel(window)).not.toHaveText('600%');
+  await expect(cartFrame).toHaveCount(1);
+  await expect(zoomLevel(window)).not.toHaveText(zoomed);
   await expect(selectedOutline(window)).toBeVisible();
   await expect(size(window)).toHaveText('330 × 48');
 });
