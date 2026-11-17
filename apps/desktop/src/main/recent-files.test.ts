@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -65,5 +65,40 @@ describe('RecentFiles', () => {
     expect(await recent.list()).toEqual([]);
     await recent.add('/x/1.vis');
     expect((await recent.list()).map((file) => file.path)).toEqual(['/x/1.vis']);
+  });
+
+  it('keeps every file added at the same time', async () => {
+    const recent = new RecentFiles(join(dir, 'recent.json'));
+    await Promise.all(['/x/1.vis', '/x/2.vis', '/x/3.vis'].map((path) => recent.add(path)));
+    expect((await recent.list()).map((file) => file.path)).toEqual([
+      '/x/3.vis',
+      '/x/2.vis',
+      '/x/1.vis',
+    ]);
+  });
+
+  it('reads the list again after a failed read', async () => {
+    const store = join(dir, 'recent.json');
+    await mkdir(store);
+    const recent = new RecentFiles(store);
+    await expect(recent.list()).rejects.toThrow('EISDIR');
+    await rm(store, { recursive: true });
+    await writeFile(store, '{"version":1,"paths":["/x/1.vis"]}');
+    expect((await recent.list()).map((file) => file.path)).toEqual(['/x/1.vis']);
+  });
+
+  it('marks files it cannot reach as missing', async () => {
+    await mkdir(join(dir, 'locked'));
+    await writeFile(join(dir, 'locked', 'a.vis'), '');
+    await chmod(join(dir, 'locked'), 0o000);
+    const recent = new RecentFiles(join(dir, 'recent.json'));
+    await recent.add(join(dir, 'locked', 'a.vis'));
+    try {
+      expect(await recent.list()).toEqual([
+        { path: join(dir, 'locked', 'a.vis'), name: 'a.vis', exists: false },
+      ]);
+    } finally {
+      await chmod(join(dir, 'locked'), 0o755);
+    }
   });
 });

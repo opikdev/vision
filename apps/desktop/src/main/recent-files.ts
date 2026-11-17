@@ -24,26 +24,33 @@ export class RecentFiles {
     );
   }
 
-  async add(path: string): Promise<void> {
-    const paths = await this.#load();
-    await this.#save(
+  add(path: string): Promise<void> {
+    return this.#update((paths) =>
       [path, ...paths.filter((existing) => existing !== path)].slice(0, this.#limit),
     );
   }
 
-  async remove(path: string): Promise<void> {
-    const paths = await this.#load();
-    await this.#save(paths.filter((existing) => existing !== path));
+  remove(path: string): Promise<void> {
+    return this.#update((paths) => paths.filter((existing) => existing !== path));
   }
 
   #load(): Promise<string[]> {
-    this.#paths ??= readStore(this.#file);
+    if (this.#paths === undefined) {
+      const loading = readStore(this.#file);
+      this.#paths = loading;
+      loading.catch(() => {
+        if (this.#paths === loading) this.#paths = undefined;
+      });
+    }
     return this.#paths;
   }
 
-  #save(paths: string[]): Promise<void> {
-    this.#paths = Promise.resolve(paths);
-    const write = this.#writes.then(() => writeStore(this.#file, paths));
+  #update(change: (paths: string[]) => string[]): Promise<void> {
+    const write = this.#writes.then(async () => {
+      const paths = change(await this.#load());
+      this.#paths = Promise.resolve(paths);
+      await writeStore(this.#file, paths);
+    });
     this.#writes = write.catch(() => undefined);
     return write;
   }
@@ -80,11 +87,9 @@ async function writeStore(file: string, paths: string[]): Promise<void> {
   await rename(temp, file);
 }
 
-async function isFile(path: string): Promise<boolean> {
-  try {
-    return (await stat(path)).isFile();
-  } catch (error) {
-    if (isMissingFileError(error)) return false;
-    throw error;
-  }
+function isFile(path: string): Promise<boolean> {
+  return stat(path).then(
+    (stats) => stats.isFile(),
+    () => false,
+  );
 }
