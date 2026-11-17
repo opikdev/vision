@@ -42,7 +42,11 @@ export class ActivityServer {
   }
 
   async close(): Promise<void> {
-    const closed = new Promise<void>((resolve) => this.#server.close(() => { resolve(); }));
+    const closed = new Promise<void>((resolve) =>
+      this.#server.close(() => {
+        resolve();
+      }),
+    );
     for (const socket of this.#sockets) socket.destroy();
     await closed;
     await this.#queue;
