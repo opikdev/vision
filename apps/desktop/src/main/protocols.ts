@@ -13,14 +13,18 @@ export function registerPrivilegedSchemes(): void {
   ]);
 }
 
+export function appFile(rendererDir: string, url: string): string | undefined {
+  const { host, pathname } = new URL(url);
+  const file = join(rendererDir, decodeURIComponent(pathname));
+  const inside = relative(rendererDir, file);
+  if (host !== 'vision' || inside.startsWith('..') || isAbsolute(inside)) return undefined;
+  return file;
+}
+
 export function handleAppProtocol(rendererDir: string): void {
   protocol.handle('app', async (request) => {
-    const { host, pathname } = new URL(request.url);
-    const file = join(rendererDir, decodeURIComponent(pathname));
-    const inside = relative(rendererDir, file);
-    if (host !== 'vision' || inside.startsWith('..') || isAbsolute(inside)) {
-      return new Response('Not found', { status: 404 });
-    }
+    const file = appFile(rendererDir, request.url);
+    if (file === undefined) return new Response('Not found', { status: 404 });
     const response = await net.fetch(pathToFileURL(file).toString());
     const headers = new Headers(response.headers);
     headers.set('Content-Security-Policy', contentSecurityPolicy(undefined));

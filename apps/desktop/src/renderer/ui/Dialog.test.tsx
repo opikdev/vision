@@ -67,6 +67,17 @@ describe('Dialog', () => {
     expect(document.activeElement).toBe(opener);
   });
 
+  it('follows the browser closing it, as Escape does, and returns focus', async () => {
+    const { container, opener, onClose } = await openDialog();
+    await act(async () => {
+      container.querySelector('dialog')?.close();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(container.querySelector('dialog')).toBeNull();
+    expect(document.activeElement).toBe(opener);
+  });
+
   it('closes when the backdrop is clicked', async () => {
     const { container, onClose } = await openDialog();
     await act(async () => {
