@@ -21,13 +21,18 @@ const markerPattern = /^(group|peer)(\/[A-Za-z0-9_-]+)?$/;
 
 export function createTailwindEngine(sheets: TailwindStylesheets): TailwindEngine {
   const options = { base: '/', loadStylesheet: stylesheetLoader(sheets) };
+  let lastChecker: { css: string; checker: Promise<ClassChecker> } | undefined;
+  const checkerFor = (css: string): Promise<ClassChecker> => {
+    if (lastChecker?.css !== css) lastChecker = { css, checker: loadClassChecker(css, options) };
+    return lastChecker.checker;
+  };
   return {
     async css(doc) {
       const compiler = await compile(inputCss(doc), options);
       return compiler.build(collectClasses(doc));
     },
     async classDiagnostics(doc) {
-      const checker = await loadClassChecker(inputCss(doc), options);
+      const checker = await checkerFor(inputCss(doc));
       const unknown = new Set(checker.unknown(collectClasses(doc)));
       const diagnostics: Diagnostic[] = [];
       for (const located of visit(doc)) {

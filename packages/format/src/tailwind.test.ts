@@ -1,8 +1,24 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import type * as Tailwind from 'tailwindcss';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { createTailwindEngine, type TailwindEngine } from './tailwind';
 import type { VisionDocument } from './schema';
 import { docWith } from './test-fixtures';
 import { loadTailwindStylesheets } from './test-tailwind';
+
+const loads = vi.hoisted(() => ({ count: 0 }));
+
+vi.mock('tailwindcss', async (importOriginal) => {
+  const tailwind = await importOriginal<typeof Tailwind>();
+  return {
+    ...tailwind,
+    __unstable__loadDesignSystem: (
+      ...args: Parameters<typeof tailwind.__unstable__loadDesignSystem>
+    ) => {
+      loads.count++;
+      return tailwind.__unstable__loadDesignSystem(...args);
+    },
+  };
+});
 
 let engine: TailwindEngine;
 
@@ -51,6 +67,16 @@ describe('css', () => {
 });
 
 describe('classDiagnostics', () => {
+  it('loads the class checker once while the tokens stay the same', async () => {
+    const fresh = createTailwindEngine(await loadTailwindStylesheets());
+    const before = loads.count;
+    await fresh.classDiagnostics(docWith([{ type: 'frame', id: 'a', class: 'flx' }], { tokens }));
+    await fresh.classDiagnostics(docWith([{ type: 'frame', id: 'b', class: 'gird' }], { tokens }));
+    expect(loads.count - before).toBe(1);
+    await fresh.classDiagnostics(docWith([], { tokens: { color: { other: '#000000' } } }));
+    expect(loads.count - before).toBe(2);
+  });
+
   it('accepts valid utilities, arbitrary values, variants, tokens and group markers', async () => {
     const doc = docWith(
       [
