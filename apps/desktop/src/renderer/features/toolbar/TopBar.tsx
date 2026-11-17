@@ -11,8 +11,8 @@ export function TopBar({ title, actions }: { title: ReactNode; actions?: ReactNo
     <header className="drag-region flex h-12 shrink-0 items-center">
       <div
         className={cn(
-          'flex h-full shrink-0 items-center pl-[86px]',
-          sidebarVisible ? 'w-62 justify-between pr-2' : 'gap-2.5',
+          'flex h-full shrink-0 items-center justify-between gap-2.5 pl-[86px] transition-[width,padding] duration-200 ease-linear [interpolate-size:allow-keywords] motion-reduce:transition-none',
+          sidebarVisible ? 'w-62 pr-2' : 'w-auto pr-0',
         )}
       >
         <AppMenu />
