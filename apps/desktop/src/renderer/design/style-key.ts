@@ -1,19 +1,33 @@
 import type { Artboard, Node, VisionDocument } from '@vision/format';
 
-const artboardClasses = new WeakMap<Artboard, string[]>();
+export interface DesignStyle {
+  key: string;
+  tokens: string;
+  classes: ReadonlySet<string>;
+}
 
-export function styleKey(document: VisionDocument): string {
+const artboardClassCache = new WeakMap<Artboard, readonly string[]>();
+
+export function designStyle(document: VisionDocument): DesignStyle {
   const classes = new Set<string>();
   for (const page of document.pages) {
     for (const artboard of page.artboards) {
-      for (const name of classesOf(artboard)) classes.add(name);
+      for (const name of artboardClasses(artboard)) classes.add(name);
     }
   }
-  return JSON.stringify([document.tokens ?? null, [...classes].sort()]);
+  const tokens = JSON.stringify(document.tokens ?? null);
+  return { key: `${tokens}\n${[...classes].sort().join(' ')}`, tokens, classes };
 }
 
-function classesOf(artboard: Artboard): string[] {
-  let classes = artboardClasses.get(artboard);
+export function covers(style: DesignStyle, next: DesignStyle, artboard: Artboard): boolean {
+  return (
+    style.tokens === next.tokens &&
+    artboardClasses(artboard).every((name) => style.classes.has(name))
+  );
+}
+
+function artboardClasses(artboard: Artboard): readonly string[] {
+  let classes = artboardClassCache.get(artboard);
   if (classes === undefined) {
     const found = new Set<string>();
     const add = (value: string | undefined) => {
@@ -28,7 +42,7 @@ function classesOf(artboard: Artboard): string[] {
     add(artboard.class);
     visit(artboard.children);
     classes = [...found];
-    artboardClasses.set(artboard, classes);
+    artboardClassCache.set(artboard, classes);
   }
   return classes;
 }

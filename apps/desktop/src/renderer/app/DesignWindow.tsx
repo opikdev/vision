@@ -63,6 +63,7 @@ export function DesignWindow({ state }: { state: DocumentState }) {
             <Canvas
               page={shownPage}
               css={compiled?.css ?? null}
+              style={compiled?.style ?? null}
               assetToken={state.assetToken}
               assetsVersion={state.assetsVersion}
               overlay={(viewport) => (

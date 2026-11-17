@@ -1,6 +1,6 @@
 import type { Artboard, VisionDocument } from '@vision/format';
 import { describe, expect, it } from 'vitest';
-import { styleKey } from './style-key';
+import { covers, designStyle } from './style-key';
 
 function artboard(id: string, cardClass: string, text = 'Hi'): Artboard {
   return {
@@ -31,10 +31,12 @@ function design(artboards: Artboard[], brand = '#000'): VisionDocument {
   };
 }
 
-describe('styleKey', () => {
+const styleKey = (document: VisionDocument) => designStyle(document).key;
+
+describe('designStyle', () => {
   it('lists the tokens and every class once, sorted', () => {
     expect(styleKey(design([artboard('a', 'flex  p-4'), artboard('b', 'p-4 grid')]))).toBe(
-      '[{"color":{"brand":"#000"}},["bg-white","flex","grid","p-4","text-sm"]]',
+      '{"color":{"brand":"#000"}}\nbg-white flex grid p-4 text-sm',
     );
   });
 
@@ -54,7 +56,22 @@ describe('styleKey', () => {
     styleKey(design([kept]));
     const changed = { ...kept, class: 'bg-black' };
     expect(styleKey(design([kept, changed]))).toBe(
-      '[{"color":{"brand":"#000"}},["bg-black","bg-white","flex","text-sm"]]',
+      '{"color":{"brand":"#000"}}\nbg-black bg-white flex text-sm',
     );
+  });
+});
+
+describe('covers', () => {
+  it('is true when a style has every class of the artboard and the same tokens', () => {
+    const style = designStyle(design([artboard('a', 'flex'), artboard('b', 'grid')]));
+    const next = designStyle(design([artboard('a', 'flex'), artboard('b', 'grid gap-2')]));
+    expect(covers(style, next, artboard('a', 'flex'))).toBe(true);
+    expect(covers(style, next, artboard('b', 'grid gap-2'))).toBe(false);
+  });
+
+  it('is false when the tokens changed', () => {
+    const style = designStyle(design([artboard('a', 'flex')]));
+    const next = designStyle(design([artboard('a', 'flex')], '#fff'));
+    expect(covers(style, next, artboard('a', 'flex'))).toBe(false);
   });
 });

@@ -1,7 +1,8 @@
 import type { Artboard, Page } from '@vision/format';
-import { memo, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { memo, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from 'cn';
 import { ArtboardFrame } from '../../design/ArtboardFrame';
+import { covers, type DesignStyle } from '../../design/style-key';
 import { useViewStore, type Viewport } from '../../stores/view-store';
 import { fitPage, resizeCanvas } from './canvas-commands';
 import { useLayerPointer } from '../layers/use-layer-pointer';
@@ -12,12 +13,14 @@ import { labelRoom } from './viewport';
 export function Canvas({
   page,
   css,
+  style,
   assetToken,
   assetsVersion,
   overlay,
 }: {
   page: Page | undefined;
   css: string | null;
+  style: DesignStyle | null;
   assetToken: string;
   assetsVersion: number;
   overlay?: (viewport: Viewport) => ReactNode;
@@ -84,7 +87,7 @@ export function Canvas({
       onPointerLeave={layers.onPointerLeave}
       onContextMenu={layers.onContextMenu}
     >
-      {viewport !== null && css !== null && (
+      {viewport !== null && css !== null && style !== null && (
         <>
           <div
             className="absolute top-0 left-0 origin-top-left"
@@ -94,6 +97,7 @@ export function Canvas({
               artboards={artboards}
               drawn={drawn}
               css={css}
+              style={style}
               assetToken={assetToken}
               assetsVersion={assetsVersion}
             />
@@ -126,12 +130,14 @@ const ArtboardLayer = memo(function ArtboardLayer({
   artboards,
   drawn,
   css,
+  style,
   assetToken,
   assetsVersion,
 }: {
   artboards: Artboard[];
   drawn: ReadonlySet<string>;
   css: string;
+  style: DesignStyle;
   assetToken: string;
   assetsVersion: number;
 }) {
@@ -141,6 +147,7 @@ const ArtboardLayer = memo(function ArtboardLayer({
         key={artboard.id}
         artboard={artboard}
         css={css}
+        style={style}
         assetToken={assetToken}
         assetsVersion={assetsVersion}
       />
@@ -151,19 +158,25 @@ const ArtboardLayer = memo(function ArtboardLayer({
 const PlacedArtboard = memo(function PlacedArtboard({
   artboard,
   css,
+  style,
   assetToken,
   assetsVersion,
 }: {
   artboard: Artboard;
   css: string;
+  style: DesignStyle;
   assetToken: string;
   assetsVersion: number;
 }) {
+  // Swapping an iframe's stylesheet restyles its whole document, so an artboard keeps the
+  // stylesheet it has while that one still styles every class it uses.
+  const [shown, setShown] = useState({ css, style });
+  if (shown.css !== css && !covers(shown.style, style, artboard)) setShown({ css, style });
   return (
     <div className="absolute" style={{ left: artboard.x, top: artboard.y }}>
       <ArtboardFrame
         artboard={artboard}
-        css={css}
+        css={shown.css}
         assetToken={assetToken}
         assetsVersion={assetsVersion}
       />
