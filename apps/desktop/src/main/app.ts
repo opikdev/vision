@@ -1,6 +1,9 @@
+import { socketPath } from '@vision/activity/node';
 import { app, BrowserWindow, Menu } from 'electron';
 import { join } from 'node:path';
 import { channels } from '../shared/channels';
+import type { AgentActivity } from '../shared/contract';
+import { ActivityServer } from './activity-server';
 import { registerAppIpc } from './app-ipc';
 import { AssetRegistry, handleAssetProtocol } from './asset-protocol';
 import { Commands } from './commands';
@@ -65,6 +68,7 @@ export function startApp(): void {
       };
 
       registerAppIpc(windows, commands, recent);
+      listenForAgents(windows);
       refreshMenu();
       app.on('activate', () => {
         if (windows.windows().length === 0) windows.openWindow();
@@ -82,6 +86,24 @@ export function startApp(): void {
       console.error('Vision failed to start:', error);
       app.exit(1);
     });
+}
+
+function listenForAgents(windows: WindowRegistry): void {
+  ActivityServer.start(socketPath(), ({ session, agent, activity }, file) => {
+    const update: AgentActivity = { session, agent, activity };
+    windows.findByPath(file)?.webContents.send(channels.agentActivity, update);
+  }).then(
+    (server) => {
+      app.once('will-quit', () => {
+        server?.close().catch((error: unknown) => {
+          console.error('Closing the agent activity socket failed:', error);
+        });
+      });
+    },
+    (error: unknown) => {
+      console.error('Listening for agent activity failed:', error);
+    },
+  );
 }
 
 function broadcastRecent(recent: RecentFiles): void {

@@ -1,3 +1,4 @@
+import type { ActivityMessage } from '@vision/activity';
 import type { Diagnostic, VisionDocument } from '@vision/format';
 
 export const appCommands = ['new-design', 'open', 'show-in-finder', 'copy-path', 'quit'] as const;
@@ -34,6 +35,8 @@ export interface McpServer {
   env: Record<string, string>;
 }
 
+export type AgentActivity = Pick<ActivityMessage, 'session' | 'agent' | 'activity'>;
+
 export interface VisionApi {
   getState(): Promise<DocumentState | null>;
   onState(listener: (state: DocumentState | null) => void): () => void;
@@ -47,5 +50,6 @@ export interface VisionApi {
   getMcpServer(): Promise<McpServer>;
   captureReady(): Promise<void>;
   captureFailed(message: string): Promise<void>;
+  onAgentActivity(listener: (activity: AgentActivity) => void): () => void;
   getPathForFile(file: File): string;
 }
