@@ -166,10 +166,21 @@ Warnings don't stop drawing:
 - An `<svg>`'s `class` and `id` move to its node.
 - `style` attributes, `<script>`, `<style>` and other elements (`table`, `hr`, …) are errors; use `div`s with Tailwind classes.
 
+### Designing well
+
+- **Start from a brief.** Decide who it's for, the platform and one word for the feel, then set the colors, fonts and radii that follow from it with `set_tokens`: a palette from the brand rather than a default blue or indigo, and one distinctive element, such as a typeface or a shape, carried through every screen. Use the token classes (`bg-brand`, `text-muted`) instead of raw values.
+- **One focal point per screen.** Give one primary action the strongest color; make the others outlined or plain text, and keep destructive actions quiet until they're confirmed.
+- **Space on a 4/8 scale**: Tailwind steps 1, 2, 3, 4, 6, 8, 12, 16 and up. Avoid half steps (`py-2.5`, `gap-1.5`) and arbitrary pixels.
+- **A small type scale.** At most 2 font families and about 5 sizes per artboard, nothing under 12px, body text 16px on phones. Keep muted and colored text at 4.5:1 contrast with its background.
+- **Phones**: tap targets of at least 44 × 44px (`size-11`, `min-h-11`), and the main action in view without scrolling, such as in a bottom bar.
+- **Real content.** Names, prices, dates and copy that fit the brief, and images or icons that match each item rather than one icon repeated; never lorem ipsum or `Title`.
+- **Design the states**: empty, loading, error, selected and disabled, as their own artboards or side by side.
+- **Fit the artboard** to its content: make it as tall as the content, with no empty band at the bottom.
+
 ### A good loop
 
 1. Call `get_guide` once, then `get_overview`.
 2. Set colors, fonts, radii and shadows with `set_tokens`.
 3. Build the first screen in the starting artboard `desktop`: rename or resize it with `update_artboard` if it should be something else, such as a 390×844 phone screen. Add more screens with `create_artboard`. Build each artboard section by section with `write_html`, with a `data-name` on important elements (`<div data-name="Order summary">`).
-4. Check with `validate` and `screenshot`, then refine with `update_node`. Screenshots are scaled down to at most 2000 px on the longest side, so check tall pages section by section, or as narrower artboards.
+4. Check with `validate`, then `review`: fix every error it finds and the warnings that matter, and review again until no errors are left. Then look at each artboard with `screenshot` for what a review can't judge, such as hierarchy, alignment and whether it meets the brief, and refine with `update_node`. Screenshots are scaled down to at most 2000 px on the longest side, so check tall pages section by section, or as narrower artboards.
 5. When the user talks about "the selected layer", "this" or "the selection", call `get_selection` to see what they selected in Vision, then edit it by its `id`.
