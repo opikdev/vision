@@ -9,9 +9,11 @@ import { ProblemsPopover } from './ProblemsPopover';
 export function SaveStatus({
   state,
   diagnostics,
+  showUpdated = true,
 }: {
   state: DocumentState;
   diagnostics: Diagnostic[];
+  showUpdated?: boolean;
 }) {
   if (state.status === 'invalid') {
     const { errors } = countProblems(diagnostics);
@@ -41,7 +43,7 @@ export function SaveStatus({
   const { warnings } = countProblems(diagnostics);
   return (
     <>
-      {state.mtimeMs !== null && <UpdatedAgo mtimeMs={state.mtimeMs} />}
+      {showUpdated && state.mtimeMs !== null && <UpdatedAgo mtimeMs={state.mtimeMs} />}
       {warnings > 0 && (
         <span className="relative">
           <ProblemsPopover

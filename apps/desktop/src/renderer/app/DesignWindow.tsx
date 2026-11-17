@@ -1,5 +1,9 @@
 import type { DocumentState } from '../../shared/contract';
 import { useClassWarnings, useCompiledDesign } from '../design/use-compiled-design';
+import { useLatestAgent } from '../features/agents/agent-store';
+import { AgentCursors } from '../features/agents/AgentCursors';
+import { AgentStatus } from '../features/agents/AgentStatus';
+import { useAgentActivity } from '../features/agents/use-agent-activity';
 import { useReveal } from '../features/agents/use-reveal';
 import { Canvas } from '../features/canvas/Canvas';
 import { pageIn } from '../features/canvas/current-page';
@@ -16,7 +20,9 @@ import { WindowFrame } from './WindowFrame';
 export function DesignWindow({ state }: { state: DocumentState }) {
   const compiled = useCompiledDesign(state.document);
   const classWarnings = useClassWarnings(state.document);
-  useReveal(compiled?.document ?? null);
+  const tracker = useAgentActivity();
+  useReveal(compiled?.document ?? null, tracker);
+  const agentWorking = useLatestAgent() !== null;
   const pageId = useViewStore((store) => store.pageId);
   const diagnostics =
     state.status === 'ok' ? [...state.diagnostics, ...classWarnings] : state.diagnostics;
@@ -29,7 +35,8 @@ export function DesignWindow({ state }: { state: DocumentState }) {
     <WindowFrame
       title={
         <DocumentTitle name={state.name} pageName={pageIn(state.document, pageId)?.name}>
-          <SaveStatus state={state} diagnostics={diagnostics} />
+          <AgentStatus />
+          <SaveStatus state={state} diagnostics={diagnostics} showUpdated={!agentWorking} />
         </DocumentTitle>
       }
       actions={<ZoomControls disabled={state.document === null} />}
@@ -48,16 +55,19 @@ export function DesignWindow({ state }: { state: DocumentState }) {
             css={compiled?.css ?? null}
             assetToken={state.assetToken}
             assetsVersion={state.assetsVersion}
-            overlay={(viewport) =>
-              isEmpty === true && (
-                <EmptyDesignHint
-                  artboard={shownPage?.artboards[0]}
-                  viewport={viewport}
-                  path={state.path}
-                  displayPath={state.displayPath}
-                />
-              )
-            }
+            overlay={(viewport) => (
+              <>
+                {isEmpty === true && (
+                  <EmptyDesignHint
+                    artboard={shownPage?.artboards[0]}
+                    viewport={viewport}
+                    path={state.path}
+                    displayPath={state.displayPath}
+                  />
+                )}
+                <AgentCursors page={shownPage} viewport={viewport} />
+              </>
+            )}
           />
           {state.status === 'invalid' && (
             <ErrorStrip diagnostics={diagnostics} document={state.document} />

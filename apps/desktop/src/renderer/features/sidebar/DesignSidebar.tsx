@@ -1,7 +1,8 @@
-import { FrameIcon, Note01Icon } from '@hugeicons/core-free-icons';
-import type { Diagnostic, VisionDocument } from '@vision/format';
+import { Cursor02Icon, FrameIcon, Note01Icon } from '@hugeicons/core-free-icons';
+import type { Artboard, Diagnostic, VisionDocument } from '@vision/format';
 import { useViewStore } from '../../stores/view-store';
 import { Icon } from '../../ui/Icon';
+import { useAgentOn } from '../agents/agent-store';
 import { zoomToBounds } from '../canvas/canvas-commands';
 import { pageIn } from '../canvas/current-page';
 import { artboardErrorCounts, plural } from '../problems/problems';
@@ -37,29 +38,38 @@ export function DesignSidebar({
         {page?.artboards.length === 0 && (
           <p className="px-2 text-sm text-ink-subtle">This page has no artboards yet.</p>
         )}
-        {page?.artboards.map((artboard) => {
-          const count = errors.get(artboard.id) ?? 0;
-          return (
-            <SidebarRow
-              key={artboard.id}
-              icon={<Icon icon={FrameIcon} className="shrink-0 text-ink-subtle" />}
-              label={artboard.name}
-              trailing={
-                count > 0 ? (
-                  <span className="shrink-0 text-red tabular-nums">{plural(count, 'error')}</span>
-                ) : (
-                  <span className="shrink-0 text-ink-subtle tabular-nums">
-                    {artboard.width}×{artboard.height}
-                  </span>
-                )
-              }
-              onClick={() => {
-                zoomToBounds(artboard);
-              }}
-            />
-          );
-        })}
+        {page?.artboards.map((artboard) => (
+          <SidebarRow
+            key={artboard.id}
+            icon={<Icon icon={FrameIcon} className="shrink-0 text-ink-subtle" />}
+            label={artboard.name}
+            trailing={<ArtboardMeta artboard={artboard} errors={errors.get(artboard.id) ?? 0} />}
+            onClick={() => {
+              zoomToBounds(artboard);
+            }}
+          />
+        ))}
       </SidebarSection>
     </>
+  );
+}
+
+function ArtboardMeta({ artboard, errors }: { artboard: Artboard; errors: number }) {
+  const agent = useAgentOn(artboard.id);
+  if (errors > 0) {
+    return <span className="shrink-0 text-red tabular-nums">{plural(errors, 'error')}</span>;
+  }
+  if (agent !== null) {
+    return (
+      <span className="flex min-w-0 shrink items-center gap-1 text-ink-subtle">
+        <Icon icon={Cursor02Icon} size={12} className="shrink-0" />
+        <span className="truncate">{agent}</span>
+      </span>
+    );
+  }
+  return (
+    <span className="shrink-0 text-ink-subtle tabular-nums">
+      {artboard.width}×{artboard.height}
+    </span>
   );
 }

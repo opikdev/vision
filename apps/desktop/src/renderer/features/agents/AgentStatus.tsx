@@ -1,0 +1,26 @@
+import { Cursor02Icon } from '@hugeicons/core-free-icons';
+import { cx } from '../../ui/cx';
+import { Icon } from '../../ui/Icon';
+import { useLatestAgent } from './agent-store';
+
+export function AgentStatus() {
+  const presence = useLatestAgent();
+  return (
+    <span
+      role="status"
+      className={cx(
+        'flex min-w-0 items-center gap-1.5 text-sm text-ink-subtle transition-opacity duration-200',
+        presence?.leaving === true && 'opacity-0',
+      )}
+    >
+      {presence !== null && (
+        <>
+          <Icon icon={Cursor02Icon} size={14} className="shrink-0" />
+          <span className="truncate">
+            <span className="font-medium text-ink">{presence.agent}</span> {presence.summary}
+          </span>
+        </>
+      )}
+    </span>
+  );
+}
