@@ -13,13 +13,19 @@ describe('validateDocument', () => {
         severity: 'error',
         code: 'invalid-id',
         message: 'Invalid id "my box"',
-        hint: 'Ids may only contain letters, digits, "-" and "_", such as "pay-button".',
+        hint: 'Ids may only contain letters, digits, "-" and "_", and can\'t start with "-", such as "pay-button".',
         path: ['pages', 0, 'artboards', 0, 'children', 0, 'id'],
         pageId: 'page',
         artboardId: 'board',
         nodeId: 'my box',
       },
     ]);
+  });
+
+  it('reports ids that start with "-"', () => {
+    expect(
+      validateDocument(docWith([{ type: 'frame', id: '-no-sandbox' }])).map((d) => d.message),
+    ).toEqual(['Invalid id "-no-sandbox"']);
   });
 
   it('reports ids shared by a page and a nested node', () => {

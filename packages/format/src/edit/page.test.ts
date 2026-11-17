@@ -21,7 +21,7 @@ describe('createPage', () => {
       new EditError('The id "desktop" is already used. Choose another id or leave it out.'),
     );
     expect(() => createPage(createDocument(), { name: 'A', id: 'a/b' })).toThrow(
-      'Invalid id "a/b". Ids may only contain letters, digits, "-" and "_", such as "pay-button".',
+      'Invalid id "a/b". Ids may only contain letters, digits, "-" and "_", and can\'t start with "-", such as "pay-button".',
     );
   });
 });

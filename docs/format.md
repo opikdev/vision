@@ -73,7 +73,7 @@ checkout.assets/     images referenced by the design (optional)
 | `image` | `id`, `name`?, `class`?, `src`, `alt`? | An `<img>`.                                     |
 | `svg`   | `id`, `name`?, `class`?, `svg`         | Inline SVG markup, for icons and illustrations. |
 
-- `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_-]+`.
+- `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_][A-Za-z0-9_-]*`: letters, digits, `-` and `_`, not starting with `-`.
 - `name` is an optional label shown in Vision's layer list.
 - `src` is a path inside the assets folder (`photos/hero.jpg` means `checkout.assets/photos/hero.jpg`) or an `https:` URL. Paths can't leave the assets folder.
 - `svg` must be a single `<svg>` element. Scripts, styles, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon.

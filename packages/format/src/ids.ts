@@ -1,12 +1,12 @@
 import { collectIds } from './query';
 import type { VisionDocument } from './schema';
 
-export const idPattern = /^[A-Za-z0-9_-]+$/;
+export const idPattern = /^[A-Za-z0-9_][A-Za-z0-9_-]*$/;
 
 export function idProblem(id: string): string | undefined {
   return idPattern.test(id)
     ? undefined
-    : 'Ids may only contain letters, digits, "-" and "_", such as "pay-button".';
+    : 'Ids may only contain letters, digits, "-" and "_", and can\'t start with "-", such as "pay-button".';
 }
 
 export function uniqueId(base: string, taken: ReadonlySet<string>): string {
