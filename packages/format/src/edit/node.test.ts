@@ -131,7 +131,7 @@ describe('updateNode', () => {
       'Expected a single <svg> element, got <div>.',
     );
     expect(() => updateNode(base, 'board', { class: 'x' })).toThrow(
-      '"board" is an artboard, not a node. Use updateArtboard for artboards.',
+      '"board" is an artboard, not a node. Use update_artboard for artboards.',
     );
   });
 });
@@ -173,7 +173,7 @@ describe('moveNode', () => {
       'The parent "one" is a text node.',
     );
     expect(() => moveNode(base, 'board', { parent: 'list' })).toThrow(
-      '"board" is an artboard; only nodes can be moved.',
+      '"board" is an artboard; only nodes can be moved. Use update_artboard to reposition an artboard.',
     );
     expect(() => moveNode(base, 'photo', { parent: 'list', index: 5 })).toThrow(
       'index must be a whole number from 0 to 2, not 5.',

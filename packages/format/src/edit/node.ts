@@ -65,7 +65,9 @@ export function updateNode(doc: VisionDocument, id: string, patch: NodePatch): V
   const located = locate(document, id);
   if (located.kind !== 'node') {
     const hint =
-      located.kind === 'artboard' ? 'Use updateArtboard for artboards.' : 'Pages have only a name.';
+      located.kind === 'artboard'
+        ? 'Use update_artboard for artboards.'
+        : 'Pages have only a name.';
     throw new EditError(
       `"${id}" is ${located.kind === 'artboard' ? 'an artboard' : 'a page'}, not a node. ${hint}`,
     );
@@ -121,7 +123,7 @@ export function moveNode(
   const located = locate(document, id);
   if (located.kind !== 'node') {
     throw new EditError(
-      `"${id}" is ${located.kind === 'artboard' ? 'an artboard' : 'a page'}; only nodes can be moved. Use updateArtboard to reposition an artboard.`,
+      `"${id}" is ${located.kind === 'artboard' ? 'an artboard' : 'a page'}; only nodes can be moved. Use update_artboard to reposition an artboard.`,
     );
   }
   const destination = locate(document, target.parent);
