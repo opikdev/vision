@@ -6,6 +6,7 @@ import { useViewStore, type Viewport } from '../../stores/view-store';
 import { fitPage, resizeCanvas } from './canvas-commands';
 import { useLayerPointer } from '../layers/use-layer-pointer';
 import { useCanvasGestures } from './use-canvas-gestures';
+import { useDrawnArtboards } from './use-drawn-artboards';
 import { labelRoom } from './viewport';
 
 export function Canvas({
@@ -30,6 +31,7 @@ export function Canvas({
   const { handlers, cursor, grabbing } = useCanvasGestures(container);
   const layers = useLayerPointer(page, grabbing);
   const viewport = stored ?? (page !== undefined && size !== null ? fitPage(page, size) : null);
+  const drawn = useDrawnArtboards(page, viewport, size);
 
   useLayoutEffect(() => {
     const element = container.current;
@@ -90,6 +92,7 @@ export function Canvas({
           >
             <ArtboardLayer
               artboards={artboards}
+              drawn={drawn}
               css={css}
               assetToken={assetToken}
               assetsVersion={assetsVersion}
@@ -121,24 +124,28 @@ export function Canvas({
 
 const ArtboardLayer = memo(function ArtboardLayer({
   artboards,
+  drawn,
   css,
   assetToken,
   assetsVersion,
 }: {
   artboards: Artboard[];
+  drawn: ReadonlySet<string>;
   css: string;
   assetToken: string;
   assetsVersion: number;
 }) {
-  return artboards.map((artboard) => (
-    <PlacedArtboard
-      key={artboard.id}
-      artboard={artboard}
-      css={css}
-      assetToken={assetToken}
-      assetsVersion={assetsVersion}
-    />
-  ));
+  return artboards.map((artboard) =>
+    drawn.has(artboard.id) ? (
+      <PlacedArtboard
+        key={artboard.id}
+        artboard={artboard}
+        css={css}
+        assetToken={assetToken}
+        assetsVersion={assetsVersion}
+      />
+    ) : null,
+  );
 });
 
 const PlacedArtboard = memo(function PlacedArtboard({

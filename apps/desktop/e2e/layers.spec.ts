@@ -139,6 +139,32 @@ test('copies a layer id and zooms to a layer from the context menu', async ({
   await expect(zoomLevel(window)).not.toHaveText(fit);
 });
 
+test('draws an off-screen artboard again to select and zoom to its layer', async ({
+  launch,
+  exampleCopy,
+}) => {
+  const { window } = await launch(exampleCopy);
+  await open(window);
+  await window
+    .getByRole('region', { name: 'Canvas' })
+    .getByText('Cart, mobile', { exact: true })
+    .click();
+  await window.keyboard.press('Shift+Digit2');
+  await window.keyboard.press('Escape');
+  for (let step = 0; step < 7; step++) await window.keyboard.press('ControlOrMeta+Equal');
+  await expect(zoomLevel(window)).toHaveText('600%');
+  await expect(window.locator('iframe[title="Cart"]')).toHaveCount(0);
+
+  await expandToSummary(window);
+  await row(window, 'Continue to payment').click();
+  await window.keyboard.press('Shift+Digit2');
+
+  await expect(window.locator('iframe[title="Cart"]')).toHaveCount(1);
+  await expect(zoomLevel(window)).not.toHaveText('600%');
+  await expect(selectedOutline(window)).toBeVisible();
+  await expect(size(window)).toHaveText('330 × 48');
+});
+
 test('answers selection requests from the MCP server', async ({
   launch,
   exampleCopy,
