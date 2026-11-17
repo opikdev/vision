@@ -1,0 +1,27 @@
+appId: dev.opik.vision
+productName: Vision
+directories:
+  output: release
+files:
+  - out/**
+mac:
+  category: public.app-category.graphics-design
+  target:
+    - dmg
+    - zip
+  identity: '-'
+  hardenedRuntime: false
+fileAssociations:
+  - ext: vis
+    name: Vision Design
+    role: Viewer
+    rank: Owner
+    icon: build/document-icon.icns
+electronFuses:
+  runAsNode: true
+  enableCookieEncryption: true
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  enableEmbeddedAsarIntegrityValidation: true
+  onlyLoadAppFromAsar: true
+  grantFileProtocolExtraPrivileges: false
