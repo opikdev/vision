@@ -1,5 +1,6 @@
 import { Alert02Icon } from '@hugeicons/core-free-icons';
 import type { Diagnostic } from '@vision/format';
+import { Badge } from '@/components/ui/badge';
 import type { DocumentState } from '../../../shared/contract';
 import { Icon } from '../../ui/Icon';
 import { UpdatedAgo } from '../toolbar/UpdatedAgo';
@@ -19,7 +20,9 @@ export function SaveStatus({
     const { errors } = countProblems(diagnostics);
     return (
       <>
-        <Badge>{errors === 1 ? 'Save has an error' : `Save has ${plural(errors, 'error')}`}</Badge>
+        <ErrorBadge>
+          {errors === 1 ? 'Save has an error' : `Save has ${plural(errors, 'error')}`}
+        </ErrorBadge>
         {state.document !== null && <Note>Showing the version before it</Note>}
       </>
     );
@@ -27,7 +30,7 @@ export function SaveStatus({
   if (state.status === 'missing') {
     return (
       <>
-        <Badge>File not found</Badge>
+        <ErrorBadge>File not found</ErrorBadge>
         {state.document !== null && <Note>Showing the last version</Note>}
       </>
     );
@@ -35,7 +38,7 @@ export function SaveStatus({
   if (state.status === 'read-error') {
     return (
       <>
-        <Badge>Can't read the file</Badge>
+        <ErrorBadge>Can't read the file</ErrorBadge>
         <Note>{state.readError ?? ''}</Note>
       </>
     );
@@ -45,26 +48,23 @@ export function SaveStatus({
     <>
       {showUpdated && state.mtimeMs !== null && <UpdatedAgo mtimeMs={state.mtimeMs} />}
       {warnings > 0 && (
-        <span className="relative">
-          <ProblemsPopover
-            diagnostics={diagnostics}
-            document={state.document}
-            label={plural(warnings, 'warning')}
-            className="no-drag h-7 rounded-sm px-2 text-muted-foreground tabular-nums hover:bg-accent hover:text-foreground active:bg-active"
-            panelClassName="top-full left-0 mt-1.5"
-          />
-        </span>
+        <ProblemsPopover
+          diagnostics={diagnostics}
+          document={state.document}
+          label={plural(warnings, 'warning')}
+          className="tabular-nums"
+        />
       )}
     </>
   );
 }
 
-function Badge({ children }: { children: string }) {
+function ErrorBadge({ children }: { children: string }) {
   return (
-    <span className="flex h-[22px] shrink-0 items-center gap-1.5 rounded-sm bg-destructive-tint px-2 text-destructive">
+    <Badge variant="destructive">
       <Icon icon={Alert02Icon} size={14} />
       {children}
-    </span>
+    </Badge>
   );
 }
 
