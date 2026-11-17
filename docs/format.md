@@ -121,6 +121,7 @@ Warnings don't stop drawing:
 
 - a class Tailwind doesn't recognise;
 - an image file that doesn't exist;
+- an `svg` that isn't a single `<svg>` element (it isn't drawn);
 - overlapping artboards.
 
 ## Writing designs with MCP

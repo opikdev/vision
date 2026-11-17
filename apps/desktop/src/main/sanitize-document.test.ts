@@ -25,8 +25,8 @@ describe('sanitizeDocument', () => {
         ],
       },
     ]);
-    expect(sanitizeDocument(doc)).toEqual({
-      document: docWith([
+    expect(sanitizeDocument(doc)).toEqual(
+      docWith([
         {
           type: 'frame',
           id: 'row',
@@ -35,25 +35,13 @@ describe('sanitizeDocument', () => {
           ],
         },
       ]),
-      diagnostics: [],
-    });
+    );
   });
 
-  it('blanks svg markup that is not a single svg element and warns', () => {
-    const result = sanitizeDocument(docWith([{ type: 'svg', id: 'bad', svg: '<div>hi</div>' }]));
-    expect(result.document).toEqual(docWith([{ type: 'svg', id: 'bad', svg: '' }]));
-    expect(result.diagnostics).toEqual([
-      {
-        severity: 'warning',
-        code: 'schema',
-        message:
-          'SVG "bad" can\'t be drawn: Expected a single <svg> element, got <div>. Wrap the drawing in one <svg viewBox="…">…</svg>',
-        path: ['pages', 0, 'artboards', 0, 'children', 0, 'svg'],
-        pageId: 'page-1',
-        artboardId: 'desktop',
-        nodeId: 'bad',
-      },
-    ]);
+  it('blanks svg markup that is not a single svg element', () => {
+    expect(sanitizeDocument(docWith([{ type: 'svg', id: 'bad', svg: '<div>hi</div>' }]))).toEqual(
+      docWith([{ type: 'svg', id: 'bad', svg: '' }]),
+    );
   });
 
   it('leaves the input untouched', () => {

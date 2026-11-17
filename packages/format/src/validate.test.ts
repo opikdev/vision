@@ -143,6 +143,28 @@ describe('validateDocument', () => {
     ]);
   });
 
+  it('warns about svg markup that is not a single svg element', () => {
+    expect(
+      validateDocument(
+        docWith([
+          { type: 'svg', id: 'ok', svg: '<svg viewBox="0 0 1 1"></svg>' },
+          { type: 'svg', id: 'bad', svg: '<div>hi</div>' },
+        ]),
+      ),
+    ).toEqual([
+      {
+        severity: 'warning',
+        code: 'invalid-svg',
+        message:
+          'SVG "bad" can\'t be drawn: Expected a single <svg> element, got <div>. Wrap the drawing in one <svg viewBox="…">…</svg>',
+        path: ['pages', 0, 'artboards', 0, 'children', 1, 'svg'],
+        pageId: 'page',
+        artboardId: 'board',
+        nodeId: 'bad',
+      },
+    ]);
+  });
+
   it('warns about overlapping artboards and suggests a free spot', () => {
     const doc = docWith([]);
     doc.pages[0]?.artboards.push(

@@ -145,13 +145,12 @@ async function readSnapshot(path: string, lastValid: VisionDocument | null): Pro
       mtimeMs,
     };
   }
-  const sanitized = sanitizeDocument(result.document);
   const assets = await assetDiagnostics(path, result.document);
   return {
     status: 'ok',
     text,
-    document: sanitized.document,
-    diagnostics: [...result.diagnostics, ...sanitized.diagnostics, ...assets],
+    document: sanitizeDocument(result.document),
+    diagnostics: [...result.diagnostics, ...assets],
     mtimeMs,
   };
 }

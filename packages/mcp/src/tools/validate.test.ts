@@ -51,6 +51,16 @@ describe('validate', () => {
     );
   });
 
+  it('lists svg markup that cannot be drawn', async () => {
+    await writeFile(file, design([{ type: 'svg', id: 's', svg: '<p>icon</p>' }]));
+    expect((await session.call('validate', { file })).text).toBe(
+      [
+        '0 errors, 1 warning:',
+        '- warning invalid-svg at line 1, pages[0].artboards[0].children[0].svg: SVG "s" can\'t be drawn: Expected a single <svg> element, got <p>. Wrap the drawing in one <svg viewBox="…">…</svg>.',
+      ].join('\n'),
+    );
+  });
+
   it('lists errors, then warnings', async () => {
     await writeFile(
       file,

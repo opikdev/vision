@@ -9,6 +9,7 @@ export type DiagnosticCode =
   | 'asset-path'
   | 'unknown-class'
   | 'missing-asset'
+  | 'invalid-svg'
   | 'artboard-overlap';
 
 export type JsonPath = (string | number)[];

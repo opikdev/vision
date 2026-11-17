@@ -82,7 +82,7 @@ async function capture({
     displayPath: file,
     name: basename(file),
     status: 'ok',
-    document: sanitizeDocument(result.document).document,
+    document: sanitizeDocument(result.document),
     diagnostics: [],
     readError: null,
     mtimeMs: null,

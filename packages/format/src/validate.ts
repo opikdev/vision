@@ -2,6 +2,7 @@ import type { Diagnostic } from './diagnostics';
 import { idProblem } from './ids';
 import { idOf, visit, type Located } from './query';
 import type { Artboard, Page, VisionDocument } from './schema';
+import { sanitizeSvg, SvgError } from './svg';
 import { tokenEntries, tokenNameProblem, tokenValueProblem } from './tokens';
 
 const artboardGap = 80;
@@ -11,6 +12,7 @@ export function validateDocument(doc: VisionDocument): Diagnostic[] {
     ...idDiagnostics(doc),
     ...tokenDiagnostics(doc),
     ...srcDiagnostics(doc),
+    ...svgDiagnostics(doc),
     ...overlapDiagnostics(doc),
   ];
 }
@@ -137,6 +139,26 @@ function srcDiagnostics(doc: VisionDocument): Diagnostic[] {
       path: [...located.path, 'src'],
       ...locationIds(located),
     });
+  }
+  return diagnostics;
+}
+
+function svgDiagnostics(doc: VisionDocument): Diagnostic[] {
+  const diagnostics: Diagnostic[] = [];
+  for (const located of visit(doc)) {
+    if (located.kind !== 'node' || located.node.type !== 'svg') continue;
+    try {
+      sanitizeSvg(located.node.svg);
+    } catch (error) {
+      if (!(error instanceof SvgError)) throw error;
+      diagnostics.push({
+        severity: 'warning',
+        code: 'invalid-svg',
+        message: `SVG "${located.node.id}" can't be drawn: ${error.message.replace(/\.$/, '')}`,
+        path: [...located.path, 'svg'],
+        ...locationIds(located),
+      });
+    }
   }
   return diagnostics;
 }
