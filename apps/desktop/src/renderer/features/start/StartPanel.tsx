@@ -1,4 +1,4 @@
-import { CenterFocusIcon, FileAddIcon, FolderOpenIcon } from '@hugeicons/core-free-icons';
+import { FileAddIcon, FolderOpenIcon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import {
   Empty,
@@ -11,13 +11,14 @@ import {
 import { Kbd } from '@/components/ui/kbd';
 import { reportError, vision } from '../../bridge';
 import { Icon } from '@/components/Icon';
+import appIcon from '../../../../build/icon.svg';
 
 export function StartPanel() {
   return (
     <Empty className="dot-grid absolute inset-0">
       <EmptyHeader className="max-w-[380px]">
-        <EmptyMedia variant="icon">
-          <Icon icon={CenterFocusIcon} size={24} />
+        <EmptyMedia>
+          <img src={appIcon} alt="" width={60} height={60} draggable={false} className="-m-1.5" />
         </EmptyMedia>
         <EmptyTitle>Start a design</EmptyTitle>
         <EmptyDescription>
