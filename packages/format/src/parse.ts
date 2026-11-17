@@ -7,7 +7,7 @@ import {
 } from 'jsonc-parser';
 import type { $ZodIssue } from 'zod/v4/core';
 import { closest } from './closest';
-import type { Diagnostic, JsonPath } from './diagnostics';
+import { hasErrors, type Diagnostic, type JsonPath } from './diagnostics';
 import {
   artboardSchema,
   documentSchema,
@@ -33,7 +33,7 @@ export function parseDocument(text: string): ParseResult {
   const structure = parseStructure(text);
   if (!structure.ok) return structure;
   const diagnostics = validateDocument(structure.document).map(structure.locate);
-  return diagnostics.some((diagnostic) => diagnostic.severity === 'error')
+  return hasErrors(diagnostics)
     ? { ok: false, diagnostics }
     : { ok: true, document: structure.document, diagnostics };
 }
