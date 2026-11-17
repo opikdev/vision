@@ -1,0 +1,1868 @@
+{
+  "format": "vision",
+  "version": 1,
+  "tokens": {
+    "color": {
+      "brand": "#1F3D2B",
+      "fg": "#1C1C1A",
+      "fg-muted": "#6B6B66",
+      "line": "#DDD8CC",
+      "surface": "#F2EFE8"
+    },
+    "font": {
+      "sans": "Inter, system-ui, sans-serif"
+    },
+    "radius": {
+      "card": "12px"
+    },
+    "shadow": {
+      "card": "0 1px 2px rgb(28 28 26 / 0.04), 0 8px 24px rgb(28 28 26 / 0.06)"
+    }
+  },
+  "pages": [
+    {
+      "id": "checkout",
+      "name": "Checkout",
+      "artboards": [
+        {
+          "id": "cart",
+          "name": "Cart",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 900,
+          "class": "bg-surface font-sans text-fg antialiased",
+          "children": [
+            {
+              "type": "frame",
+              "id": "cart-layout",
+              "class": "flex h-full flex-col",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cart-header",
+                  "class": "flex items-center justify-between border-b border-line bg-white px-12 py-5",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "div-1",
+                      "class": "flex w-64 items-center gap-2 text-brand",
+                      "children": [
+                        {
+                          "type": "svg",
+                          "id": "svg-1",
+                          "class": "size-7",
+                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21V8\"></path><path d=\"M12 13c-3.2 0-5.5-2.2-5.5-5.5 3.2 0 5.5 2.3 5.5 5.5z\"></path><path d=\"M12 9.5c0-3.2 2.3-5.5 5.5-5.5 0 3.2-2.3 5.5-5.5 5.5z\"></path><path d=\"M12 17c3.2 0 5.5-2.2 5.5-5.5-3.2 0-5.5 2.3-5.5 5.5z\"></path></svg>"
+                        },
+                        {
+                          "type": "text",
+                          "id": "span-1",
+                          "class": "text-xl font-semibold tracking-tight",
+                          "text": "Larkspur"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nav-1",
+                      "class": "flex items-center gap-3",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-2",
+                          "class": "flex items-center gap-2",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-2",
+                              "class": "flex size-6 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white",
+                              "text": "1"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-3",
+                              "class": "text-sm font-semibold",
+                              "text": "Cart"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-3",
+                          "class": "h-px w-10 bg-line"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-4",
+                          "class": "flex items-center gap-2 text-fg-muted",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-4",
+                              "class": "flex size-6 items-center justify-center rounded-full border border-line text-xs font-semibold",
+                              "text": "2"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-5",
+                              "class": "text-sm",
+                              "text": "Payment"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-5",
+                          "class": "h-px w-10 bg-line"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-6",
+                          "class": "flex items-center gap-2 text-fg-muted",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-6",
+                              "class": "flex size-6 items-center justify-center rounded-full border border-line text-xs font-semibold",
+                              "text": "3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-7",
+                              "class": "text-sm",
+                              "text": "Pickup"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-7",
+                      "class": "flex w-64 items-center justify-end gap-2 text-sm text-fg-muted",
+                      "children": [
+                        {
+                          "type": "svg",
+                          "id": "svg-2",
+                          "class": "size-4",
+                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z\"></path><circle cx=\"12\" cy=\"10\" r=\"2.25\"></circle></svg>"
+                        },
+                        {
+                          "type": "text",
+                          "id": "span-8",
+                          "text": "Mission St · open until 6 pm"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "main-1",
+                  "class": "mx-auto grid w-full max-w-6xl flex-1 grid-cols-[1fr_380px] items-start gap-12 px-12 py-12",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "cart-items",
+                      "class": "flex flex-col gap-8",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-8",
+                          "class": "flex flex-col gap-1",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h1-1",
+                              "class": "text-3xl font-semibold tracking-tight",
+                              "text": "Your order"
+                            },
+                            {
+                              "type": "text",
+                              "id": "p-1",
+                              "class": "text-fg-muted",
+                              "text": "4 items for pickup at Larkspur Mission St, 2140 Mission Street"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ul-1",
+                          "class": "flex flex-col divide-y divide-line rounded-card border border-line bg-white",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "li-1",
+                              "class": "flex items-center gap-5 px-6 py-5",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "div-9",
+                                  "class": "flex size-14 shrink-0 items-center justify-center rounded-xl bg-surface text-brand",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-3",
+                                      "class": "size-7",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z\"></path><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"></path><path d=\"M8 2.5v2.5M12 2.5v2.5\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-10",
+                                  "class": "flex flex-1 flex-col gap-0.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "p-2",
+                                      "class": "font-medium",
+                                      "text": "Cortado"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "p-3",
+                                      "class": "text-sm text-fg-muted",
+                                      "text": "Whole milk · 4 oz"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-11",
+                                  "class": "flex items-center gap-1 rounded-full border border-line p-1",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "button-1",
+                                      "class": "flex size-8 items-center justify-center rounded-full text-fg-muted",
+                                      "children": [
+                                        {
+                                          "type": "svg",
+                                          "id": "svg-4",
+                                          "class": "size-4",
+                                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-9",
+                                      "class": "w-6 text-center text-sm font-semibold tabular-nums",
+                                      "text": "1"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "button-2",
+                                      "class": "flex size-8 items-center justify-center rounded-full bg-surface text-fg",
+                                      "children": [
+                                        {
+                                          "type": "svg",
+                                          "id": "svg-5",
+                                          "class": "size-4",
+                                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14M5 12h14\"></path></svg>"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-4",
+                                  "class": "w-20 text-right font-medium tabular-nums",
+                                  "text": "$4.75"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "li-2",
+                              "class": "flex items-center gap-5 px-6 py-5",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "div-12",
+                                  "class": "flex size-14 shrink-0 items-center justify-center rounded-xl bg-surface text-brand",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-6",
+                                      "class": "size-7",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z\"></path><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"></path><path d=\"M8 2.5v2.5M12 2.5v2.5\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-13",
+                                  "class": "flex flex-1 flex-col gap-0.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "p-5",
+                                      "class": "font-medium",
+                                      "text": "Honey lavender latte"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "p-6",
+                                      "class": "text-sm text-fg-muted",
+                                      "text": "Oat milk · 12 oz · Less sweet"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-14",
+                                  "class": "flex items-center gap-1 rounded-full border border-line p-1",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "button-3",
+                                      "class": "flex size-8 items-center justify-center rounded-full text-fg-muted",
+                                      "children": [
+                                        {
+                                          "type": "svg",
+                                          "id": "svg-7",
+                                          "class": "size-4",
+                                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-10",
+                                      "class": "w-6 text-center text-sm font-semibold tabular-nums",
+                                      "text": "1"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "button-4",
+                                      "class": "flex size-8 items-center justify-center rounded-full bg-surface text-fg",
+                                      "children": [
+                                        {
+                                          "type": "svg",
+                                          "id": "svg-8",
+                                          "class": "size-4",
+                                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14M5 12h14\"></path></svg>"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-7",
+                                  "class": "w-20 text-right font-medium tabular-nums",
+                                  "text": "$6.25"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "li-3",
+                              "class": "flex items-center gap-5 px-6 py-5",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "div-15",
+                                  "class": "flex size-14 shrink-0 items-center justify-center rounded-xl bg-surface text-brand",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-9",
+                                      "class": "size-7",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"></circle><path d=\"M12 12a1.75 1.75 0 1 1 1.75 1.75A3.75 3.75 0 1 1 10 10a5.5 5.5 0 1 1 7.5 5\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-16",
+                                  "class": "flex flex-1 flex-col gap-0.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "p-8",
+                                      "class": "font-medium",
+                                      "text": "Cardamom bun"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "p-9",
+                                      "class": "text-sm text-fg-muted",
+                                      "text": "Warmed"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-17",
+                                  "class": "flex items-center gap-1 rounded-full border border-line p-1",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "button-5",
+                                      "class": "flex size-8 items-center justify-center rounded-full text-fg-muted",
+                                      "children": [
+                                        {
+                                          "type": "svg",
+                                          "id": "svg-10",
+                                          "class": "size-4",
+                                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-11",
+                                      "class": "w-6 text-center text-sm font-semibold tabular-nums",
+                                      "text": "2"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "button-6",
+                                      "class": "flex size-8 items-center justify-center rounded-full bg-surface text-fg",
+                                      "children": [
+                                        {
+                                          "type": "svg",
+                                          "id": "svg-11",
+                                          "class": "size-4",
+                                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14M5 12h14\"></path></svg>"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-10",
+                                  "class": "w-20 text-right font-medium tabular-nums",
+                                  "text": "$9.00"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-19",
+                          "class": "flex flex-col gap-3",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h2-1",
+                              "class": "text-sm font-semibold tracking-wide text-fg-muted uppercase",
+                              "text": "Pickup time"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-18",
+                              "class": "grid grid-cols-4 gap-3",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "button-7",
+                                  "class": "flex flex-col items-start gap-0.5 rounded-card border-2 border-brand bg-white px-4 py-3",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "span-12",
+                                      "class": "text-sm font-semibold",
+                                      "text": "ASAP"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-13",
+                                      "class": "text-xs text-fg-muted",
+                                      "text": "Ready in 8–10 min"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-8",
+                                  "class": "flex flex-col items-start gap-0.5 rounded-card border border-line bg-white px-4 py-3",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "span-14",
+                                      "class": "text-sm font-semibold",
+                                      "text": "8:45 am"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-15",
+                                      "class": "text-xs text-fg-muted",
+                                      "text": "Today"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-9",
+                                  "class": "flex flex-col items-start gap-0.5 rounded-card border border-line bg-white px-4 py-3",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "span-16",
+                                      "class": "text-sm font-semibold",
+                                      "text": "9:00 am"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-17",
+                                      "class": "text-xs text-fg-muted",
+                                      "text": "Today"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-10",
+                                  "class": "flex flex-col items-start gap-0.5 rounded-card border border-line bg-white px-4 py-3",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "span-18",
+                                      "class": "text-sm font-semibold",
+                                      "text": "9:15 am"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-19",
+                                      "class": "text-xs text-fg-muted",
+                                      "text": "Today"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cart-summary",
+                      "class": "flex flex-col gap-6 rounded-card border border-line bg-white p-6 shadow-card",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "h2-2",
+                          "class": "text-lg font-semibold",
+                          "text": "Order summary"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-23",
+                          "class": "flex flex-col gap-3 text-sm",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-20",
+                              "class": "flex justify-between",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-20",
+                                  "class": "text-fg-muted",
+                                  "text": "Subtotal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-21",
+                                  "class": "tabular-nums",
+                                  "text": "$20.00"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-21",
+                              "class": "flex justify-between",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-22",
+                                  "class": "text-fg-muted",
+                                  "text": "Sales tax"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-23",
+                                  "class": "tabular-nums",
+                                  "text": "$1.73"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-22",
+                              "class": "flex justify-between border-t border-dashed border-line pt-4 text-lg font-semibold",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-24",
+                                  "text": "Total"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-25",
+                                  "class": "tabular-nums",
+                                  "text": "$21.73"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-25",
+                          "class": "flex flex-col gap-1.5",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "label-1",
+                              "class": "text-sm font-medium",
+                              "text": "Promo code"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-24",
+                              "class": "flex gap-2",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "input-1",
+                                  "class": "flex h-11 flex-1 items-center rounded-lg border border-line px-3 text-sm text-fg-muted",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "text-1",
+                                      "text": "FIRSTCUP"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-11",
+                                  "class": "flex h-11 items-center rounded-lg border border-line px-4 text-sm font-medium",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "text-2",
+                                      "text": "Apply"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cart-continue",
+                          "class": "flex h-12 items-center justify-center gap-2 rounded-lg bg-brand font-medium text-white",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-26",
+                              "text": "Continue to payment"
+                            },
+                            {
+                              "type": "svg",
+                              "id": "svg-12",
+                              "class": "size-4",
+                              "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"></path></svg>"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-26",
+                          "class": "flex items-start gap-2 text-xs text-fg-muted",
+                          "children": [
+                            {
+                              "type": "svg",
+                              "id": "svg-13",
+                              "class": "size-4 shrink-0",
+                              "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"></circle><path d=\"M12 7.5V12l3 2\"></path></svg>"
+                            },
+                            {
+                              "type": "text",
+                              "id": "p-11",
+                              "text": "You can cancel for free until the barista starts your order."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cart-mobile",
+          "name": "Cart, mobile",
+          "x": 1520,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "class": "bg-surface font-sans text-fg antialiased",
+          "children": [
+            {
+              "type": "frame",
+              "id": "m-layout",
+              "class": "flex h-full flex-col",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "m-header",
+                  "class": "flex items-center justify-between border-b border-line bg-white px-2 py-2",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "button-12",
+                      "class": "flex size-11 items-center justify-center rounded-full",
+                      "children": [
+                        {
+                          "type": "svg",
+                          "id": "svg-14",
+                          "class": "size-5",
+                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 5l-7 7 7 7\"></path></svg>"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-27",
+                      "class": "flex flex-col items-center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "p-12",
+                          "class": "font-semibold",
+                          "text": "Your order"
+                        },
+                        {
+                          "type": "text",
+                          "id": "p-13",
+                          "class": "text-xs text-fg-muted",
+                          "text": "Larkspur Mission St"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-28",
+                      "class": "size-11"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "main-2",
+                  "class": "flex flex-1 flex-col gap-6 px-4 py-5",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ul-2",
+                      "class": "flex flex-col divide-y divide-line rounded-card border border-line bg-white",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "li-4",
+                          "class": "flex items-center gap-3 p-4",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-29",
+                              "class": "flex size-12 shrink-0 items-center justify-center rounded-xl bg-surface text-brand",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-15",
+                                  "class": "size-6",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z\"></path><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"></path><path d=\"M8 2.5v2.5M12 2.5v2.5\"></path></svg>"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-30",
+                              "class": "flex min-w-0 flex-1 flex-col",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "p-14",
+                                  "class": "font-medium",
+                                  "text": "Cortado"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-15",
+                                  "class": "text-sm text-fg-muted",
+                                  "text": "Whole milk · 4 oz"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-16",
+                                  "class": "text-sm font-medium tabular-nums",
+                                  "text": "$4.75"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-31",
+                              "class": "flex items-center gap-1 rounded-full border border-line p-1",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "button-13",
+                                  "class": "flex size-9 items-center justify-center rounded-full text-fg-muted",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-16",
+                                      "class": "size-4",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-27",
+                                  "class": "w-6 text-center text-sm font-semibold tabular-nums",
+                                  "text": "1"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-14",
+                                  "class": "flex size-9 items-center justify-center rounded-full bg-surface text-fg",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-17",
+                                      "class": "size-4",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14M5 12h14\"></path></svg>"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "li-5",
+                          "class": "flex items-center gap-3 p-4",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-32",
+                              "class": "flex size-12 shrink-0 items-center justify-center rounded-xl bg-surface text-brand",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-18",
+                                  "class": "size-6",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z\"></path><path d=\"M17 10h1.5a2.5 2.5 0 0 1 0 5H17\"></path><path d=\"M8 2.5v2.5M12 2.5v2.5\"></path></svg>"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-33",
+                              "class": "flex min-w-0 flex-1 flex-col",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "p-17",
+                                  "class": "font-medium",
+                                  "text": "Honey lavender latte"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-18",
+                                  "class": "text-sm text-fg-muted",
+                                  "text": "Oat milk · 12 oz · Less sweet"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-19",
+                                  "class": "text-sm font-medium tabular-nums",
+                                  "text": "$6.25"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-34",
+                              "class": "flex items-center gap-1 rounded-full border border-line p-1",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "button-15",
+                                  "class": "flex size-9 items-center justify-center rounded-full text-fg-muted",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-19",
+                                      "class": "size-4",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-28",
+                                  "class": "w-6 text-center text-sm font-semibold tabular-nums",
+                                  "text": "1"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-16",
+                                  "class": "flex size-9 items-center justify-center rounded-full bg-surface text-fg",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-20",
+                                      "class": "size-4",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14M5 12h14\"></path></svg>"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "li-6",
+                          "class": "flex items-center gap-3 p-4",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-35",
+                              "class": "flex size-12 shrink-0 items-center justify-center rounded-xl bg-surface text-brand",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-21",
+                                  "class": "size-6",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"></circle><path d=\"M12 12a1.75 1.75 0 1 1 1.75 1.75A3.75 3.75 0 1 1 10 10a5.5 5.5 0 1 1 7.5 5\"></path></svg>"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-36",
+                              "class": "flex min-w-0 flex-1 flex-col",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "p-20",
+                                  "class": "font-medium",
+                                  "text": "Cardamom bun"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-21",
+                                  "class": "text-sm text-fg-muted",
+                                  "text": "Warmed"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-22",
+                                  "class": "text-sm font-medium tabular-nums",
+                                  "text": "$9.00"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-37",
+                              "class": "flex items-center gap-1 rounded-full border border-line p-1",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "button-17",
+                                  "class": "flex size-9 items-center justify-center rounded-full text-fg-muted",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-22",
+                                      "class": "size-4",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-29",
+                                  "class": "w-6 text-center text-sm font-semibold tabular-nums",
+                                  "text": "2"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-18",
+                                  "class": "flex size-9 items-center justify-center rounded-full bg-surface text-fg",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-23",
+                                      "class": "size-4",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14M5 12h14\"></path></svg>"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-39",
+                      "class": "flex flex-col gap-3",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "h2-3",
+                          "class": "text-sm font-semibold tracking-wide text-fg-muted uppercase",
+                          "text": "Pickup time"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-38",
+                          "class": "flex gap-2",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "button-19",
+                              "class": "flex h-11 items-center gap-2 rounded-full border-2 border-brand bg-white px-4 text-sm font-semibold",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-24",
+                                  "class": "size-4",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"></circle><path d=\"M12 7.5V12l3 2\"></path></svg>"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-30",
+                                  "text": "ASAP · 8–10 min"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "button-20",
+                              "class": "flex h-11 items-center rounded-full border border-line bg-white px-4 text-sm font-medium",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "text-3",
+                                  "text": "Schedule"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-42",
+                      "class": "flex items-start gap-3 rounded-card border border-line bg-white p-4",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-40",
+                          "class": "flex size-10 shrink-0 items-center justify-center rounded-full bg-surface text-brand",
+                          "children": [
+                            {
+                              "type": "svg",
+                              "id": "svg-25",
+                              "class": "size-5",
+                              "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z\"></path><circle cx=\"12\" cy=\"10\" r=\"2.25\"></circle></svg>"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-41",
+                          "class": "flex flex-col",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "p-23",
+                              "class": "font-medium",
+                              "text": "Larkspur Mission St"
+                            },
+                            {
+                              "type": "text",
+                              "id": "p-24",
+                              "class": "text-sm text-fg-muted",
+                              "text": "2140 Mission Street · open until 6 pm"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-45",
+                      "class": "flex flex-col gap-3 text-sm",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-43",
+                          "class": "flex justify-between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-31",
+                              "class": "text-fg-muted",
+                              "text": "Subtotal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-32",
+                              "class": "tabular-nums",
+                              "text": "$20.00"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-44",
+                          "class": "flex justify-between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-33",
+                              "class": "text-fg-muted",
+                              "text": "Sales tax"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-34",
+                              "class": "tabular-nums",
+                              "text": "$1.73"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "m-footer",
+                  "class": "flex flex-col gap-3 border-t border-line bg-white px-4 pt-4 pb-8",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "div-46",
+                      "class": "flex justify-between text-lg font-semibold",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "span-35",
+                          "text": "Total"
+                        },
+                        {
+                          "type": "text",
+                          "id": "span-36",
+                          "class": "tabular-nums",
+                          "text": "$21.73"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "m-continue",
+                      "class": "flex h-12 items-center justify-center gap-2 rounded-lg bg-brand font-medium text-white",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "span-37",
+                          "text": "Continue to payment"
+                        },
+                        {
+                          "type": "svg",
+                          "id": "svg-26",
+                          "class": "size-4",
+                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"></path></svg>"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "payment",
+          "name": "Payment",
+          "x": 1990,
+          "y": 0,
+          "width": 1440,
+          "height": 900,
+          "class": "bg-surface font-sans text-fg antialiased",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pay-layout",
+              "class": "flex h-full flex-col",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pay-header",
+                  "class": "flex items-center justify-between border-b border-line bg-white px-12 py-5",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "div-47",
+                      "class": "flex w-64 items-center gap-2 text-brand",
+                      "children": [
+                        {
+                          "type": "svg",
+                          "id": "svg-27",
+                          "class": "size-7",
+                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21V8\"></path><path d=\"M12 13c-3.2 0-5.5-2.2-5.5-5.5 3.2 0 5.5 2.3 5.5 5.5z\"></path><path d=\"M12 9.5c0-3.2 2.3-5.5 5.5-5.5 0 3.2-2.3 5.5-5.5 5.5z\"></path><path d=\"M12 17c3.2 0 5.5-2.2 5.5-5.5-3.2 0-5.5 2.3-5.5 5.5z\"></path></svg>"
+                        },
+                        {
+                          "type": "text",
+                          "id": "span-38",
+                          "class": "text-xl font-semibold tracking-tight",
+                          "text": "Larkspur"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nav-2",
+                      "class": "flex items-center gap-3",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-49",
+                          "class": "flex items-center gap-2 text-brand",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-48",
+                              "class": "flex size-6 items-center justify-center rounded-full bg-brand text-white",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-28",
+                                  "class": "size-3.5",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"></path></svg>"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-39",
+                              "class": "text-sm font-medium",
+                              "text": "Cart"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-50",
+                          "class": "h-px w-10 bg-line"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-51",
+                          "class": "flex items-center gap-2",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-40",
+                              "class": "flex size-6 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white",
+                              "text": "2"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-41",
+                              "class": "text-sm font-semibold",
+                              "text": "Payment"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-52",
+                          "class": "h-px w-10 bg-line"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-53",
+                          "class": "flex items-center gap-2 text-fg-muted",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "span-42",
+                              "class": "flex size-6 items-center justify-center rounded-full border border-line text-xs font-semibold",
+                              "text": "3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "span-43",
+                              "class": "text-sm",
+                              "text": "Pickup"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "div-54",
+                      "class": "flex w-64 items-center justify-end gap-2 text-sm text-fg-muted",
+                      "children": [
+                        {
+                          "type": "svg",
+                          "id": "svg-29",
+                          "class": "size-4",
+                          "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z\"></path><circle cx=\"12\" cy=\"10\" r=\"2.25\"></circle></svg>"
+                        },
+                        {
+                          "type": "text",
+                          "id": "span-44",
+                          "text": "Mission St · open until 6 pm"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "main-3",
+                  "class": "mx-auto grid w-full max-w-6xl flex-1 grid-cols-[1fr_380px] items-start gap-12 px-12 py-12",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "pay-form",
+                      "class": "flex flex-col gap-6",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-55",
+                          "class": "flex flex-col gap-1",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h1-2",
+                              "class": "text-3xl font-semibold tracking-tight",
+                              "text": "Payment"
+                            },
+                            {
+                              "type": "text",
+                              "id": "p-25",
+                              "class": "text-fg-muted",
+                              "text": "We charge your card when you place the order."
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pay-contact",
+                          "class": "flex flex-col gap-4 rounded-card border border-line bg-white p-6",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h2-4",
+                              "class": "font-semibold",
+                              "text": "Contact"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-58",
+                              "class": "grid grid-cols-2 gap-4",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "div-56",
+                                  "class": "flex flex-col gap-1.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "label-2",
+                                      "class": "text-sm font-medium",
+                                      "text": "Email"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "input-2",
+                                      "class": "flex h-11 items-center rounded-lg border border-line bg-white px-3",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "text-4",
+                                          "text": "maya.okafor@example.com"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-57",
+                                  "class": "flex flex-col gap-1.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "label-3",
+                                      "class": "text-sm font-medium",
+                                      "text": "Mobile number"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "input-3",
+                                      "class": "flex h-11 items-center rounded-lg border border-line bg-white px-3",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "text-5",
+                                          "text": "(415) 555-0142"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "p-26",
+                                      "class": "text-xs text-fg-muted",
+                                      "text": "We text you when your order is ready."
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pay-method",
+                          "class": "flex flex-col gap-4 rounded-card border border-line bg-white p-6",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "h2-5",
+                              "class": "font-semibold",
+                              "text": "Payment method"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-62",
+                              "class": "grid grid-cols-2 gap-3",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "button-21",
+                                  "class": "flex h-12 items-center gap-3 rounded-lg border-2 border-brand px-4 text-brand",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-30",
+                                      "class": "size-5",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2.5\" y=\"5\" width=\"19\" height=\"14\" rx=\"2.5\"></rect><path d=\"M2.5 10h19M6.5 15h4\"></path></svg>"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-45",
+                                      "class": "font-medium text-fg",
+                                      "text": "Card"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "div-60",
+                                      "class": "ml-auto flex size-5 items-center justify-center rounded-full border-2 border-brand",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "div-59",
+                                          "class": "size-2.5 rounded-full bg-brand"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "button-22",
+                                  "class": "flex h-12 items-center gap-3 rounded-lg border border-line px-4 text-fg-muted",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-31",
+                                      "class": "size-5",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"6.5\" y=\"2.5\" width=\"11\" height=\"19\" rx=\"2.5\"></rect><path d=\"M11 18.5h2\"></path></svg>"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "span-46",
+                                      "class": "font-medium text-fg",
+                                      "text": "Apple Pay"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "div-61",
+                                      "class": "ml-auto size-5 rounded-full border-2 border-line"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-63",
+                              "class": "flex flex-col gap-1.5",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "label-4",
+                                  "class": "text-sm font-medium",
+                                  "text": "Card number"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "input-4",
+                                  "class": "flex h-11 items-center rounded-lg border border-line bg-white px-3 text-fg-muted",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "text-6",
+                                      "text": "1234 5678 9012 3456"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-67",
+                              "class": "grid grid-cols-3 gap-4",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "div-64",
+                                  "class": "flex flex-col gap-1.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "label-5",
+                                      "class": "text-sm font-medium",
+                                      "text": "Expiry"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "input-5",
+                                      "class": "flex h-11 items-center rounded-lg border border-line bg-white px-3 text-fg-muted",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "text-7",
+                                          "text": "MM / YY"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-65",
+                                  "class": "flex flex-col gap-1.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "label-6",
+                                      "class": "text-sm font-medium",
+                                      "text": "Security code"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "input-6",
+                                      "class": "flex h-11 items-center rounded-lg border border-line bg-white px-3 text-fg-muted",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "text-8",
+                                          "text": "CVC"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "div-66",
+                                  "class": "flex flex-col gap-1.5",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "label-7",
+                                      "class": "text-sm font-medium",
+                                      "text": "ZIP code"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "input-7",
+                                      "class": "flex h-11 items-center rounded-lg border border-line bg-white px-3",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "text-9",
+                                          "text": "94110"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-69",
+                              "class": "flex items-center gap-3",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "div-68",
+                                  "class": "flex size-5 items-center justify-center rounded bg-brand text-white",
+                                  "children": [
+                                    {
+                                      "type": "svg",
+                                      "id": "svg-32",
+                                      "class": "size-3.5",
+                                      "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"></path></svg>"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-27",
+                                  "class": "text-sm",
+                                  "text": "Save this card for your next order"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pay-ticket",
+                      "class": "flex flex-col rounded-card border border-line bg-white shadow-card",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "div-71",
+                          "class": "flex flex-col gap-1 p-6",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "p-28",
+                              "class": "text-xs font-semibold tracking-wide text-fg-muted uppercase",
+                              "text": "Pickup"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-70",
+                              "class": "flex items-center gap-2 text-brand",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-33",
+                                  "class": "size-5",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8.5\"></circle><path d=\"M12 7.5V12l3 2\"></path></svg>"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "p-29",
+                                  "class": "text-lg font-semibold",
+                                  "text": "Ready in 8–10 min"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "p-30",
+                              "class": "text-sm text-fg-muted",
+                              "text": "Larkspur Mission St · 2140 Mission Street"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-75",
+                          "class": "flex flex-col gap-3 border-t border-dashed border-line p-6 text-sm",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-72",
+                              "class": "flex justify-between gap-4",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-47",
+                                  "text": "1× Cortado"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-48",
+                                  "class": "tabular-nums",
+                                  "text": "$4.75"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-73",
+                              "class": "flex justify-between gap-4",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-49",
+                                  "text": "1× Honey lavender latte"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-50",
+                                  "class": "tabular-nums",
+                                  "text": "$6.25"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-74",
+                              "class": "flex justify-between gap-4",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-51",
+                                  "text": "2× Cardamom bun"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-52",
+                                  "class": "tabular-nums",
+                                  "text": "$9.00"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "div-79",
+                          "class": "flex flex-col gap-3 border-t border-dashed border-line p-6 text-sm",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "div-76",
+                              "class": "flex justify-between",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-53",
+                                  "class": "text-fg-muted",
+                                  "text": "Subtotal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-54",
+                                  "class": "tabular-nums",
+                                  "text": "$20.00"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-77",
+                              "class": "flex justify-between",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-55",
+                                  "class": "text-fg-muted",
+                                  "text": "Sales tax"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-56",
+                                  "class": "tabular-nums",
+                                  "text": "$1.73"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "div-78",
+                              "class": "flex justify-between text-lg font-semibold",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "span-57",
+                                  "text": "Total"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-58",
+                                  "class": "tabular-nums",
+                                  "text": "$21.73"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "pay-place-order",
+                              "class": "mt-3 flex h-12 items-center justify-center gap-2 rounded-lg bg-brand text-base font-medium text-white",
+                              "children": [
+                                {
+                                  "type": "svg",
+                                  "id": "svg-34",
+                                  "class": "size-4",
+                                  "svg": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2\"></rect><path d=\"M8 10.5V7.5a4 4 0 0 1 8 0v3\"></path></svg>"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "span-59",
+                                  "text": "Place order · $21.73"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "p-31",
+                              "class": "text-center text-xs text-fg-muted",
+                              "text": "You can cancel for free until the barista starts your order."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
