@@ -4,22 +4,24 @@ Vision is an Electron app that draws `.vis` design files and redraws them on eve
 
 ## Commands
 
-| Task                  | Command                                                                                         |
-| --------------------- | ----------------------------------------------------------------------------------------------- |
-| Install               | `pnpm install`                                                                                  |
-| Run the app           | `pnpm dev`                                                                                      |
-| Everything CI checks  | `pnpm check` (format, lint, types, tests)                                                       |
-| End-to-end tests      | `pnpm test:e2e`                                                                                 |
-| Benchmark big designs | `pnpm bench` ([how to read it](docs/performance.md))                                            |
-| Build the MCP server  | `pnpm --filter @vision/mcp build`                                                               |
-| Package the macOS app | `pnpm package`                                                                                  |
-| Add a UI component    | `pnpm dlx shadcn@latest add <name>` in `apps/desktop`, then [restyle it](docs/ui.md#components) |
+| Task                   | Command                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| Install                | `pnpm install`                                                                                  |
+| Run the app            | `pnpm dev`                                                                                      |
+| Everything CI checks   | `pnpm check` (format, lint, types, tests)                                                       |
+| End-to-end tests       | `pnpm test:e2e`                                                                                 |
+| Benchmark big designs  | `pnpm bench` ([how to read it](docs/performance.md))                                            |
+| Build the MCP server   | `pnpm --filter @vision/mcp build`                                                               |
+| Package the macOS app  | `pnpm package`                                                                                  |
+| Measure design quality | `pnpm eval:design --out=<folder> --round=<name>` ([how-to](docs/design-evals.md))               |
+| Add a UI component     | `pnpm dlx shadcn@latest add <name>` in `apps/desktop`, then [restyle it](docs/ui.md#components) |
 
 ## Map
 
 - `packages/format`: the `.vis` format; read [docs/format.md](docs/format.md) first.
 - `packages/mcp`: the `vision-mcp` server.
 - `packages/activity`: the socket protocol between `vision-mcp` and the app: agent activity and selection requests.
+- `evals/design`: briefs and the harness that measures the designs AIs make with `vision-mcp`; not run in CI.
 - `apps/desktop`: the Electron app; the UI rules and its shadcn/ui components are in [docs/ui.md](docs/ui.md).
 - [docs/architecture.md](docs/architecture.md): how the pieces fit; [docs/decisions/](docs/decisions/): why.
 

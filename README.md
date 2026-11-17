@@ -88,5 +88,6 @@ codex mcp add vision --env ELECTRON_RUN_AS_NODE=1 -- /Applications/Vision.app/Co
 - [The `.vis` format](docs/format.md) and the [MCP server](packages/mcp/README.md)
 - [Architecture](docs/architecture.md) and [decisions](docs/decisions/)
 - [App UI rules](docs/ui.md)
+- [Design review](docs/review.md) and [measuring design quality](docs/design-evals.md)
 - [Releasing](docs/releasing.md)
 - [Measuring performance](docs/performance.md)
