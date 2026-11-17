@@ -1,6 +1,5 @@
 import {
   ArrowDown01Icon,
-  CenterFocusIcon,
   Clock01Icon,
   Copy01Icon,
   FileAddIcon,
@@ -29,6 +28,7 @@ import { useDocumentStore } from '../../stores/document-store';
 import { useRecentStore } from '../../stores/recent-store';
 import { useViewStore } from '../../stores/view-store';
 import { Icon, type IconSvgElement } from '@/components/Icon';
+import { VisionMark } from '@/components/VisionMark';
 
 const run = (command: AppCommand) => () => {
   vision.runCommand(command).catch(reportError);
@@ -47,13 +47,11 @@ export function AppMenu() {
           <Button
             variant="ghost"
             aria-label="Vision menu"
-            className="gap-1 pr-1.5 pl-1 hover:text-muted-foreground data-popup-open:bg-active"
+            className="gap-1 px-1.5 hover:text-muted-foreground data-popup-open:bg-active"
           />
         }
       >
-        <span className="flex size-6 items-center justify-center rounded-sm bg-foreground text-background">
-          <Icon icon={CenterFocusIcon} />
-        </span>
+        <VisionMark className="text-foreground" />
         <Icon icon={ArrowDown01Icon} size={12} />
       </DropdownMenuTrigger>
       <DropdownMenuContent aria-label="Vision menu" alignOffset={-6} className="w-61">
