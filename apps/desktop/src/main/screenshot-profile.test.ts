@@ -1,4 +1,12 @@
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  symlinkSync,
+  utimesSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -25,5 +33,12 @@ describe('createScreenshotProfile', () => {
       [created.slice(root.length + 1), 'profile-recent'].sort(),
     );
     expect(created.startsWith(join(root, 'profile-'))).toBe(true);
+  });
+
+  it('skips entries another run removed while it was sweeping', () => {
+    mkdirSync(root, { recursive: true });
+    symlinkSync(join(root, 'removed'), join(root, 'profile-vanishing'));
+    const created = createScreenshotProfile(root);
+    expect(existsSync(created)).toBe(true);
   });
 });

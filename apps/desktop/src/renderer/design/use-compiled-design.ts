@@ -7,7 +7,10 @@ export interface CompiledDesign {
   css: string;
 }
 
-export function useCompiledDesign(document: VisionDocument | null): CompiledDesign | null {
+export function useCompiledDesign(
+  document: VisionDocument | null,
+  onError: (error: unknown) => void = logCompileError,
+): CompiledDesign | null {
   const [compiled, setCompiled] = useState<CompiledDesign | null>(null);
   useEffect(() => {
     if (document === null) return;
@@ -18,13 +21,17 @@ export function useCompiledDesign(document: VisionDocument | null): CompiledDesi
         if (current) setCompiled({ document, css });
       })
       .catch((error: unknown) => {
-        console.error('Compiling the design CSS failed:', error);
+        if (current) onError(error);
       });
     return () => {
       current = false;
     };
-  }, [document]);
+  }, [document, onError]);
   return compiled;
+}
+
+function logCompileError(error: unknown): void {
+  console.error('Compiling the design CSS failed:', error);
 }
 
 export function useClassWarnings(document: VisionDocument | null): Diagnostic[] {

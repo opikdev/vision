@@ -20,19 +20,31 @@ import { createBrowserWindow } from './windows';
 const timeoutMs = 20_000;
 
 export function failScreenshot(message: string): void {
-  process.stderr.write(`${message}\n`);
+  process.stderr.write(`${message.replace(/\s*\n\s*/g, ' ')}\n`);
   app.exit(1);
 }
 
 export function runScreenshot(request: ScreenshotRequest): void {
-  app.setPath('userData', createScreenshotProfile(join(tmpdir(), 'vision-screenshots')));
-  app.dock?.hide();
-  hardenWebContents();
-  app.on('window-all-closed', () => undefined);
+  let finished = false;
   const finish = (error?: unknown): void => {
+    if (finished) return;
+    finished = true;
     if (error === undefined) app.exit(0);
     else failScreenshot(errorMessage(error));
   };
+  process.on('uncaughtException', finish);
+  process.on('unhandledRejection', finish);
+  if (!app.commandLine.hasSwitch('user-data-dir')) {
+    try {
+      app.setPath('userData', createScreenshotProfile(join(tmpdir(), 'vision-screenshots')));
+    } catch (error) {
+      finish(error);
+      return;
+    }
+  }
+  app.dock?.hide();
+  hardenWebContents();
+  app.on('window-all-closed', () => undefined);
   app
     .whenReady()
     .then(() => capture(request))
@@ -77,20 +89,19 @@ async function capture({
     assetToken: assets.register(assetsDirFor(file)),
   };
 
-  const rendered = new Promise<void>((resolve, reject) => {
-    handle(channels.getState, () => state);
-    handle(channels.captureReady, () => {
-      resolve();
-    });
-    handleWith(channels.captureFailed, captureMessageSchema, (_window, message) => {
-      reject(new Error(message));
-    });
-    setTimeout(() => {
-      reject(
-        new Error(`Timed out after ${timeoutMs / 1000} s waiting for "${artboardId}" to render`),
-      );
-    }, timeoutMs);
+  const { promise: rendered, resolve, reject } = Promise.withResolvers<undefined>();
+  handle(channels.getState, () => state);
+  handle(channels.captureReady, () => {
+    resolve(undefined);
   });
+  handleWith(channels.captureFailed, captureMessageSchema, (_window, message) => {
+    reject(new Error(message));
+  });
+  setTimeout(() => {
+    reject(
+      new Error(`Timed out after ${timeoutMs / 1000} s waiting for "${artboardId}" to render`),
+    );
+  }, timeoutMs);
 
   const window = createBrowserWindow(
     {
@@ -103,7 +114,13 @@ async function capture({
       enableLargerThanScreen: true,
     },
     { mode: 'capture', artboard: artboardId },
+    (error) => {
+      reject(new Error(`Vision's interface didn't load: ${errorMessage(error)}`));
+    },
   );
+  window.webContents.on('render-process-gone', (_event, details) => {
+    reject(new Error(`Drawing "${artboardId}" stopped: the renderer ${details.reason}`));
+  });
   await rendered;
   const image = await window.webContents.capturePage(
     { x: 0, y: 0, width, height },

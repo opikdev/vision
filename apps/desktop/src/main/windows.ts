@@ -19,16 +19,19 @@ interface Entry {
 export function createBrowserWindow(
   options: Electron.BrowserWindowConstructorOptions,
   search: Record<string, string> = {},
+  onLoadFailed: (error: unknown) => void = logLoadFailure,
 ): BrowserWindow {
   const window = new BrowserWindow({
     ...options,
     backgroundColor: '#1C1C1C',
     webPreferences: secureWebPreferences(preloadPath),
   });
-  window.loadURL(rendererUrl(search)).catch((error: unknown) => {
-    console.error('Loading the window failed:', error);
-  });
+  window.loadURL(rendererUrl(search)).catch(onLoadFailed);
   return window;
+}
+
+function logLoadFailure(error: unknown): void {
+  console.error('Loading the window failed:', error);
 }
 
 export class WindowRegistry {

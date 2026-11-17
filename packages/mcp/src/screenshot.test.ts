@@ -1,6 +1,6 @@
 import { access, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { onePixelPng, writeFakeVision } from './fake-vision';
 import {
@@ -128,6 +128,7 @@ describe('takeScreenshot', () => {
       '--artboard=cart',
       `--out=${out}`,
       '--scale=2',
+      `--user-data-dir=${join(dirname(out), 'profile')}`,
     ]);
     expect(out).toMatch(/vision-screenshot-[^/]+\/screenshot\.png$/);
     expect(electronRunAsNode).toBeNull();

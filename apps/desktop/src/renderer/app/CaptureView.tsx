@@ -6,22 +6,19 @@ import { useCompiledDesign } from '../design/use-compiled-design';
 
 export function CaptureView({ artboardId }: { artboardId: string }) {
   const [state, setState] = useState<DocumentState | null>(null);
-  const compiled = useCompiledDesign(state?.document ?? null);
   const signalled = useRef(false);
+  const fail = useCallback((error: unknown) => {
+    if (signalled.current) return;
+    signalled.current = true;
+    void vision.captureFailed(error instanceof Error ? error.message : String(error));
+  }, []);
+  const compiled = useCompiledDesign(state?.document ?? null, fail);
   const artboard = compiled?.document.pages
     .flatMap((page) => page.artboards)
     .find((candidate) => candidate.id === artboardId);
 
-  const fail = useCallback((message: string) => {
-    if (signalled.current) return;
-    signalled.current = true;
-    void vision.captureFailed(message);
-  }, []);
-
   useEffect(() => {
-    vision.getState().then(setState, (error: unknown) => {
-      fail(error instanceof Error ? error.message : String(error));
-    });
+    vision.getState().then(setState, fail);
   }, [fail]);
 
   useEffect(() => {
@@ -31,15 +28,10 @@ export function CaptureView({ artboardId }: { artboardId: string }) {
   const onRendered = useCallback(
     (document: Document) => {
       if (signalled.current) return;
-      waitForPaint(document).then(
-        () => {
-          signalled.current = true;
-          return vision.captureReady();
-        },
-        (error: unknown) => {
-          fail(error instanceof Error ? error.message : String(error));
-        },
-      );
+      waitForPaint(document).then(() => {
+        signalled.current = true;
+        return vision.captureReady();
+      }, fail);
     },
     [fail],
   );

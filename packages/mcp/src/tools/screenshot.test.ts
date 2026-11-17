@@ -47,7 +47,7 @@ describe('screenshot', () => {
     const { args } = JSON.parse(await readFile(join(session.dir, 'log.json'), 'utf8')) as {
       args: string[];
     };
-    expect(args.at(-1)).toBe('--scale=0.2222222222222222');
+    expect(args).toContain('--scale=0.2222222222222222');
   });
 
   it('rejects an artboard that does not exist', async () => {

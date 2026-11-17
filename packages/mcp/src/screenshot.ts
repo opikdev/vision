@@ -79,6 +79,7 @@ export async function takeScreenshot(app: VisionApp, options: ScreenshotOptions)
       `--artboard=${options.artboard}`,
       `--out=${out}`,
       `--scale=${options.scale}`,
+      `--user-data-dir=${join(dir, 'profile')}`,
     ]);
     return await readPng(out);
   } finally {
