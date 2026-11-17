@@ -1,6 +1,6 @@
 import { stat } from 'node:fs/promises';
 import { formatDiagnostic, type Diagnostic, type VisionDocument } from '@vision/format';
-import { assetDiagnostics, readDesign } from '@vision/format/node';
+import { assetDiagnostics, isMissingFileError, readDesign } from '@vision/format/node';
 import { tailwind } from './tailwind';
 
 export interface Inspection {
@@ -57,7 +57,7 @@ export async function fileExists(file: string): Promise<boolean> {
     await stat(file);
     return true;
   } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') return false;
+    if (isMissingFileError(error)) return false;
     throw error;
   }
 }

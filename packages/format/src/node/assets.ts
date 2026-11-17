@@ -5,7 +5,6 @@ import { visit } from '../query';
 import type { VisionDocument } from '../schema';
 import { isRemoteSrc, locationIds, srcProblem } from '../validate';
 import { assetsDirFor } from './paths';
-import { isNotFound } from './read';
 
 export async function assetDiagnostics(path: string, doc: VisionDocument): Promise<Diagnostic[]> {
   const assetsDir = assetsDirFor(path);
@@ -29,12 +28,9 @@ export async function assetDiagnostics(path: string, doc: VisionDocument): Promi
   return (await Promise.all(checks)).flat();
 }
 
-async function exists(file: string): Promise<boolean> {
-  try {
-    await stat(file);
-    return true;
-  } catch (error) {
-    if (isNotFound(error)) return false;
-    throw error;
-  }
+function exists(file: string): Promise<boolean> {
+  return stat(file).then(
+    () => true,
+    () => false,
+  );
 }

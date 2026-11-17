@@ -1,11 +1,10 @@
-import { assetDiagnostics, readDesign } from '@vision/format/node';
+import { assetDiagnostics, isMissingFileError, readDesign } from '@vision/format/node';
 import type { VisionDocument } from '@vision/format';
 import { watch } from 'chokidar';
 import { stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { basename, dirname, sep } from 'node:path';
 import type { DocumentState } from '../shared/contract';
-import { isMissingFileError } from './errors';
 import { sanitizeDocument } from './sanitize-document';
 
 export interface DocumentSessionOptions {

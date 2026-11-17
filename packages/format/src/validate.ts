@@ -99,7 +99,10 @@ export function isRemoteSrc(src: string): boolean {
   return src.startsWith('https:');
 }
 
+const maxSegmentLength = 255;
+
 export function srcProblem(src: string): string | undefined {
+  if (/\p{Cc}/u.test(src)) return 'Remove the control characters from src.';
   if (isRemoteSrc(src)) {
     return URL.canParse(src) ? undefined : "Fix the URL; it can't be parsed.";
   }
@@ -113,6 +116,9 @@ export function srcProblem(src: string): string | undefined {
   }
   if (src.split(/[/\\]/).includes('..')) {
     return 'Paths can\'t leave the assets folder; remove ".." and use a path such as "photos/hero.jpg".';
+  }
+  if (src.split(/[/\\]/).some((segment) => segment.length > maxSegmentLength)) {
+    return `Folder and file names in src can be at most ${maxSegmentLength} characters.`;
   }
   return undefined;
 }

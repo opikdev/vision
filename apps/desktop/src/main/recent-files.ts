@@ -1,8 +1,8 @@
+import { isMissingFileError } from '@vision/format/node';
 import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname } from 'node:path';
 import { z } from 'zod';
 import type { RecentFile } from '../shared/contract';
-import { isMissingFileError } from './errors';
 
 const storeSchema = z.object({ version: z.literal(1), paths: z.array(z.string()) });
 

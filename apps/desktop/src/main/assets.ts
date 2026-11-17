@@ -1,6 +1,6 @@
+import { isMissingFileError } from '@vision/format/node';
 import { realpath } from 'node:fs/promises';
 import { extname, isAbsolute, join, relative } from 'node:path';
-import { isMissingFileError } from './errors';
 
 const imageExtensions = new Set([
   '.png',

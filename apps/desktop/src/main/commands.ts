@@ -1,11 +1,11 @@
 import { createDocument } from '@vision/format';
-import { writeDesign } from '@vision/format/node';
+import { isMissingFileError, writeDesign } from '@vision/format/node';
 import { app, BrowserWindow, clipboard, shell } from 'electron';
 import { realpath, stat } from 'node:fs/promises';
 import { basename, extname, isAbsolute } from 'node:path';
 import type { AppCommand } from '../shared/contract';
 import { chooseDesignsToOpen, chooseNewDesignPath, showError } from './dialogs';
-import { errorMessage, isMissingFileError } from './errors';
+import { errorMessage } from './errors';
 import type { RecentFiles } from './recent-files';
 import type { WindowRegistry } from './windows';
 

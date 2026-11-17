@@ -115,6 +115,14 @@ describe('validateDocument', () => {
       'Use a path inside the assets folder, such as "photos/hero.jpg", or an https: URL.',
     ],
     ['', 'Set src to a path inside the assets folder, such as "photos/hero.jpg".'],
+    ['photos/a\u0000.png', 'Remove the control characters from src.'],
+    ['photos/a\n.png', 'Remove the control characters from src.'],
+    ['https://example.com/a\t.png', 'Remove the control characters from src.'],
+    [
+      `photos/${'a'.repeat(252)}.png`,
+      'Folder and file names in src can be at most 255 characters.',
+    ],
+    [`photos/${'a'.repeat(251)}.png`, undefined],
   ])('checks image src %j', (src, hint) => {
     const diagnostics = validateDocument(docWith([{ type: 'image', id: 'img', src }]));
     if (hint === undefined) {

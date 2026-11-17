@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { isMissingFileError } from '@vision/format/node';
 
 export interface VisionApp {
   command: string;
@@ -123,7 +124,7 @@ async function readPng(path: string): Promise<Buffer> {
   try {
     return await readFile(path);
   } catch (error) {
-    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+    if (isMissingFileError(error)) {
       throw new ScreenshotError('Vision exited without writing the PNG.', { cause: error });
     }
     throw error;

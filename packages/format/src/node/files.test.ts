@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -190,5 +190,24 @@ describe('assetDiagnostics', () => {
         nodeId: 'gone',
       },
     ]);
+  });
+
+  it('treats image files it cannot reach as missing', async () => {
+    const path = join(dir, 'checkout.vis');
+    await mkdir(join(dir, 'checkout.assets', 'locked'), { recursive: true });
+    await writeFile(join(dir, 'checkout.assets', 'file.png'), '');
+    await chmod(join(dir, 'checkout.assets', 'locked'), 0o000);
+    const doc = docWith([
+      { type: 'image', id: 'locked', src: 'locked/a.png' },
+      { type: 'image', id: 'under-file', src: 'file.png/a.png' },
+    ]);
+    try {
+      expect((await assetDiagnostics(path, doc)).map((d) => [d.code, d.nodeId])).toEqual([
+        ['missing-asset', 'locked'],
+        ['missing-asset', 'under-file'],
+      ]);
+    } finally {
+      await chmod(join(dir, 'checkout.assets', 'locked'), 0o755);
+    }
   });
 });

@@ -20,11 +20,15 @@ export async function readTextIfExists(path: string): Promise<string | undefined
   try {
     return await readFile(path, 'utf8');
   } catch (error) {
-    if (isNotFound(error)) return undefined;
+    if (isMissingFileError(error)) return undefined;
     throw error;
   }
 }
 
-export function isNotFound(error: unknown): boolean {
-  return error instanceof Error && 'code' in error && error.code === 'ENOENT';
+export function isMissingFileError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    'code' in error &&
+    (error.code === 'ENOENT' || error.code === 'ENOTDIR')
+  );
 }
