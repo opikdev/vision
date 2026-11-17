@@ -1,5 +1,5 @@
 import type { Node } from '@vision/format';
-import { useLayoutEffect, useRef } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { assetUrl } from './asset-url';
 
 interface Assets {
@@ -11,7 +11,7 @@ export function DesignNodes({ nodes, ...assets }: { nodes: Node[] } & Assets) {
   return nodes.map((node) => <DesignNode key={node.id} node={node} {...assets} />);
 }
 
-function DesignNode({ node, ...assets }: { node: Node } & Assets) {
+const DesignNode = memo(function DesignNode({ node, ...assets }: { node: Node } & Assets) {
   switch (node.type) {
     case 'frame':
       return (
@@ -37,7 +37,7 @@ function DesignNode({ node, ...assets }: { node: Node } & Assets) {
     case 'svg':
       return <SvgMarkup id={node.id} className={node.class} markup={node.svg} />;
   }
-}
+});
 
 function SvgMarkup({
   id,

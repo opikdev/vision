@@ -131,7 +131,29 @@ const ArtboardLayer = memo(function ArtboardLayer({
   assetsVersion: number;
 }) {
   return artboards.map((artboard) => (
-    <div key={artboard.id} className="absolute" style={{ left: artboard.x, top: artboard.y }}>
+    <PlacedArtboard
+      key={artboard.id}
+      artboard={artboard}
+      css={css}
+      assetToken={assetToken}
+      assetsVersion={assetsVersion}
+    />
+  ));
+});
+
+const PlacedArtboard = memo(function PlacedArtboard({
+  artboard,
+  css,
+  assetToken,
+  assetsVersion,
+}: {
+  artboard: Artboard;
+  css: string;
+  assetToken: string;
+  assetsVersion: number;
+}) {
+  return (
+    <div className="absolute" style={{ left: artboard.x, top: artboard.y }}>
       <ArtboardFrame
         artboard={artboard}
         css={css}
@@ -139,5 +161,5 @@ const ArtboardLayer = memo(function ArtboardLayer({
         assetsVersion={assetsVersion}
       />
     </div>
-  ));
+  );
 });
