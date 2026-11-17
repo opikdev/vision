@@ -2,7 +2,7 @@
 
 The stdio MCP server that lets any AI create and edit `.vis` designs. Every tool takes `file`, the absolute path of a `.vis` file, so one registration serves every design. The tools are listed in [docs/format.md](../../docs/format.md#writing-designs-with-mcp).
 
-After each tool call the server tells a running Vision app what it did, so the app can show the agent's cursor; set `VISION_ACTIVITY_SOCKET` to change the socket path from `~/Library/Application Support/Vision/activity.sock`.
+After each tool call the server tells a running Vision app what it did, so the app can show the agent's cursor. `get_selection` asks the app over the same socket which layer the user selected in the window showing the file, waiting at most a second. Set `VISION_ACTIVITY_SOCKET` to change the socket path from `~/Library/Application Support/Vision/activity.sock`.
 
 ## Build and run
 

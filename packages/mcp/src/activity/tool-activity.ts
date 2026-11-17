@@ -6,7 +6,7 @@ import {
 import { agentName, type ClientInfo } from '@vision/activity';
 import type { Artboard, VisionDocument } from '@vision/format';
 import { z } from 'zod';
-import { describeEdit, describeReading, describeScreenshot } from './describe';
+import { describeEdit, describeReading, describeScreenshot, type LookActivity } from './describe';
 import type { ActivityReporter } from './reporter';
 
 export type EditListener = (before: VisionDocument, after: VisionDocument) => void;
@@ -15,12 +15,14 @@ export interface ToolActivity {
   reading(ctx: ServerContext, file: string): void;
   screenshotting(ctx: ServerContext, file: string, artboard: Artboard): void;
   editing(ctx: ServerContext, file: string): EditListener;
+  looking(ctx: ServerContext, file: string, look: LookActivity): void;
 }
 
 export const quietActivity: ToolActivity = {
   reading: () => undefined,
   screenshotting: () => undefined,
   editing: () => () => undefined,
+  looking: () => undefined,
 };
 
 export function reportActivity(server: McpServer, reporter: ActivityReporter): ToolActivity {
@@ -34,6 +36,9 @@ export function reportActivity(server: McpServer, reporter: ActivityReporter): T
     },
     editing: (ctx, file) => (before, after) => {
       reporter.report({ agent: agentOf(ctx), file, activity: describeEdit(before, after) });
+    },
+    looking: (ctx, file, look) => {
+      reporter.report({ agent: agentOf(ctx), file, activity: look });
     },
   };
 }

@@ -74,7 +74,7 @@ checkout.assets/     images referenced by the design (optional)
 | `svg`   | `id`, `name`?, `class`?, `svg`         | Inline SVG markup, for icons and illustrations. |
 
 - `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_][A-Za-z0-9_-]*`: letters, digits, `-` and `_`, not starting with `-`.
-- `name` is an optional label for people and AIs reading the file.
+- `name` is an optional label for people and AIs reading the file. Vision's layer list shows it; without one, Vision derives a label from the text, image, icon title or id. Give important frames a short `name`, such as "Order summary" or "Checkout button".
 - `src` is a path inside the assets folder (`photos/hero.jpg` means `checkout.assets/photos/hero.jpg`) or an `https:` URL. Paths can't leave the assets folder.
 - `svg` must be a single `<svg>` element. Scripts, styles, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon.
 
@@ -145,6 +145,7 @@ Warnings don't stop drawing:
 | `set_tokens`      | Merge tokens; `null` deletes one.                                                                  |
 | `validate`        | List every error and warning.                                                                      |
 | `screenshot`      | A PNG of an artboard, rendered by Vision, at most 2000 px on its longest side.                     |
+| `get_selection`   | The layer the user selected in the Vision app, with its label, artboard, page and fields.          |
 
 ### HTML for `write_html`
 
@@ -168,5 +169,6 @@ Warnings don't stop drawing:
 
 1. Call `get_guide` once, then `get_overview`.
 2. Set colors, fonts, radii and shadows with `set_tokens`.
-3. Build the first screen in the starting artboard `desktop`: rename or resize it with `update_artboard` if it should be something else, such as a 390×844 phone screen. Add more screens with `create_artboard`. Build each artboard section by section with `write_html`.
+3. Build the first screen in the starting artboard `desktop`: rename or resize it with `update_artboard` if it should be something else, such as a 390×844 phone screen. Add more screens with `create_artboard`. Build each artboard section by section with `write_html`, with a `data-name` on important elements (`<div data-name="Order summary">`).
 4. Check with `validate` and `screenshot`, then refine with `update_node`. Screenshots are scaled down to at most 2000 px on the longest side, so check tall pages section by section, or as narrower artboards.
+5. When the user talks about "the selected layer", "this" or "the selection", call `get_selection` to see what they selected in Vision, then edit it by its `id`.
