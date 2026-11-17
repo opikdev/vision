@@ -10,7 +10,7 @@
     "build": "electron-vite build",
     "typecheck": "tsc -p tsconfig.node.json && tsc -p tsconfig.web.json",
     "test:e2e": "electron-vite build && playwright test",
-    "package": "electron-vite build && electron-builder --mac"
+    "package": "pnpm --filter @vision/mcp build && electron-vite build && electron-builder --mac"
   },
   "dependencies": {
     "chokidar": "5.0.0"

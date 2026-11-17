@@ -4,6 +4,9 @@ directories:
   output: release
 files:
   - out/**
+extraResources:
+  - from: ../../packages/mcp/dist/vision-mcp.mjs
+    to: mcp/vision-mcp.mjs
 mac:
   category: public.app-category.graphics-design
   target:
