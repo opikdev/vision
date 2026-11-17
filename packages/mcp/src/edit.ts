@@ -33,13 +33,26 @@ export async function runEdit(
   }
   if (applied === undefined) throw new Error(`The edit of ${file} finished without running`);
   const { before, outcome } = applied;
-  const added = introduced(await warnings(file, before), await warnings(file, outcome.document));
   const lines = [
     ...(existed ? [] : [`Created ${file} with page "page-1" and artboard "desktop".`]),
     outcome.summary,
-    ...(added.length === 0 ? [] : ['', `New warnings:\n${listDiagnostics(added)}`]),
+    ...(await newWarnings(file, before, outcome.document)),
   ];
   return textResult(lines.join('\n'), outcome.structured);
+}
+
+async function newWarnings(
+  file: string,
+  before: VisionDocument,
+  after: VisionDocument,
+): Promise<string[]> {
+  try {
+    const added = introduced(await warnings(file, before), await warnings(file, after));
+    return added.length === 0 ? [] : ['', `New warnings:\n${listDiagnostics(added)}`];
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    return ['', `The edit was saved, but checking it for new warnings failed: ${reason}`];
+  }
 }
 
 async function warnings(file: string, document: VisionDocument): Promise<Diagnostic[]> {
