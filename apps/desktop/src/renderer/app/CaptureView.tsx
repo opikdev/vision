@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { captureMarkerColor } from '../../shared/capture';
 import type { DocumentState } from '../../shared/contract';
 import { vision } from '../bridge';
 import { ArtboardFrame } from '../design/ArtboardFrame';
@@ -6,6 +7,7 @@ import { useCompiledDesign } from '../design/use-compiled-design';
 
 export function CaptureView({ artboardId }: { artboardId: string }) {
   const [state, setState] = useState<DocumentState | null>(null);
+  const [drawn, setDrawn] = useState(false);
   const signalled = useRef(false);
   const fail = useCallback((error: unknown) => {
     if (signalled.current) return;
@@ -30,11 +32,15 @@ export function CaptureView({ artboardId }: { artboardId: string }) {
       if (signalled.current) return;
       waitForPaint(document).then(() => {
         signalled.current = true;
-        return vision.captureReady();
+        setDrawn(true);
       }, fail);
     },
     [fail],
   );
+
+  useEffect(() => {
+    if (drawn) vision.captureReady().catch(fail);
+  }, [drawn, fail]);
 
   if (compiled === null || state === null || artboard === undefined) return null;
   return (
@@ -46,6 +52,13 @@ export function CaptureView({ artboardId }: { artboardId: string }) {
         assetsVersion={state.assetsVersion}
         onRendered={onRendered}
       />
+      {drawn && (
+        <div
+          aria-hidden
+          className="absolute left-0 size-px"
+          style={{ top: artboard.height, background: captureMarkerColor }}
+        />
+      )}
     </div>
   );
 }

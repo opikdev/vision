@@ -1,6 +1,6 @@
 import { findById, formatDiagnostic } from '@vision/format';
 import { assetsDirFor, readDesign } from '@vision/format/node';
-import { app, nativeImage } from 'electron';
+import { app } from 'electron';
 import { writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
@@ -18,8 +18,6 @@ import { hardenSessions, hardenWebContents } from './security';
 import { createBrowserWindow } from './windows';
 
 const timeoutMs = 20_000;
-const quietMs = 250;
-const settleLimitMs = 3_000;
 
 export function failScreenshot(message: string): void {
   process.stderr.write(`${message.replace(/\s*\n\s*/g, ' ')}\n`);
@@ -100,8 +98,9 @@ async function capture({
   handleWith(channels.captureFailed, captureMessageSchema, (_window, message) => {
     reject(new Error(message));
   });
-  setTimeout(() => {
-    reject(
+  const { promise: deadline, reject: expire } = Promise.withResolvers<never>();
+  const timer = setTimeout(() => {
+    expire(
       new Error(`Timed out after ${timeoutMs / 1000} s waiting for "${artboardId}" to render`),
     );
   }, timeoutMs);
@@ -109,7 +108,7 @@ async function capture({
   const window = createBrowserWindow(
     {
       width,
-      height,
+      height: height + 1,
       useContentSize: true,
       show: false,
       frame: false,
@@ -124,9 +123,11 @@ async function capture({
   window.webContents.on('render-process-gone', (_event, details) => {
     reject(new Error(`Drawing "${artboardId}" stopped: the renderer ${details.reason}`));
   });
-  await rendered;
-  const image = await settledFrame(window.webContents);
-  if (image.isEmpty()) throw new Error(`Vision didn't paint "${artboardId}"`);
+  const frame = markedFrame(window.webContents, width, height);
+  await Promise.race([rendered, deadline]);
+  window.webContents.invalidate();
+  const image = await Promise.race([frame, deadline]);
+  clearTimeout(timer);
   const size = {
     width: Math.max(1, Math.round(width * scale)),
     height: Math.max(1, Math.round(height * scale)),
@@ -140,29 +141,29 @@ async function capture({
   window.destroy();
 }
 
-// Offscreen frames reach main tens of milliseconds after the renderer commits them, so wait
-// until painting goes quiet and keep the last frame.
-function settledFrame(contents: Electron.WebContents): Promise<Electron.NativeImage> {
+// Offscreen frames reach main some time after the renderer draws them. The capture view paints
+// a marker pixel in the extra row below the artboard after the design has drawn, so the first
+// frame showing it holds the finished design.
+function markedFrame(
+  contents: Electron.WebContents,
+  width: number,
+  height: number,
+): Promise<Electron.NativeImage> {
   return new Promise((resolve) => {
-    let latest = nativeImage.createEmpty();
-    let quiet: NodeJS.Timeout | undefined;
-    const settle = (): void => {
-      clearTimeout(quiet);
-      clearTimeout(limit);
-      contents.off('paint', onPaint);
-      resolve(latest);
-    };
     const onPaint = (
       _event: Electron.Event,
       _dirty: Electron.Rectangle,
       image: Electron.NativeImage,
     ): void => {
-      latest = image;
-      clearTimeout(quiet);
-      quiet = setTimeout(settle, quietMs);
+      const ratio = image.getSize().width / width;
+      const artboardHeight = Math.round(height * ratio);
+      const [blue = 0, green = 255, red = 0] = image
+        .crop({ x: 0, y: artboardHeight, width: 1, height: 1 })
+        .toBitmap();
+      if (red < 200 || green > 60 || blue < 200) return;
+      contents.off('paint', onPaint);
+      resolve(image.crop({ x: 0, y: 0, width: image.getSize().width, height: artboardHeight }));
     };
-    const limit = setTimeout(settle, settleLimitMs);
     contents.on('paint', onPaint);
-    contents.invalidate();
   });
 }
