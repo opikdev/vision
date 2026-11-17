@@ -1,4 +1,17 @@
-import { chmod, mkdir, mkdtemp, open, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { writeFileSync } from 'node:fs';
+import {
+  chmod,
+  lstat,
+  mkdir,
+  mkdtemp,
+  open,
+  stat,
+  symlink,
+  readdir,
+  readFile,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -183,6 +196,52 @@ describe('editDesign', () => {
     await expect(editDesign(path, (doc) => ({ ...doc, pages: [] }))).rejects.toThrow(
       '"pages" needs at least 1 item',
     );
+  });
+
+  it('edits the target of a symlink and keeps the link', async () => {
+    const real = join(dir, 'real.vis');
+    const link = join(dir, 'link.vis');
+    await writeDesign(real, createDocument());
+    await symlink(real, link);
+    await editDesign(link, (doc) => createPage(doc, { name: 'Flow', id: 'flow' }).document);
+    expect((await lstat(link)).isSymbolicLink()).toBe(true);
+    const { result } = await readDesign(real);
+    expect(result.ok && result.document.pages.map((page) => page.id)).toEqual(['page-1', 'flow']);
+  });
+
+  it("keeps the file's permissions", async () => {
+    const path = join(dir, 'a.vis');
+    await writeDesign(path, createDocument());
+    await chmod(path, 0o600);
+    await editDesign(path, (doc) => createPage(doc, { name: 'Flow' }).document);
+    expect((await stat(path)).mode & 0o777).toBe(0o600);
+  });
+
+  it('rejects the edit when the file changes while it is being applied', async () => {
+    const path = join(dir, 'a.vis');
+    await writeDesign(path, createDocument());
+    const external = serializeDocument(createPage(createDocument(), { name: 'Theirs' }).document);
+    await expect(
+      editDesign(path, (doc) => {
+        writeFileSync(path, external);
+        return createPage(doc, { name: 'Mine' }).document;
+      }),
+    ).rejects.toThrow(
+      new EditError('a.vis changed while this edit was being applied. Read it again and retry.'),
+    );
+    expect(await readFile(path, 'utf8')).toBe(external);
+    expect(await readdir(dir)).toEqual(['a.vis']);
+  });
+
+  it('rejects the edit when the file appears while it is being applied', async () => {
+    const path = join(dir, 'a.vis');
+    await expect(
+      editDesign(path, (doc) => {
+        writeFileSync(path, 'theirs');
+        return doc;
+      }),
+    ).rejects.toThrow('a.vis changed while this edit was being applied');
+    expect(await readFile(path, 'utf8')).toBe('theirs');
   });
 
   it('runs concurrent edits to the same file one after another', async () => {

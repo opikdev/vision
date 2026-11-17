@@ -1,3 +1,4 @@
+import { realpath } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createDocument } from '../create';
 import { formatDiagnostic, type Diagnostic } from '../diagnostics';
@@ -6,7 +7,7 @@ import { parseDocument, parseStructure } from '../parse';
 import type { VisionDocument } from '../schema';
 import { serializeDocument } from '../serialize';
 import { validateDocument } from '../validate';
-import { readDesignFile } from './read';
+import { isMissingFileError, readDesignFile } from './read';
 import { writeDesign } from './write';
 
 const queues = new Map<string, Promise<unknown>>();
@@ -29,7 +30,8 @@ async function applyEdit(
   path: string,
   edit: (doc: VisionDocument) => VisionDocument,
 ): Promise<{ document: VisionDocument; diagnostics: Diagnostic[] }> {
-  const file = await readDesignFile(path);
+  const target = await linkTarget(path);
+  const file = await readDesignFile(target);
   if (file.kind === 'too-large') {
     throw new EditError(`${path} can't be edited: ${formatDiagnostic(file.diagnostic)}`);
   }
@@ -58,8 +60,23 @@ async function applyEdit(
       `The edit was rejected because it adds errors:\n${list(added.map(withoutPosition))}`,
     );
   }
-  await writeDesign(path, document);
+  await writeDesign(
+    target,
+    document,
+    file.kind === 'text'
+      ? { mode: file.mode, unchangedSince: file.version }
+      : { unchangedSince: 'missing' },
+  );
   return { document, diagnostics: result.diagnostics };
+}
+
+async function linkTarget(path: string): Promise<string> {
+  try {
+    return await realpath(path);
+  } catch (error) {
+    if (isMissingFileError(error)) return path;
+    throw error;
+  }
 }
 
 function errorCounts(diagnostics: Diagnostic[]): Map<string, number> {

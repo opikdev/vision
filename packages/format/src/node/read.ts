@@ -7,10 +7,15 @@ import { parseDocument, type ParseResult } from '../parse';
 const megabyte = 1024 * 1024;
 const maxDesignBytes = 20 * megabyte;
 
+export interface FileVersion {
+  mtimeMs: number;
+  size: number;
+}
+
 export type DesignFile =
   | { kind: 'missing' }
   | { kind: 'too-large'; diagnostic: Diagnostic }
-  | { kind: 'text'; text: string };
+  | { kind: 'text'; text: string; version: FileVersion; mode: number };
 
 export async function readDesign(
   path: string,
@@ -39,9 +44,10 @@ export async function readDesignFile(path: string): Promise<DesignFile> {
     throw error;
   }
   try {
-    const { size } = await file.stat();
+    const { size, mtimeMs, mode } = await file.stat();
     if (size > maxDesignBytes) return { kind: 'too-large', diagnostic: tooLarge(path, size) };
-    return { kind: 'text', text: await file.readFile('utf8') };
+    const text = await file.readFile('utf8');
+    return { kind: 'text', text, version: { mtimeMs, size }, mode: mode & 0o7777 };
   } finally {
     await file.close();
   }
