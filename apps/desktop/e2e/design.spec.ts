@@ -1,4 +1,5 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { copyFile, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 import { expect, test } from './vision';
 
@@ -83,4 +84,22 @@ test('opens the app menu from the keyboard and closes it with Escape', async ({
   await window.keyboard.press('Escape');
   await expect(window.getByRole('menu', { name: 'Vision menu' })).toBeHidden();
   await expect(trigger).toBeFocused();
+});
+
+test('opens one window when the same file is opened twice at once', async ({
+  launch,
+  exampleCopy,
+  dir,
+}) => {
+  const { app, window } = await launch(exampleCopy);
+  await expect(cart(window).getByText('Your order', { exact: true })).toBeVisible();
+  const second = join(dir, 'second.vis');
+  await copyFile(exampleCopy, second);
+
+  await window.evaluate((file) => {
+    const vision = Reflect.get(window, 'vision') as { openPath(path: string): Promise<void> };
+    return Promise.all([vision.openPath(file), vision.openPath(file)]);
+  }, second);
+
+  expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length)).toBe(2);
 });

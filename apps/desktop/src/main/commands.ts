@@ -13,6 +13,7 @@ export class Commands {
   readonly #windows: WindowRegistry;
   readonly #recent: RecentFiles;
   readonly #onRecentChanged: () => void;
+  readonly #opening = new Map<string, Promise<void>>();
 
   constructor(windows: WindowRegistry, recent: RecentFiles, onRecentChanged: () => void) {
     this.#windows = windows;
@@ -80,14 +81,22 @@ export class Commands {
     }
   }
 
-  async #openChecked(path: string, from: BrowserWindow | undefined): Promise<void> {
+  #openChecked(path: string, from: BrowserWindow | undefined): Promise<void> {
+    const pending = this.#opening.get(path);
+    if (pending !== undefined) return pending;
+    const opening = this.#openOnce(path, from).finally(() => this.#opening.delete(path));
+    this.#opening.set(path, opening);
+    return opening;
+  }
+
+  async #openOnce(path: string, from: BrowserWindow | undefined): Promise<void> {
     const open = this.#windows.findByPath(path);
     if (open !== undefined) {
       focus(open);
       return;
     }
     const window = this.#startWindowFor(from) ?? this.#windows.openWindow();
-    await this.#windows.attach(window, path);
+    if (!(await this.#windows.attach(window, path))) return;
     focus(window);
     app.addRecentDocument(path);
     await this.#recent.add(path);

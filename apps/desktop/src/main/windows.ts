@@ -83,7 +83,7 @@ export class WindowRegistry {
     return this.#entries.get(window)?.session?.state() ?? null;
   }
 
-  async attach(window: BrowserWindow, path: string): Promise<void> {
+  async attach(window: BrowserWindow, path: string): Promise<boolean> {
     const assetToken = this.#assets.register(assetsDirFor(path));
     let session: DocumentSession;
     try {
@@ -102,7 +102,7 @@ export class WindowRegistry {
     if (entry === undefined || window.isDestroyed()) {
       this.#assets.unregister(assetToken);
       await session.close();
-      return;
+      return false;
     }
     entry.path = path;
     entry.assetToken = assetToken;
@@ -111,6 +111,7 @@ export class WindowRegistry {
     window.setRepresentedFilename(path);
     window.webContents.send(channels.state, session.state());
     this.#onChange();
+    return true;
   }
 
   #release(window: BrowserWindow): void {
