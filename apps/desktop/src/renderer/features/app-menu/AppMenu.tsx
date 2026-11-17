@@ -10,13 +10,25 @@ import {
   Note01Icon,
   PlugSocketIcon,
 } from '@hugeicons/core-free-icons';
+import type { ComponentProps } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Kbd } from '@/components/ui/kbd';
 import type { AppCommand } from '../../../shared/contract';
 import { reportError, vision } from '../../bridge';
 import { useDocumentStore } from '../../stores/document-store';
 import { useRecentStore } from '../../stores/recent-store';
 import { useViewStore } from '../../stores/view-store';
-import { Icon } from '../../ui/Icon';
-import { MenuButton, type MenuEntry } from '../../ui/Menu';
+import { Icon, type IconSvgElement } from '../../ui/Icon';
 
 const run = (command: AppCommand) => () => {
   vision.runCommand(command).catch(reportError);
@@ -28,72 +40,90 @@ export function AppMenu() {
   const recent = files.filter((file) => file.exists);
   const openDialog = useViewStore((store) => store.openDialog);
 
-  const recentEntries: MenuEntry[] =
-    recent.length === 0
-      ? [{ type: 'item', label: 'No recent designs', disabled: true, onSelect: () => undefined }]
-      : recent.map((file) => ({
-          type: 'item',
-          label: file.name,
-          icon: Note01Icon,
-          onSelect: () => {
-            vision.openPath(file.path).catch(reportError);
-          },
-        }));
-
-  const entries: MenuEntry[] = [
-    {
-      type: 'item',
-      label: 'New design…',
-      icon: FileAddIcon,
-      shortcut: '⌘N',
-      onSelect: run('new-design'),
-    },
-    { type: 'item', label: 'Open…', icon: FolderOpenIcon, shortcut: '⌘O', onSelect: run('open') },
-    { type: 'submenu', label: 'Open recent', icon: Clock01Icon, entries: recentEntries },
-    { type: 'separator' },
-    {
-      type: 'item',
-      label: 'Show in Finder',
-      icon: Folder01Icon,
-      shortcut: '⌥⌘R',
-      disabled: !hasDesign,
-      onSelect: run('show-in-finder'),
-    },
-    {
-      type: 'item',
-      label: 'Copy file path',
-      icon: Copy01Icon,
-      disabled: !hasDesign,
-      onSelect: run('copy-path'),
-    },
-    {
-      type: 'item',
-      label: 'Connect an AI…',
-      icon: PlugSocketIcon,
-      onSelect: () => {
-        openDialog('connect-ai');
-      },
-    },
-    { type: 'separator' },
-    {
-      type: 'item',
-      label: 'Quit Vision',
-      icon: Logout03Icon,
-      shortcut: '⌘Q',
-      onSelect: run('quit'),
-    },
-  ];
-
   return (
-    <MenuButton
-      label="Vision menu"
-      entries={entries}
-      className="no-drag flex h-8 items-center gap-1 rounded-sm pr-1.5 pl-1 text-muted-foreground hover:bg-accent active:bg-active"
-    >
-      <span className="flex size-6 items-center justify-center rounded-sm bg-foreground text-background">
-        <Icon icon={CenterFocusIcon} />
-      </span>
-      <Icon icon={ArrowDown01Icon} size={12} />
-    </MenuButton>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            aria-label="Vision menu"
+            className="gap-1 pr-1.5 pl-1 hover:text-muted-foreground data-popup-open:bg-active"
+          />
+        }
+      >
+        <span className="flex size-6 items-center justify-center rounded-sm bg-foreground text-background">
+          <Icon icon={CenterFocusIcon} />
+        </span>
+        <Icon icon={ArrowDown01Icon} size={12} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent aria-label="Vision menu" alignOffset={-6} className="w-61">
+        <Entry icon={FileAddIcon} label="New design…" shortcut="⌘N" onClick={run('new-design')} />
+        <Entry icon={FolderOpenIcon} label="Open…" shortcut="⌘O" onClick={run('open')} />
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Icon icon={Clock01Icon} />
+            <span className="min-w-0 flex-1 truncate">Open recent</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent aria-label="Open recent" className="w-61">
+            {recent.length === 0 ? (
+              <DropdownMenuItem disabled>No recent designs</DropdownMenuItem>
+            ) : (
+              recent.map((file) => (
+                <Entry
+                  key={file.path}
+                  icon={Note01Icon}
+                  label={file.name}
+                  onClick={() => {
+                    vision.openPath(file.path).catch(reportError);
+                  }}
+                />
+              ))
+            )}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSeparator />
+        <Entry
+          icon={Folder01Icon}
+          label="Show in Finder"
+          shortcut="⌥⌘R"
+          disabled={!hasDesign}
+          onClick={run('show-in-finder')}
+        />
+        <Entry
+          icon={Copy01Icon}
+          label="Copy file path"
+          disabled={!hasDesign}
+          onClick={run('copy-path')}
+        />
+        <Entry
+          icon={PlugSocketIcon}
+          label="Connect an AI…"
+          onClick={() => {
+            openDialog('connect-ai');
+          }}
+        />
+        <DropdownMenuSeparator />
+        <Entry icon={Logout03Icon} label="Quit Vision" shortcut="⌘Q" onClick={run('quit')} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function Entry({
+  icon,
+  label,
+  shortcut,
+  ...props
+}: Omit<ComponentProps<typeof DropdownMenuItem>, 'children'> & {
+  icon: IconSvgElement;
+  label: string;
+  shortcut?: string;
+}) {
+  return (
+    <DropdownMenuItem aria-keyshortcuts={shortcut} {...props}>
+      <Icon icon={icon} />
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {shortcut && <Kbd>{shortcut}</Kbd>}
+    </DropdownMenuItem>
   );
 }
