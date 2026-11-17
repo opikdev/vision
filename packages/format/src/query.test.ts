@@ -57,6 +57,15 @@ describe('outline', () => {
     );
   });
 
+  it('stops at the given depth', () => {
+    expect(outline(doc, undefined, 1)).toBe(
+      ['page page name="Page"', '  artboard board name="board" 400x300 at 0,0'].join('\n'),
+    );
+    expect(outline(doc, 'header', 0)).toBe(
+      'frame header name="Header" class="flex  items-center\\tgap-4"',
+    );
+  });
+
   it('outlines a subtree', () => {
     expect(outline(doc, 'header')).toBe(
       [

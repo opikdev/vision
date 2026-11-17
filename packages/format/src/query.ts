@@ -94,10 +94,10 @@ export function compareStrings(a: string, b: string): number {
 
 const maxTextLength = 60;
 
-export function outline(doc: VisionDocument, rootId?: string): string {
+export function outline(doc: VisionDocument, rootId?: string, maxDepth = Infinity): string {
   const lines: string[] = [];
   const write = (located: Located, depth: number): void => {
-    lines.push('  '.repeat(depth) + describe(located));
+    if (depth <= maxDepth) lines.push('  '.repeat(depth) + describe(located));
   };
   if (rootId === undefined) {
     for (const located of visit(doc)) write(located, depthOf(located));

@@ -2,12 +2,13 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { findById, outline, tokenGroups, type Located, type VisionDocument } from '@vision/format';
 import { readDesign } from '@vision/format/node';
 import { z } from 'zod';
-import { inspectDesign, invalidText, missingText, problemCounts } from '../design';
+import { inspectDesign, invalidText, missingText, plural, problemCounts } from '../design';
 import { guide } from '../guide';
 import { errorResult, textResult } from '../results';
 import { file, id } from '../schemas';
 
 const readOnly = { readOnlyHint: true, idempotentHint: true } as const;
+const designDepth = 3;
 
 export function registerReadTools(server: McpServer): void {
   server.registerTool(
@@ -16,7 +17,7 @@ export function registerReadTools(server: McpServer): void {
       title: 'Read the format guide',
       description:
         'Call this first, once per session. Explains .vis designs: nodes, Tailwind classes, tokens, the HTML that write_html accepts and a good working loop.',
-      inputSchema: z.object({ file }),
+      inputSchema: z.object({ file: file.exactOptional() }),
       annotations: readOnly,
     },
     () => textResult(guide),
@@ -60,16 +61,33 @@ export function registerReadTools(server: McpServer): void {
         id: id(
           'Id of the page, artboard or frame to outline. Leave it out to outline the whole design.',
         ).exactOptional(),
+        depth: z
+          .number()
+          .int()
+          .min(0)
+          .exactOptional()
+          .describe(
+            `How many levels below the top to show; 0 shows only the top. Leave it out to show everything under an id, or ${designDepth} levels of the whole design (pages, artboards and two levels of nodes).`,
+          ),
       }),
       annotations: readOnly,
     },
-    async ({ file, id }) => {
+    async ({ file, id, depth }) => {
       const { result } = await readDesign(file);
       if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
       if (id !== undefined && findById(result.document, id) === undefined) {
         return errorResult(notFound(id));
       }
-      return textResult(outline(result.document, id));
+      const shown = outline(
+        result.document,
+        id,
+        depth ?? (id === undefined ? designDepth : undefined),
+      );
+      const hidden = outline(result.document, id).split('\n').length - shown.split('\n').length;
+      if (hidden === 0) return textResult(shown);
+      return textResult(
+        `${shown}\n\n${plural(hidden, 'deeper node')} not shown. Pass the id of an artboard or frame, or a larger depth, to see them.`,
+      );
     },
   );
 

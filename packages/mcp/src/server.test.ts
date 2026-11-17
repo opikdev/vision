@@ -27,7 +27,7 @@ describe('createServer', () => {
   it('requires file on every tool and describes every input', async () => {
     const { tools } = await session.client.listTools();
     for (const tool of tools) {
-      expect(tool.inputSchema.required, tool.name).toContain('file');
+      if (tool.name !== 'get_guide') expect(tool.inputSchema.required, tool.name).toContain('file');
       for (const [name, property] of Object.entries(tool.inputSchema.properties ?? {})) {
         expect(property, `${tool.name}.${name}`).toHaveProperty('description');
       }

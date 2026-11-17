@@ -47,8 +47,9 @@ beforeEach(async () => {
 describe('get_guide', () => {
   it('returns docs/format.md verbatim', async () => {
     const guide = await readFile(new URL('../../../../docs/format.md', import.meta.url), 'utf8');
-    const result = await session.call('get_guide', { file });
+    const result = await session.call('get_guide', {});
     expect(result.text).toBe(guide);
+    expect((await session.call('get_guide', { file })).text).toBe(guide);
     expect(result.text.startsWith('# The `.vis` format\n')).toBe(true);
   });
 });
@@ -101,6 +102,44 @@ describe('get_tree', () => {
         '    image hero src="hero.jpg" alt="Plants"',
         'page empty name="Empty"',
       ].join('\n'),
+    );
+  });
+
+  it('stops at the given depth and says how to see more', async () => {
+    expect((await session.call('get_tree', { file, depth: 2 })).text).toBe(
+      [
+        'page shop name="Shop"',
+        '  artboard cart name="Cart" 1440x900 at 0,0 class="bg-white"',
+        '    frame summary class="flex flex-col gap-2"',
+        '    image hero src="hero.jpg" alt="Plants"',
+        'page empty name="Empty"',
+        '',
+        '1 deeper node not shown. Pass the id of an artboard or frame, or a larger depth, to see them.',
+      ].join('\n'),
+    );
+  });
+
+  it('outlines the whole design 3 levels deep by default', async () => {
+    await session.call('write_html', {
+      file,
+      parent: 'summary',
+      html: '<div id="row"><p id="deep">Deep</p></div>',
+    });
+    expect((await session.call('get_tree', { file })).text).toBe(
+      [
+        'page shop name="Shop"',
+        '  artboard cart name="Cart" 1440x900 at 0,0 class="bg-white"',
+        '    frame summary class="flex flex-col gap-2"',
+        '      text title class="text-2xl text-brand" text="Cart"',
+        '      frame row',
+        '    image hero src="hero.jpg" alt="Plants"',
+        'page empty name="Empty"',
+        '',
+        '1 deeper node not shown. Pass the id of an artboard or frame, or a larger depth, to see them.',
+      ].join('\n'),
+    );
+    expect((await session.call('get_tree', { file, id: 'cart' })).text).toContain(
+      '      text deep text="Deep"',
     );
   });
 
