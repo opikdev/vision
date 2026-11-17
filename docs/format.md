@@ -45,33 +45,33 @@ checkout.assets/     images referenced by the design (optional)
 }
 ```
 
-| Field | Type | Notes |
-|---|---|---|
-| `format` | `"vision"` | Required. |
-| `version` | `1` | Required. |
-| `tokens` | object | Optional. See [Tokens](#tokens). |
-| `pages` | array | At least one page. |
+| Field     | Type       | Notes                            |
+| --------- | ---------- | -------------------------------- |
+| `format`  | `"vision"` | Required.                        |
+| `version` | `1`        | Required.                        |
+| `tokens`  | object     | Optional. See [Tokens](#tokens). |
+| `pages`   | array      | At least one page.               |
 
 ### Pages and artboards
 
-| Field | Type | Notes |
-|---|---|---|
-| page `id`, `name` | string | |
-| page `artboards` | array | May be empty. |
-| artboard `id`, `name` | string | |
-| artboard `x`, `y` | number | Position on the page's canvas, in px. Artboards should not overlap. |
+| Field                      | Type   | Notes                                                                                                                                                      |
+| -------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| page `id`, `name`          | string |                                                                                                                                                            |
+| page `artboards`           | array  | May be empty.                                                                                                                                              |
+| artboard `id`, `name`      | string |                                                                                                                                                            |
+| artboard `x`, `y`          | number | Position on the page's canvas, in px. Artboards should not overlap.                                                                                        |
 | artboard `width`, `height` | number | Size in px, from 1 to 10000. The artboard is the viewport its content is laid out in, so responsive classes such as `md:flex` follow the artboard's width. |
-| artboard `class` | string | Optional. Classes for the artboard's root box, such as a background. |
-| artboard `children` | array | The artboard's nodes. |
+| artboard `class`           | string | Optional. Classes for the artboard's root box, such as a background.                                                                                       |
+| artboard `children`        | array  | The artboard's nodes.                                                                                                                                      |
 
 ## Nodes
 
-| `type` | Fields | Renders as |
-|---|---|---|
-| `frame` | `id`, `name`?, `class`?, `children`? | A `<div>` that lays out its children. |
-| `text` | `id`, `name`?, `class`?, `text` | A `<p>`. `\n` starts a new line. |
-| `image` | `id`, `name`?, `class`?, `src`, `alt`? | An `<img>`. |
-| `svg` | `id`, `name`?, `class`?, `svg` | Inline SVG markup, for icons and illustrations. |
+| `type`  | Fields                                 | Renders as                                      |
+| ------- | -------------------------------------- | ----------------------------------------------- |
+| `frame` | `id`, `name`?, `class`?, `children`?   | A `<div>` that lays out its children.           |
+| `text`  | `id`, `name`?, `class`?, `text`        | A `<p>`. `\n` starts a new line.                |
+| `image` | `id`, `name`?, `class`?, `src`, `alt`? | An `<img>`.                                     |
+| `svg`   | `id`, `name`?, `class`?, `svg`         | Inline SVG markup, for icons and illustrations. |
 
 - `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_-]+`.
 - `name` is an optional label shown in Vision's layer list.
@@ -91,14 +91,14 @@ checkout.assets/     images referenced by the design (optional)
 
 Tokens become Tailwind theme variables, so each one creates classes:
 
-| Group | Example token | Example classes |
-|---|---|---|
-| `color` | `"fg-muted": "#6B6B66"` | `text-fg-muted`, `bg-fg-muted`, `border-fg-muted` |
-| `font` | `"sans": "Inter, system-ui, sans-serif"` | `font-sans` |
-| `text` | `"title": "28px"` | `text-title` |
-| `radius` | `"card": "12px"` | `rounded-card` |
-| `shadow` | `"card": "0 2px 6px rgb(0 0 0 / 0.08)"` | `shadow-card` |
-| `spacing` | `"gutter": "24px"` | `p-gutter`, `gap-gutter` |
+| Group     | Example token                            | Example classes                                   |
+| --------- | ---------------------------------------- | ------------------------------------------------- |
+| `color`   | `"fg-muted": "#6B6B66"`                  | `text-fg-muted`, `bg-fg-muted`, `border-fg-muted` |
+| `font`    | `"sans": "Inter, system-ui, sans-serif"` | `font-sans`                                       |
+| `text`    | `"title": "28px"`                        | `text-title`                                      |
+| `radius`  | `"card": "12px"`                         | `rounded-card`                                    |
+| `shadow`  | `"card": "0 2px 6px rgb(0 0 0 / 0.08)"`  | `shadow-card`                                     |
+| `spacing` | `"gutter": "24px"`                       | `p-gutter`, `gap-gutter`                          |
 
 - Token names match `[a-z0-9]+(-[a-z0-9]+)*`.
 - Values are CSS values: colors in any CSS color syntax, lengths with units.
@@ -127,32 +127,32 @@ Warnings don't stop drawing:
 
 `vision-mcp` is a stdio MCP server. Every tool takes `file`, the absolute path of a `.vis` file. The file doesn't need to exist yet; the first edit creates it.
 
-| Tool | Purpose |
-|---|---|
-| `get_guide` | This page. |
-| `get_overview` | Pages, artboards, tokens and problem counts. |
-| `get_tree` | An outline of a page or an artboard. |
-| `get_node` | One node, page or artboard as JSON. |
-| `create_page` | Add a page. |
+| Tool              | Purpose                                                                      |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `get_guide`       | This page.                                                                   |
+| `get_overview`    | Pages, artboards, tokens and problem counts.                                 |
+| `get_tree`        | An outline of a page or an artboard.                                         |
+| `get_node`        | One node, page or artboard as JSON.                                          |
+| `create_page`     | Add a page.                                                                  |
 | `create_artboard` | Add an artboard, placed to the right of the others unless `x`/`y` are given. |
-| `update_artboard` | Rename, move, resize or restyle an artboard. |
-| `write_html` | Convert HTML with Tailwind classes into nodes inside an artboard or frame. |
-| `update_node` | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`. |
-| `move_node` | Move a node to another parent or position. |
-| `delete` | Remove a node, artboard or page by id. |
-| `set_tokens` | Merge tokens; `null` deletes one. |
-| `validate` | List every error and warning. |
-| `screenshot` | A PNG of an artboard, rendered by Vision. |
+| `update_artboard` | Rename, move, resize or restyle an artboard.                                 |
+| `write_html`      | Convert HTML with Tailwind classes into nodes inside an artboard or frame.   |
+| `update_node`     | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`.              |
+| `move_node`       | Move a node to another parent or position.                                   |
+| `delete`          | Remove a node, artboard or page by id.                                       |
+| `set_tokens`      | Merge tokens; `null` deletes one.                                            |
+| `validate`        | List every error and warning.                                                |
+| `screenshot`      | A PNG of an artboard, rendered by Vision.                                    |
 
 ### HTML for `write_html`
 
-| Elements | Node |
-|---|---|
-| `div`, `section`, `header`, `nav`, `main`, `footer`, `aside`, `article`, `form`, `ul`, `ol`, `li`, `button` | `frame` |
-| `p`, `span`, `h1`–`h6`, `label`, `a`, `strong`, `em`, `small` | `text` (its text content; `<br>` is a line break) |
-| `img` | `image` (`src`, `alt`) |
-| `svg` | `svg` (its markup) |
-| `input`, `textarea`, `select` | `frame` showing the `placeholder` or `value` as text |
+| Elements                                                                                                    | Node                                                 |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `div`, `section`, `header`, `nav`, `main`, `footer`, `aside`, `article`, `form`, `ul`, `ol`, `li`, `button` | `frame`                                              |
+| `p`, `span`, `h1`–`h6`, `label`, `a`, `strong`, `em`, `small`                                               | `text` (its text content; `<br>` is a line break)    |
+| `img`                                                                                                       | `image` (`src`, `alt`)                               |
+| `svg`                                                                                                       | `svg` (its markup)                                   |
+| `input`, `textarea`, `select`                                                                               | `frame` showing the `placeholder` or `value` as text |
 
 `class` and `id` attributes are kept and missing ids are generated. A frame's bare text becomes a text node. `style` attributes and scripts are not allowed.
 

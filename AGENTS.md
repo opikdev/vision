@@ -4,14 +4,14 @@ Vision is an Electron app that draws `.vis` design files and redraws them on eve
 
 ## Commands
 
-| Task | Command |
-|---|---|
-| Install | `pnpm install` |
-| Run the app | `pnpm dev` |
-| Everything CI checks | `pnpm check` (format, lint, types, tests) |
-| End-to-end tests | `pnpm test:e2e` |
-| Build the MCP server | `pnpm --filter @vision/mcp build` |
-| Package the macOS app | `pnpm package` |
+| Task                  | Command                                   |
+| --------------------- | ----------------------------------------- |
+| Install               | `pnpm install`                            |
+| Run the app           | `pnpm dev`                                |
+| Everything CI checks  | `pnpm check` (format, lint, types, tests) |
+| End-to-end tests      | `pnpm test:e2e`                           |
+| Build the MCP server  | `pnpm --filter @vision/mcp build`         |
+| Package the macOS app | `pnpm package`                            |
 
 ## Map
 

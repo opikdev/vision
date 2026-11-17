@@ -13,11 +13,11 @@ flowchart LR
 
 ## Repository
 
-| Path | Package | Role |
-|---|---|---|
-| `packages/format` | `@vision/format` | The `.vis` schema, parsing, validation, deterministic serialization, tokens → Tailwind theme, HTML → nodes, edit operations. No Electron or React. |
-| `packages/mcp` | `@vision/mcp` | The `vision-mcp` stdio server: MCP tools over `@vision/format`. |
-| `apps/desktop` | `@vision/desktop` | The Electron app. |
+| Path              | Package           | Role                                                                                                                                               |
+| ----------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/format` | `@vision/format`  | The `.vis` schema, parsing, validation, deterministic serialization, tokens → Tailwind theme, HTML → nodes, edit operations. No Electron or React. |
+| `packages/mcp`    | `@vision/mcp`     | The `vision-mcp` stdio server: MCP tools over `@vision/format`.                                                                                    |
+| `apps/desktop`    | `@vision/desktop` | The Electron app.                                                                                                                                  |
 
 Dependencies point one way: `desktop → format` and `mcp → format`. The desktop app and the MCP server never import each other; the only runtime link is the `screenshot` tool launching the app.
 
