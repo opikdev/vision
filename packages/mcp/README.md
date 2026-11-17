@@ -13,61 +13,10 @@ The build is one self-contained file, `dist/vision-mcp.mjs`, with the format gui
 
 ## Register it with an AI client
 
-Replace `<repo>` with the absolute path of this repository.
-
-**Claude Code**
+The packaged app ships this server; [Design with any AI](../../README.md#design-with-any-ai) has the commands for each client. To run your own build instead, use `node` as the command and `<repo>/packages/mcp/dist/vision-mcp.mjs` as the argument, with no `env`:
 
 ```sh
 claude mcp add --scope user vision -- node <repo>/packages/mcp/dist/vision-mcp.mjs
-```
-
-**Codex CLI**, in `~/.codex/config.toml`:
-
-```toml
-[mcp_servers.vision]
-command = "node"
-args = ["<repo>/packages/mcp/dist/vision-mcp.mjs"]
-```
-
-**Cursor**, in `~/.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "vision": {
-      "command": "node",
-      "args": ["<repo>/packages/mcp/dist/vision-mcp.mjs"],
-      "env": {}
-    }
-  }
-}
-```
-
-**VS Code**, in `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "vision": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["<repo>/packages/mcp/dist/vision-mcp.mjs"]
-    }
-  }
-}
-```
-
-**Claude Desktop**, in `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "vision": {
-      "command": "node",
-      "args": ["<repo>/packages/mcp/dist/vision-mcp.mjs"]
-    }
-  }
-}
 ```
 
 ## Screenshots
