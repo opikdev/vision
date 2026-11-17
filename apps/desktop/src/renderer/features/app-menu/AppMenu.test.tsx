@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import { act } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRecentStore } from '../../stores/recent-store';
 import { useViewStore } from '../../stores/view-store';
-import { render } from '../../test/render';
+import { cleanup, render } from '../../test/render';
 import { AppMenu } from './AppMenu';
 
 const vision = vi.hoisted(() => ({
@@ -40,8 +40,9 @@ async function click(element: HTMLElement) {
 }
 
 describe('AppMenu', () => {
+  afterEach(cleanup);
+
   beforeEach(() => {
-    document.body.innerHTML = '';
     vi.clearAllMocks();
     useViewStore.setState({ dialog: null });
     useRecentStore.setState({

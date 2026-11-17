@@ -86,6 +86,27 @@ test('opens the app menu from the keyboard and closes it with Escape', async ({
   await expect(trigger).toBeFocused();
 });
 
+test('opens Connect an AI from the app menu and returns focus when it closes', async ({
+  launch,
+  exampleCopy,
+}) => {
+  const { window } = await launch(exampleCopy);
+  const trigger = window.getByRole('button', { name: 'Vision menu' });
+  await trigger.focus();
+  await window.keyboard.press('Enter');
+  await window.getByRole('menuitem', { name: /Connect an AI/ }).press('Enter');
+
+  const dialog = window.getByRole('dialog', { name: 'Connect an AI' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
+  await window.keyboard.press('Shift+Tab');
+  await expect(dialog.getByRole('button', { name: 'Copy prompt' })).toBeFocused();
+
+  await window.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test('opens one window when the same file is opened twice at once', async ({
   launch,
   exampleCopy,

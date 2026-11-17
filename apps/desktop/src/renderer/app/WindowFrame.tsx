@@ -17,7 +17,6 @@ export function WindowFrame({
   children: ReactNode;
 }) {
   const sidebarVisible = useViewStore((store) => store.sidebarVisible);
-  const dialog = useViewStore((store) => store.dialog);
   const { dropActive, dropHandlers } = useFileDrop();
   return (
     <div className="flex h-full flex-col" {...dropHandlers}>
@@ -39,7 +38,7 @@ export function WindowFrame({
           </div>
         </main>
       </div>
-      {dialog === 'connect-ai' && <ConnectAiDialog />}
+      <ConnectAiDialog />
     </div>
   );
 }

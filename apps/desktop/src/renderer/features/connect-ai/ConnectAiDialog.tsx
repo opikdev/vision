@@ -1,50 +1,73 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import type { McpServer } from '../../../shared/contract';
 import { reportError, vision } from '../../bridge';
 import { useDocumentStore } from '../../stores/document-store';
 import { useViewStore } from '../../stores/view-store';
 import { cx } from '../../ui/cx';
-import { Dialog } from '../../ui/Dialog';
 import { useCopy } from '../../ui/use-copy';
 import { claudeCodeSetup, codexSetup, jsonSetup, samplePrompt } from './setup';
 
 export function ConnectAiDialog() {
+  const open = useViewStore((store) => store.dialog === 'connect-ai');
   const close = useViewStore((store) => store.closeDialog);
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) close();
+      }}
+    >
+      <DialogContent className="w-[560px]">
+        <DialogHeader className="px-5 pt-4 pb-1">
+          <DialogTitle>Connect an AI</DialogTitle>
+        </DialogHeader>
+        <div className="px-5 pb-5">
+          <DialogDescription>
+            Add Vision's MCP server to your AI tool once, then ask it to design in any .vis file
+            while you watch it redraw here.
+          </DialogDescription>
+          <Setup />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Setup() {
   const path = useDocumentStore((store) => store.state?.path ?? null);
   const [server, setServer] = useState<McpServer | null>(null);
   useEffect(() => {
     vision.getMcpServer().then(setServer, reportError);
   }, []);
-
+  if (server === null) return null;
   return (
-    <Dialog title="Connect an AI" onClose={close}>
-      <p className="text-muted-foreground">
-        Add Vision's MCP server to your AI tool once, then ask it to design in any .vis file while
-        you watch it redraw here.
-      </p>
-      {server !== null && (
-        <div className="mt-4 flex flex-col gap-4">
-          <Snippet
-            title="Claude Code"
-            copyLabel="Copy Claude Code command"
-            text={claudeCodeSetup(server)}
-          />
-          <Snippet title="Codex CLI" copyLabel="Copy Codex CLI command" text={codexSetup(server)} />
-          <Snippet
-            title="Cursor, Claude Desktop and other tools"
-            copyLabel="Copy JSON config"
-            text={jsonSetup(server)}
-          />
-          <Snippet
-            title="Then try a prompt like"
-            copyLabel="Copy prompt"
-            text={samplePrompt(path)}
-            prose
-          />
-        </div>
-      )}
-    </Dialog>
+    <div className="mt-4 flex flex-col gap-4">
+      <Snippet
+        title="Claude Code"
+        copyLabel="Copy Claude Code command"
+        text={claudeCodeSetup(server)}
+      />
+      <Snippet title="Codex CLI" copyLabel="Copy Codex CLI command" text={codexSetup(server)} />
+      <Snippet
+        title="Cursor, Claude Desktop and other tools"
+        copyLabel="Copy JSON config"
+        text={jsonSetup(server)}
+      />
+      <Snippet
+        title="Then try a prompt like"
+        copyLabel="Copy prompt"
+        text={samplePrompt(path)}
+        prose
+      />
+    </div>
   );
 }
 
