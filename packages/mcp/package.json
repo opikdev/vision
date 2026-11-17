@@ -1,0 +1,21 @@
+{
+  "name": "@vision/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "vision-mcp": "./dist/vision-mcp.mjs"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "@vision/format": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "tsdown": "0.23.5"
+  }
+}
