@@ -33,12 +33,13 @@ The rules for Vision's own interface (not for the designs it shows). The approve
   | `ring`                                  | `#60A5FA` | Focus ring                                   |
 
 - **Icons**: Hugeicons (`@hugeicons/react` with `@hugeicons/core-free-icons`), stroke 1.5, 16px in rows and buttons. No other icon set.
-- **Radii**: 6px for buttons and badges, 8px for rows and inner blocks, 12px for the canvas, cards and menus. No other radii.
+- **Radii**: 6px (`rounded-sm`) for buttons and badges, 8px (`rounded-md`) for rows and inner blocks, 12px (`rounded-lg`) for the canvas, cards, menus and dialogs. No other radii are defined.
 - **Primary button**: `primary` fill with `primary-foreground` text. Everything else is a quiet button: text or icon in `muted-foreground`, `accent` fill on hover.
 - **Layout**: no border around the main area. The sidebar (248px) and the 48px top bar form one `background` frame; the canvas is inset 8px from the window's right and bottom edges (and left, when the sidebar is hidden) with 12px corners. The traffic lights, the app icon and the sidebar toggle share the top row.
 - **Sidebar toggle**: `Layout2Column` while the sidebar shows, `LayoutAlignLeft` while it's hidden; ⌘\ toggles it. A vertical separator follows it.
 - **Zoom**: zoom out, the zoom level, zoom in and an icon-only "Zoom to fit" (`FitToScreen`), right-aligned in the top bar.
-- **States**: every interactive element has hover, pressed, disabled and a visible focus ring. Nothing moves focus on its own, and redraws on save never steal focus or reset the viewport.
+- **States**: every interactive element has hover, pressed, disabled and a visible focus ring (the global 2px `ring` outline, not shadcn's `ring-*` utilities). Nothing moves focus on its own, and redraws on save never steal focus or reset the viewport.
+- **Motion**: menus, popovers, tooltips and the dialog fade and zoom in over 100ms, and the sidebar slides over 200ms. With reduced motion, every shadcn component (`[data-slot]`) appears at once.
 - **Agent activity**: shown only while an AI works, never moving the viewport on its own.
   - **Cursor**: Hugeicons `Cursor02`, 18px, `background` fill with a `foreground` stroke, and a name pill below-right (`background` fill, `border-strong` border, 6px radius, 20px tall, 12px medium text). It glides 300ms to each new element and stays pinned to the design while you pan or zoom. It's `aria-hidden`; the status carries the meaning.
   - **Status**: after the breadcrumb, a 14px cursor icon and "**Claude Code** is adding 4 elements to Cart" in 12px `muted-foreground`, with the name in `foreground` medium, inside `role="status"`. It replaces "Updated …" while shown, says "is thinking" between steps, and fades after `done` or a minute without messages.
@@ -46,3 +47,26 @@ The rules for Vision's own interface (not for the designs it shows). The approve
   - **Reveal**: on every save, each new element fades in and rises 4px over 160ms with a 1.5px `#1C1C1C` outline that fades over 400ms; changed elements get only the outline. Elements follow each other every `min(60ms, 1500ms / count)`, and a newer save finishes the running reveal at once. Nothing is revealed on opening, page switches, screenshots or with reduced motion. Animate only opacity and transform.
   - **Off screen**: when the cursor is outside the canvas, a pill sits 16px in from the nearest edge: `popover` fill, `border-strong` border, 8px radius, 32px tall, menu shadow, "**Claude Code** on Payment" and a chevron pointing to that edge. Clicking it pans, without zooming, to centre the cursor.
 - **Copy**: sentence case, plain words, specific button labels ("New design", "Copy path"), and errors that say what happened and how to fix it.
+
+## Components
+
+The interface is built from [shadcn/ui](https://ui.shadcn.com) components (style `base-nova`, on [Base UI](https://base-ui.com) primitives). Their source lives in `apps/desktop/src/renderer/components/ui/` and is ours: each one is restyled to the rules above, and parts and variants we don't use are deleted. `components.json` configures the CLI.
+
+| Part of the app                                         | Component                                                      |
+| ------------------------------------------------------- | -------------------------------------------------------------- |
+| Buttons, icon buttons, the app menu trigger             | `button` (`default` is primary, `secondary`, `ghost` is quiet) |
+| Shortcut hints, tooltips, the top bar separator         | `kbd`, `tooltip`, `separator`                                  |
+| App menu                                                | `dropdown-menu`                                                |
+| Connect an AI                                           | `dialog`                                                       |
+| Window frame: sidebar, sections, rows, the canvas inset | `sidebar` (`variant="inset"`, slides out when hidden)          |
+| Problems, "Save has an error", the error strip          | `popover`, `badge`, `alert`                                    |
+| Start screen, "This file can't be drawn yet"            | `empty`                                                        |
+| "This design is empty" hint                             | `item`                                                         |
+
+Custom pieces: `components/Icon.tsx` (Hugeicons at stroke 1.5), `components/IconButton.tsx` (an icon `Button` with its `Tooltip`), the setup snippets in Connect an AI, and the canvas, artboard labels and agent cursor.
+
+To add a component:
+
+1. In `apps/desktop`, run `pnpm dlx shadcn@latest add <name>` and answer **No** to overwriting existing files.
+2. Restyle it: only the tokens, radii and sizes above, `shadow-popover` and `border-border-strong` for popups, no `ring-*` focus styles, `Icon` instead of `HugeiconsIcon`, `no-drag` on anything that can sit in the top bar.
+3. Delete the parts, variants and generated dependencies you don't use.

@@ -36,9 +36,11 @@ apps/desktop/src/
     app/          root, routing between start and design views, global shortcuts
     features/     start, sidebar, toolbar, canvas, problems, app-menu, connect-ai, agents
     design/       Tailwind runtime compiler and the node → DOM renderer
-    ui/           primitives: Button, IconButton, Menu, Tooltip, Kbd
+    components/   ui/: shadcn/ui components on Base UI (owned, restyled); Icon, IconButton
+    hooks/        shared React hooks
 ```
 
+- **Interface** ([ADR 006](decisions/006-shadcn-ui-on-base-ui.md)). The app's own controls are shadcn/ui components on Base UI, imported as `@/components/ui/<name>`; [App UI](ui.md#components) lists them.
 - **Security.** `contextIsolation`, `sandbox` and a strict CSP are on, and `nodeIntegration` is off. The renderer reaches the system only through `window.vision`, and main validates every IPC payload with zod. Navigation and new windows are blocked. The CSP, not the SVG sanitizer, is what limits what a design can load: scripts only from the app, and images only from the app, `vision-asset:`, `data:`, `blob:` and `https:`. Remote `https:` images are allowed by design, so opening a design can make requests to the hosts it names.
 - **One file per window** ([ADR 003](decisions/003-one-file-per-window.md)). Main keeps a registry from file path to window, so opening a file that's already open focuses its window.
 - **Watching.** Main watches the file's folder, so saves that rename a temp file over the original are seen, and its assets folder, so added or changed images redraw; it debounces events. Each change is read, parsed and validated in main, then sent to the renderer as `{ document, diagnostics, status }`. When the new version has errors or can't be read (`read-error`, with the reason), `document` stays the last valid one. A file that can't be read when it's opened isn't opened, and the error is shown.
