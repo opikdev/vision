@@ -44,11 +44,11 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-async function open(): Promise<DocumentSession> {
+async function open(debounceMs = 20): Promise<DocumentSession> {
   session = await openDocumentSession({
     path,
     assetToken: 'token',
-    debounceMs: 20,
+    debounceMs,
     onChange: (state) => states.push(state),
   });
   return session;
@@ -157,10 +157,11 @@ describe('openDocumentSession', () => {
 
   it('coalesces a burst of saves into one update', async () => {
     await writeDesign(path, valid);
-    await open();
+    await open(300);
     await writeFile(path, '{');
     await writeFile(path, '{ "format"');
     await writeDesign(path, renamed);
+    await expect.poll(() => states.length, { timeout: 2000 }).toBe(2);
     await settle();
     expect(states.map(summary)).toEqual([
       { revision: 1, status: 'ok', pageName: 'Page 1', codes: [], hasMtime: true },
