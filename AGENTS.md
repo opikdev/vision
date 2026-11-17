@@ -24,6 +24,6 @@ Vision is an Electron app that draws `.vis` design files and redraws them on eve
 
 - TypeScript strict everywhere. Validate data at every boundary (files, IPC, MCP input) with zod.
 - No comments that restate code. Comment only a non-obvious why.
-- Tests sit next to the code as `*.test.ts`. Test behaviour, with literal expected values.
+- Tests sit next to the code as `*.test.ts`; end-to-end specs live in `apps/desktop/e2e/`. Test behaviour, with literal expected values.
 - Commits are one-line conventional commits (`feat(desktop): add zoom to fit`), no body, no trailers.
 - Keep build output small: the disk is shared and nearly full. Don't add dependencies without a reason.
