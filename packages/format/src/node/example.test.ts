@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { layerLabel } from '../label';
 import { outline } from '../query';
+import type { Node } from '../schema';
 import { serializeDocument } from '../serialize';
 import { createTailwindEngine } from '../tailwind';
 import { readDesign } from './read';
@@ -33,5 +35,53 @@ describe('examples/larkspur-checkout.vis', () => {
       '  artboard cart-mobile name="Cart, mobile" 390x844 at 1520,0 class="bg-surface font-sans text-fg antialiased"',
       '  artboard payment name="Payment" 1440x900 at 1990,0 class="bg-surface font-sans text-fg antialiased"',
     ]);
+  });
+
+  it('gives every layer of the cart summary a readable label', async () => {
+    const { result } = await readDesign(examplePath);
+    if (!result.ok) throw new Error('example is invalid');
+    const lines: string[] = [];
+    const walk = (node: Node, depth: number): void => {
+      lines.push(`${'  '.repeat(depth)}${layerLabel(node)}`);
+      if (node.type === 'frame') for (const child of node.children ?? []) walk(child, depth + 1);
+    };
+    const [layout] = result.document.pages[0]?.artboards[0]?.children ?? [];
+    if (layout === undefined) throw new Error('the cart has no layout');
+    walk(layout, 0);
+    expect(lines.slice(0, 4)).toEqual([
+      'Cart layout',
+      '  Cart header',
+      '    Larkspur',
+      '      Icon',
+    ]);
+    const summary = lines.indexOf('    Cart summary');
+    expect(lines.slice(summary)).toEqual([
+      '    Cart summary',
+      '      Order summary',
+      '      Column · Subtotal',
+      '        Row · Subtotal',
+      '          Subtotal',
+      '          $20.00',
+      '        Row · Sales tax',
+      '          Sales tax',
+      '          $1.73',
+      '        Row · Total',
+      '          Total',
+      '          $21.73',
+      '      Column · Promo code',
+      '        Promo code',
+      '        Row · FIRSTCUP',
+      '          FIRSTCUP',
+      '            FIRSTCUP',
+      '          Apply',
+      '            Apply',
+      '      Continue to payment',
+      '        Continue to payment',
+      '        Icon',
+      '      You can cancel for free until the barist…',
+      '        Icon',
+      '        You can cancel for free until the barist…',
+    ]);
+    expect(lines.filter((line) => /\b(div|span|ul|li|svg|h\d|p)-\d/.test(line))).toEqual([]);
   });
 });

@@ -27,6 +27,7 @@ export {
 export { createPage } from './edit/page';
 export { setTokens, type TokensPatch } from './edit/tokens';
 export { HtmlError, htmlToNodes } from './html';
+export { layerLabel } from './label';
 export { generateId, idPattern } from './ids';
 export { parseDocument, type ParseResult } from './parse';
 export { collectClasses, findById, outline, type Container, type Located } from './query';
