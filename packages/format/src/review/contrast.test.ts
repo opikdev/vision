@@ -20,6 +20,22 @@ describe('contrast', () => {
     ]);
   });
 
+  it('skips emoji, which keep their own colors, but not text beside them', () => {
+    const gray = { color: [153, 153, 153, 1] as [number, number, number, number] };
+    expect(
+      findingsOf(
+        'contrast',
+        [text('lock', '🔒'), text('flag', '🇺🇸'), text('locked', '🔒 Locked'), text('count', '48')],
+        {
+          lock: box(gray),
+          flag: box(gray),
+          locked: box(gray),
+          count: box(gray),
+        },
+      ).map(({ nodeId }) => nodeId),
+    ).toEqual(['locked', 'count']);
+  });
+
   it('passes white text on a dark brand color', () => {
     expect(
       findingsOf('contrast', [frame('cta', [text('label', 'Pay $22.07')])], {

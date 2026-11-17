@@ -3,6 +3,9 @@ import { finding, quote, shownBox, type ArtboardContext, type ReviewNode } from 
 import type { Finding, MeasuredBox, Rgba } from './schema';
 
 const disabledPattern = /\b(disabled|inactive)\b/i;
+// Emoji keep their own colors, whatever the text color.
+const emojiOnly =
+  /^(?:[\p{Extended_Pictographic}\p{Regional_Indicator}\p{Emoji_Modifier}\s]|\u200d|\ufe0f)+$/u;
 
 export function contrastRule(context: ArtboardContext): Finding[] {
   if (context.layout === undefined) return [];
@@ -10,7 +13,7 @@ export function contrastRule(context: ArtboardContext): Finding[] {
   const unmeasured = new Map<string, string[]>();
   for (const entry of context.nodes) {
     const { node } = entry;
-    if (node.type !== 'text' || node.text.trim() === '') continue;
+    if (node.type !== 'text' || node.text.trim() === '' || emojiOnly.test(node.text)) continue;
     const box = shownBox(context, node.id);
     if (box === undefined || box.color[3] === 0 || isDisabled(context, entry)) continue;
     const backdrop = backdropOf(context, entry, box);
