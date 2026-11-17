@@ -112,6 +112,15 @@ describe('AgentTracker', () => {
     expect(presence()?.summary).toBe('is thinking');
   });
 
+  it('looks at a layer it names', () => {
+    tracker.receive({
+      session,
+      agent: 'Codex',
+      activity: { kind: 'look', artboard: 'cart', node: 'existing', summary: 'is looking at Pay' },
+    });
+    expect(presence()).toMatchObject({ summary: 'is looking at Pay', target: at(5) });
+  });
+
   it('fades away on done and after a minute without messages', () => {
     tracker.receive(edit(['existing']));
     vi.advanceTimersByTime(59_999);

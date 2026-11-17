@@ -72,7 +72,7 @@ export class AgentTracker {
   }
 
   #targetOf(activity: Work): CursorTarget | null {
-    const first = activity.kind === 'edit' ? activity.nodes[0] : undefined;
+    const first = activity.kind === 'edit' ? activity.nodes[0] : activity.node;
     const node = first === undefined ? null : this.#locate.node(first);
     return node ?? (activity.artboard === undefined ? null : this.#locate.label(activity.artboard));
   }
