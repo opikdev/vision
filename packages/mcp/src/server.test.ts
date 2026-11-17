@@ -20,6 +20,7 @@ describe('createServer', () => {
       ['delete', { destructiveHint: true, idempotentHint: true }],
       ['set_tokens', { destructiveHint: false, idempotentHint: true }],
       ['validate', { readOnlyHint: true, idempotentHint: true }],
+      ['screenshot', { readOnlyHint: true, idempotentHint: true }],
     ]);
   });
 

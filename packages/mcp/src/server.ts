@@ -3,6 +3,7 @@ import packageJson from '../package.json' with { type: 'json' };
 import { registerArtboardTools } from './tools/artboards';
 import { registerNodeTools } from './tools/nodes';
 import { registerReadTools } from './tools/read';
+import { registerScreenshotTool } from './tools/screenshot';
 import { registerTokenTools } from './tools/tokens';
 import { registerValidateTool } from './tools/validate';
 
@@ -16,5 +17,6 @@ export function createServer(): McpServer {
   registerNodeTools(server);
   registerTokenTools(server);
   registerValidateTool(server);
+  registerScreenshotTool(server);
   return server;
 }

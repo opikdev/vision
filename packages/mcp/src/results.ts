@@ -11,3 +11,12 @@ export function textResult(
 export function errorResult(text: string): CallToolResult {
   return { isError: true, content: [{ type: 'text', text }] };
 }
+
+export function imageResult(text: string, png: Buffer): CallToolResult {
+  return {
+    content: [
+      { type: 'text', text },
+      { type: 'image', data: png.toString('base64'), mimeType: 'image/png' },
+    ],
+  };
+}
