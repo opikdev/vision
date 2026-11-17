@@ -11,6 +11,14 @@ describe('createServer', () => {
       ['get_overview', { readOnlyHint: true, idempotentHint: true }],
       ['get_tree', { readOnlyHint: true, idempotentHint: true }],
       ['get_node', { readOnlyHint: true, idempotentHint: true }],
+      ['create_page', { destructiveHint: false, idempotentHint: false }],
+      ['create_artboard', { destructiveHint: false, idempotentHint: false }],
+      ['update_artboard', { destructiveHint: false, idempotentHint: true }],
+      ['write_html', { destructiveHint: false, idempotentHint: false }],
+      ['update_node', { destructiveHint: false, idempotentHint: true }],
+      ['move_node', { destructiveHint: false, idempotentHint: true }],
+      ['delete', { destructiveHint: true, idempotentHint: true }],
+      ['set_tokens', { destructiveHint: false, idempotentHint: true }],
       ['validate', { readOnlyHint: true, idempotentHint: true }],
     ]);
   });

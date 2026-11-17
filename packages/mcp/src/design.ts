@@ -1,3 +1,4 @@
+import { stat } from 'node:fs/promises';
 import { formatDiagnostic, type Diagnostic, type VisionDocument } from '@vision/format';
 import { assetDiagnostics, readDesign } from '@vision/format/node';
 import { tailwind } from './tailwind';
@@ -49,4 +50,14 @@ export function missingText(file: string): string {
 
 export function invalidText(file: string, diagnostics: Diagnostic[]): string {
   return `${file} has errors, so it can't be read until they're fixed:\n${listDiagnostics(diagnostics)}`;
+}
+
+export async function fileExists(file: string): Promise<boolean> {
+  try {
+    await stat(file);
+    return true;
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') return false;
+    throw error;
+  }
 }

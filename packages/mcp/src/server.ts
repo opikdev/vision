@@ -1,6 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import packageJson from '../package.json' with { type: 'json' };
+import { registerArtboardTools } from './tools/artboards';
+import { registerNodeTools } from './tools/nodes';
 import { registerReadTools } from './tools/read';
+import { registerTokenTools } from './tools/tokens';
 import { registerValidateTool } from './tools/validate';
 
 export const instructions =
@@ -9,6 +12,9 @@ export const instructions =
 export function createServer(): McpServer {
   const server = new McpServer({ name: 'vision', version: packageJson.version }, { instructions });
   registerReadTools(server);
+  registerArtboardTools(server);
+  registerNodeTools(server);
+  registerTokenTools(server);
   registerValidateTool(server);
   return server;
 }
