@@ -168,7 +168,7 @@ Warnings don't stop drawing:
 
 ### Designing well
 
-- **Start from a brief.** Decide who it's for, the platform and one word for the feel, then set the colors, fonts and radii that follow from it with `set_tokens`: a palette from the brand rather than a default blue or indigo, and one distinctive element, such as a typeface or a shape, carried through every screen. Use the token classes (`bg-brand`, `text-muted`) instead of raw values.
+- **Start from a brief.** Decide who it's for, the platform and one word for the feel, then set the colors, fonts and radii that follow from it with `set_tokens`: a palette that comes from this product's subject and audience, so two different products never share a look (don't fall back to any house palette), and one distinctive element, such as a typeface or a shape, carried through every screen. Use the token classes (`bg-brand`, `text-muted`) instead of raw values.
 - **One focal point per screen.** Give one primary action the strongest color; make the others outlined or plain text, and keep destructive actions quiet until they're confirmed.
 - **Space on a 4/8 scale**: Tailwind steps 1, 2, 3, 4, 6, 8, 12, 16 and up. Avoid half steps (`py-2.5`, `gap-1.5`) and arbitrary pixels.
 - **A small type scale.** At most 2 font families and about 5 sizes per artboard, nothing under 12px, body text 16px on phones. Keep muted and colored text at 4.5:1 contrast with its background.
