@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import type { McpServer } from '../../../shared/contract';
 import { reportError, vision } from '../../bridge';
 import { useDocumentStore } from '../../stores/document-store';
 import { useViewStore } from '../../stores/view-store';
-import { Button } from '../../ui/Button';
 import { cx } from '../../ui/cx';
 import { Dialog } from '../../ui/Dialog';
 import { useCopy } from '../../ui/use-copy';
@@ -66,7 +66,7 @@ function Snippet({
         <h3 className="text-xs text-muted-foreground">{title}</h3>
         <Button
           size="sm"
-          variant="quiet"
+          variant="ghost"
           aria-label={copyLabel}
           onClick={() => {
             copy(text);

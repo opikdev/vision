@@ -1,3 +1,4 @@
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { captureParamsSchema } from '../../shared/schemas';
 import { useDocumentStore } from '../stores/document-store';
 import { CaptureView } from './CaptureView';
@@ -18,5 +19,9 @@ function AppWindow() {
   const loaded = useDocumentStore((store) => store.loaded);
   const state = useDocumentStore((store) => store.state);
   if (!loaded) return null;
-  return state === null ? <StartWindow /> : <DesignWindow state={state} />;
+  return (
+    <TooltipProvider>
+      {state === null ? <StartWindow /> : <DesignWindow state={state} />}
+    </TooltipProvider>
+  );
 }

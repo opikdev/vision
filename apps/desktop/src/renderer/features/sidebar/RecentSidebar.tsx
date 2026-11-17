@@ -1,8 +1,8 @@
 import { Cancel01Icon, Note01Icon } from '@hugeicons/core-free-icons';
+import { IconButton } from '@/components/IconButton';
 import { reportError, vision } from '../../bridge';
 import { useRecentStore } from '../../stores/recent-store';
 import { Icon } from '../../ui/Icon';
-import { IconButton } from '../../ui/IconButton';
 import { SidebarRow, SidebarSection } from './SidebarSection';
 
 export function RecentSidebar() {
@@ -35,7 +35,6 @@ export function RecentSidebar() {
             <IconButton
               icon={Cancel01Icon}
               label={`Remove ${file.name} from Recent`}
-              tooltipAlign="end"
               onClick={() => {
                 vision.removeRecent(file.path).catch(reportError);
               }}

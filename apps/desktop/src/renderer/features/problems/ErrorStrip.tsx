@@ -1,8 +1,8 @@
 import { Alert02Icon, Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 import { formatDiagnostic, type Diagnostic, type VisionDocument } from '@vision/format';
+import { IconButton } from '@/components/IconButton';
+import { Separator } from '@/components/ui/separator';
 import { Icon } from '../../ui/Icon';
-import { IconButton } from '../../ui/IconButton';
-import { Separator } from '../../ui/Separator';
 import { useCopy } from '../../ui/use-copy';
 import { ProblemsPopover } from './ProblemsPopover';
 import { ProblemText } from './ProblemText';
@@ -26,7 +26,7 @@ export function ErrorStrip({
       <p className="min-w-0 truncate">
         <ProblemText diagnostic={first} document={document} />
       </p>
-      <Separator />
+      <Separator orientation="vertical" className="data-vertical:h-4 data-vertical:self-center" />
       <ProblemsPopover
         diagnostics={diagnostics}
         document={document}

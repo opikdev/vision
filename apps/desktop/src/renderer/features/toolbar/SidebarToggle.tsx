@@ -1,6 +1,6 @@
 import { Layout2ColumnIcon, LayoutAlignLeftIcon } from '@hugeicons/core-free-icons';
+import { IconButton } from '@/components/IconButton';
 import { useViewStore } from '../../stores/view-store';
-import { IconButton } from '../../ui/IconButton';
 
 export function SidebarToggle() {
   const visible = useViewStore((store) => store.sidebarVisible);

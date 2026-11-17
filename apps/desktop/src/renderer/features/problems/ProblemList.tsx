@@ -1,6 +1,6 @@
 import { Alert02Icon, InformationCircleIcon } from '@hugeicons/core-free-icons';
 import type { Diagnostic, VisionDocument } from '@vision/format';
-import { Button } from '../../ui/Button';
+import { Button } from '@/components/ui/button';
 import { Icon } from '../../ui/Icon';
 import { useCopy } from '../../ui/use-copy';
 import { errorsFirst, problemsText } from './problems';

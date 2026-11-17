@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
+import { Separator } from '@/components/ui/separator';
 import { useViewStore } from '../../stores/view-store';
 import { cx } from '../../ui/cx';
-import { Separator } from '../../ui/Separator';
 import { AppMenu } from '../app-menu/AppMenu';
 import { SidebarToggle } from './SidebarToggle';
 
@@ -18,7 +18,10 @@ export function TopBar({ title, actions }: { title: ReactNode; actions?: ReactNo
         <AppMenu />
         <SidebarToggle />
       </div>
-      <Separator className="mr-4 ml-3" />
+      <Separator
+        orientation="vertical"
+        className="mr-4 ml-3 data-vertical:h-4 data-vertical:self-center"
+      />
       <div className="flex min-w-0 flex-1 items-center gap-3">{title}</div>
       {actions && <div className="flex shrink-0 items-center gap-1.5 pr-2.5 pl-4">{actions}</div>}
     </header>

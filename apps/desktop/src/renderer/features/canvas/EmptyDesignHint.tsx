@@ -1,7 +1,8 @@
 import { Copy01Icon, PlugSocketIcon } from '@hugeicons/core-free-icons';
 import type { Artboard } from '@vision/format';
+import { Button } from '@/components/ui/button';
+import { Icon } from '../../ui/Icon';
 import { useViewStore } from '../../stores/view-store';
-import { Button } from '../../ui/Button';
 import { useCopy } from '../../ui/use-copy';
 import type { Viewport } from '../../stores/view-store';
 
@@ -43,21 +44,21 @@ export function EmptyDesignHint({
         <Button
           size="sm"
           variant="secondary"
-          icon={Copy01Icon}
           onClick={() => {
             copy(path);
           }}
         >
+          <Icon icon={Copy01Icon} />
           {copied ? 'Copied' : 'Copy path'}
         </Button>
         <Button
           size="sm"
-          variant="quiet"
-          icon={PlugSocketIcon}
+          variant="ghost"
           onClick={() => {
             openDialog('connect-ai');
           }}
         >
+          <Icon icon={PlugSocketIcon} />
           Connect an AI
         </Button>
       </div>

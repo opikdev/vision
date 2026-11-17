@@ -1,7 +1,9 @@
 import { FitToScreenIcon, ZoomInIcon, ZoomOutIcon } from '@hugeicons/core-free-icons';
+import { IconButton } from '@/components/IconButton';
+import { Button } from '@/components/ui/button';
+import { Kbd } from '@/components/ui/kbd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useViewStore } from '../../stores/view-store';
-import { IconButton } from '../../ui/IconButton';
-import { Tooltip, useTooltip } from '../../ui/Tooltip';
 import { runCanvasCommand } from '../canvas/canvas-commands';
 import { useCurrentPage } from '../canvas/current-page';
 
@@ -10,7 +12,6 @@ export function ZoomControls({ disabled }: { disabled: boolean }) {
   const zoom = useViewStore((store) =>
     page === undefined ? undefined : store.viewports[page.id]?.zoom,
   );
-  const tooltip = useTooltip();
   const percent = zoom === undefined ? '–' : `${Math.round(zoom * 100)}%`;
   return (
     <>
@@ -24,22 +25,29 @@ export function ZoomControls({ disabled }: { disabled: boolean }) {
           runCanvasCommand('zoom-out');
         }}
       />
-      <span className="relative inline-flex">
-        <button
-          type="button"
-          aria-label={`Zoom ${percent}, reset to 100%`}
-          aria-keyshortcuts="Meta+0"
-          disabled={disabled}
-          className="no-drag h-7 w-12 rounded-sm text-center text-muted-foreground tabular-nums hover:bg-accent hover:text-foreground active:bg-active disabled:opacity-40"
-          onClick={() => {
-            runCanvasCommand('zoom-reset');
-          }}
-          {...tooltip.triggerProps}
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label={`Zoom ${percent}, reset to 100%`}
+              aria-keyshortcuts="Meta+0"
+              disabled={disabled}
+              className="w-12 px-0 tabular-nums"
+              onClick={() => {
+                runCanvasCommand('zoom-reset');
+              }}
+            />
+          }
         >
           {percent}
-        </button>
-        <Tooltip open={tooltip.open} label="Reset to 100%" shortcut="⌘0" />
-      </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          Reset to 100%
+          <Kbd>⌘0</Kbd>
+        </TooltipContent>
+      </Tooltip>
       <IconButton
         icon={ZoomInIcon}
         label="Zoom in"
@@ -55,7 +63,6 @@ export function ZoomControls({ disabled }: { disabled: boolean }) {
         label="Zoom to fit"
         shortcut="⇧1"
         keyShortcuts="Shift+1"
-        tooltipAlign="end"
         disabled={disabled}
         onClick={() => {
           runCanvasCommand('zoom-fit');

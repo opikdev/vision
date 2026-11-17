@@ -1,6 +1,7 @@
 import { CenterFocusIcon, FileAddIcon, FolderOpenIcon } from '@hugeicons/core-free-icons';
+import { Button } from '@/components/ui/button';
+import { Kbd } from '@/components/ui/kbd';
 import { reportError, vision } from '../../bridge';
-import { Button } from '../../ui/Button';
 import { Icon } from '../../ui/Icon';
 
 export function StartPanel() {
@@ -17,26 +18,25 @@ export function StartPanel() {
         </p>
         <div className="mt-6 flex gap-2">
           <Button
-            variant="primary"
-            icon={FileAddIcon}
-            shortcut="⌘N"
             aria-keyshortcuts="Meta+N"
             onClick={() => {
               vision.runCommand('new-design').catch(reportError);
             }}
           >
+            <Icon icon={FileAddIcon} />
             New design
+            <Kbd>⌘N</Kbd>
           </Button>
           <Button
             variant="secondary"
-            icon={FolderOpenIcon}
-            shortcut="⌘O"
             aria-keyshortcuts="Meta+O"
             onClick={() => {
               vision.runCommand('open').catch(reportError);
             }}
           >
+            <Icon icon={FolderOpenIcon} />
             Open…
+            <Kbd>⌘O</Kbd>
           </Button>
         </div>
         <p className="mt-8 text-xs text-muted-foreground">
