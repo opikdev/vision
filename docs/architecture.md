@@ -50,5 +50,5 @@ apps/desktop/src/
   2. Apply the edit in memory.
   3. Validate, and reject the edit if it adds an error the file didn't already have.
   4. Serialize deterministically to a temp file, then rename it over the original.
-- `screenshot` runs the installed Vision app with `--screenshot`. The app renders the artboard in a hidden window, writes a PNG and exits, so screenshots match what people see.
-- The packaged app ships the server as a script run by the app's own binary with `ELECTRON_RUN_AS_NODE=1`, so users need no separate Node install.
+- `screenshot` runs the Vision app with `--vision-screenshot <file.vis> --artboard <id> --out <file.png> [--scale 1|2]`. The app renders the artboard in a hidden window with a throwaway profile, writes the PNG and exits, so screenshots match what people see. [How the server finds the app](../packages/mcp/README.md#screenshots).
+- The packaged app ships the server at `Contents/Resources/mcp/vision-mcp.mjs`, run by the app's own binary with `ELECTRON_RUN_AS_NODE=1`, so users need no separate Node install. [Releasing](releasing.md) explains the fuses that allow it.
