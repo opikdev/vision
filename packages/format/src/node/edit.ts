@@ -6,7 +6,7 @@ import { parseDocument, parseStructure } from '../parse';
 import type { VisionDocument } from '../schema';
 import { serializeDocument } from '../serialize';
 import { validateDocument } from '../validate';
-import { readTextIfExists } from './read';
+import { readDesignFile } from './read';
 import { writeDesign } from './write';
 
 const queues = new Map<string, Promise<unknown>>();
@@ -29,10 +29,13 @@ async function applyEdit(
   path: string,
   edit: (doc: VisionDocument) => VisionDocument,
 ): Promise<{ document: VisionDocument; diagnostics: Diagnostic[] }> {
-  const text = await readTextIfExists(path);
+  const file = await readDesignFile(path);
+  if (file.kind === 'too-large') {
+    throw new EditError(`${path} can't be edited: ${formatDiagnostic(file.diagnostic)}`);
+  }
   let current = createDocument();
-  if (text !== undefined) {
-    const structure = parseStructure(text);
+  if (file.kind === 'text') {
+    const structure = parseStructure(file.text);
     if (!structure.ok) {
       throw new EditError(
         `${path} can't be edited until these problems are fixed by hand:\n${list(structure.diagnostics)}`,

@@ -1,28 +1,59 @@
-import { readFile } from 'node:fs/promises';
+import { open, type FileHandle } from 'node:fs/promises';
+import { basename } from 'node:path';
 import { createDocument } from '../create';
+import type { Diagnostic } from '../diagnostics';
 import { parseDocument, type ParseResult } from '../parse';
+
+const megabyte = 1024 * 1024;
+const maxDesignBytes = 20 * megabyte;
+
+export type DesignFile =
+  | { kind: 'missing' }
+  | { kind: 'too-large'; diagnostic: Diagnostic }
+  | { kind: 'text'; text: string };
 
 export async function readDesign(
   path: string,
 ): Promise<{ text: string; result: ParseResult; exists: boolean }> {
-  const text = await readTextIfExists(path);
-  if (text === undefined) {
-    return {
-      text: '',
-      result: { ok: true, document: createDocument(), diagnostics: [] },
-      exists: false,
-    };
+  const file = await readDesignFile(path);
+  switch (file.kind) {
+    case 'missing':
+      return {
+        text: '',
+        result: { ok: true, document: createDocument(), diagnostics: [] },
+        exists: false,
+      };
+    case 'too-large':
+      return { text: '', result: { ok: false, diagnostics: [file.diagnostic] }, exists: true };
+    case 'text':
+      return { text: file.text, result: parseDocument(file.text), exists: true };
   }
-  return { text, result: parseDocument(text), exists: true };
 }
 
-export async function readTextIfExists(path: string): Promise<string | undefined> {
+export async function readDesignFile(path: string): Promise<DesignFile> {
+  let file: FileHandle;
   try {
-    return await readFile(path, 'utf8');
+    file = await open(path, 'r');
   } catch (error) {
-    if (isMissingFileError(error)) return undefined;
+    if (isMissingFileError(error)) return { kind: 'missing' };
     throw error;
   }
+  try {
+    const { size } = await file.stat();
+    if (size > maxDesignBytes) return { kind: 'too-large', diagnostic: tooLarge(path, size) };
+    return { kind: 'text', text: await file.readFile('utf8') };
+  } finally {
+    await file.close();
+  }
+}
+
+function tooLarge(path: string, size: number): Diagnostic {
+  return {
+    severity: 'error',
+    code: 'file-too-large',
+    message: `${basename(path)} is ${Math.ceil(size / megabyte)} MB; Vision opens files up to ${maxDesignBytes / megabyte} MB`,
+    path: [],
+  };
 }
 
 export function isMissingFileError(error: unknown): boolean {

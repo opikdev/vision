@@ -2,6 +2,7 @@ export type Severity = 'error' | 'warning';
 
 export type DiagnosticCode =
   | 'json-syntax'
+  | 'file-too-large'
   | 'schema'
   | 'duplicate-id'
   | 'invalid-id'

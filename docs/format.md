@@ -111,6 +111,7 @@ Every problem has a severity, a message, the place it occurred (a JSON path, wit
 
 Errors make the file invalid. Vision keeps showing the last valid version, and MCP edits that would add an error are rejected. Errors are:
 
+- a file over 20 MB;
 - JSON syntax errors;
 - a missing or wrong field, or an unknown field;
 - a duplicate or malformed id;

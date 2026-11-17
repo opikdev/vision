@@ -1,4 +1,4 @@
-import { chmod, mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, open, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -43,6 +43,43 @@ describe('readDesign', () => {
       false,
       'json-syntax',
     ]);
+  });
+});
+
+async function writeSparse(path: string, bytes: number): Promise<void> {
+  const file = await open(path, 'w');
+  await file.truncate(bytes);
+  await file.close();
+}
+
+describe('readDesign and editDesign on a file over 20 MB', () => {
+  it('reports the size instead of reading it', async () => {
+    const path = join(dir, 'checkout.vis');
+    await writeSparse(path, 210 * 1024 * 1024);
+    expect(await readDesign(path)).toEqual({
+      text: '',
+      exists: true,
+      result: {
+        ok: false,
+        diagnostics: [
+          {
+            severity: 'error',
+            code: 'file-too-large',
+            message: 'checkout.vis is 210 MB; Vision opens files up to 20 MB',
+            path: [],
+          },
+        ],
+      },
+    });
+    await expect(editDesign(path, (doc) => doc)).rejects.toThrow(
+      `${path} can't be edited: error file-too-large at (document): checkout.vis is 210 MB; Vision opens files up to 20 MB.`,
+    );
+  });
+
+  it('still reads a file of exactly 20 MB', async () => {
+    const path = join(dir, 'checkout.vis');
+    await writeSparse(path, 20 * 1024 * 1024);
+    expect((await readDesign(path)).result.diagnostics.map((d) => d.code)).toEqual(['json-syntax']);
   });
 });
 
