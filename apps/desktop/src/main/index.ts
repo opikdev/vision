@@ -1,6 +1,7 @@
 import { registerPrivilegedSchemes } from './protocols';
 import { startApp } from './app';
-import { failScreenshot, runScreenshot } from './screenshot';
+import { failHeadless } from './headless';
+import { runScreenshot } from './screenshot';
 import { parseScreenshotArgs } from './screenshot-args';
 
 registerPrivilegedSchemes();
@@ -11,7 +12,7 @@ switch (screenshot.kind) {
     startApp();
     break;
   case 'invalid':
-    failScreenshot(screenshot.message);
+    failHeadless(screenshot.message);
     break;
   case 'request':
     runScreenshot(screenshot.request);
