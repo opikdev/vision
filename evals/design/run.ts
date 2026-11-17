@@ -84,7 +84,7 @@ async function main(): Promise<void> {
     await mkdir(dir, { recursive: true });
     const run = step === 'score' ? await readRun(dir) : await generate(brief, dir);
     return step === 'generate'
-      ? { brief, run, review: undefined, error: 'not scored' }
+      ? { brief, run, review: undefined, error: undefined }
       : score(brief, dir, run);
   });
   const summary = summarize(round, results);
@@ -326,7 +326,11 @@ function summarize(round: string, results: Scored[]): string {
       review?.findings.filter((finding) => finding.severity === severity).length ?? '–';
     return [
       brief,
-      review === undefined ? `failed: ${error ?? 'not scored'}` : String(review.score),
+      review !== undefined
+        ? String(review.score)
+        : error === undefined
+          ? 'not scored'
+          : `failed: ${error}`,
       String(count('error')),
       String(count('warning')),
       String(review?.nodes ?? '–'),
