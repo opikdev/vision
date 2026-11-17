@@ -145,6 +145,7 @@ Warnings don't stop drawing:
 | `set_tokens`      | Merge tokens; `null` deletes one.                                                                  |
 | `validate`        | List every error and warning.                                                                      |
 | `screenshot`      | A PNG of an artboard, rendered by Vision, at most 2000 px on its longest side.                     |
+| `review`          | Problems people would see, measured as Vision draws the design, with a score and a fix for each.   |
 | `get_selection`   | The layer the user selected in the Vision app, with its label, artboard, page and fields.          |
 
 ### HTML for `write_html`

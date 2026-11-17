@@ -21,13 +21,16 @@ The packaged app ships this server; [Design with any AI](../../README.md#design-
 claude mcp add --scope user vision -- node <repo>/packages/mcp/dist/vision-mcp.mjs
 ```
 
-## Screenshots
+## Screenshots and reviews
 
-`screenshot` runs the Vision app:
+`screenshot` and `review` run the Vision app headless, so they match what Vision draws:
 
 ```sh
 <app> [<entry>] --vision-screenshot=<file.vis> --artboard=<id> --out=<file.png> [--scale=<n>]
+<app> [<entry>] --vision-review=<file.vis> --out=<file.json> [--artboard=<id>]
 ```
+
+`review` lists at most 40 findings, errors first, grouped by artboard; [Design review](../../docs/review.md) has the rules and the score.
 
 The server looks for the app in this order:
 

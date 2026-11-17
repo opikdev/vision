@@ -17,6 +17,12 @@ export function describeScreenshot(artboard: Artboard): LookActivity {
   };
 }
 
+export function describeReview(artboard: Artboard | undefined): LookActivity {
+  return artboard === undefined
+    ? { kind: 'look', summary: 'is reviewing the design' }
+    : { kind: 'look', artboard: artboard.id, summary: `is reviewing ${artboard.name}` };
+}
+
 export function describeEdit(before: VisionDocument, after: VisionDocument): EditActivity {
   const { touched, removed } = diffDocuments(before, after);
   const nodes = touched.flatMap(({ change, located }) =>

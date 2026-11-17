@@ -25,6 +25,9 @@ export class VisionAppError extends Error {
 export const macAppPath = '/Applications/Vision.app/Contents/MacOS/Vision';
 const timeoutSeconds = 30;
 
+export const appHint =
+  'To use another build of Vision, set VISION_APP to its executable, and VISION_APP_ENTRY to its app folder for a development build.';
+
 export function currentRuntime(): Runtime {
   return {
     env: process.env,

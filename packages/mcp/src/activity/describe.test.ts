@@ -1,6 +1,6 @@
 import type { VisionDocument } from '@vision/format';
 import { describe, expect, it } from 'vitest';
-import { describeEdit, describeReading, describeScreenshot } from './describe';
+import { describeEdit, describeReading, describeReview, describeScreenshot } from './describe';
 
 const cart = {
   id: 'cart',
@@ -132,7 +132,7 @@ describe('describeEdit', () => {
   });
 });
 
-describe('describeReading and describeScreenshot', () => {
+describe('describeReading, describeScreenshot and describeReview', () => {
   it('say what the agent looks at', () => {
     expect(describeReading()).toEqual({ kind: 'look', summary: 'is reading the design' });
     expect(describeScreenshot(cart)).toEqual({
@@ -140,5 +140,11 @@ describe('describeReading and describeScreenshot', () => {
       artboard: 'cart',
       summary: 'is taking a screenshot of Cart',
     });
+    expect(describeReview(cart)).toEqual({
+      kind: 'look',
+      artboard: 'cart',
+      summary: 'is reviewing Cart',
+    });
+    expect(describeReview(undefined)).toEqual({ kind: 'look', summary: 'is reviewing the design' });
   });
 });

@@ -7,10 +7,7 @@ import { invalidText } from '../design';
 import { errorResult, imageResult } from '../results';
 import { file, id } from '../schemas';
 import { maxScreenshotSide, screenshotSize, takeScreenshot } from '../screenshot';
-import { currentRuntime, resolveApp, VisionAppError } from '../vision-app';
-
-const appHint =
-  'To use another build of Vision, set VISION_APP to its executable, and VISION_APP_ENTRY to its app folder for a development build.';
+import { appHint, currentRuntime, resolveApp, VisionAppError } from '../vision-app';
 
 export function registerScreenshotTool(server: McpServer, activity: ToolActivity): void {
   server.registerTool(

@@ -15,7 +15,9 @@ if (option('--artboard') === 'broken') {
   process.stderr.write('No artboard has id "broken".\\n');
   process.exit(1);
 }
-if (option('--artboard') !== 'silent') {
+if (option('--vision-review') !== undefined) {
+  if (option('--artboard') !== 'silent') writeFileSync(option('--out'), process.env.FAKE_VISION_REVIEW ?? '');
+} else if (option('--artboard') !== 'silent') {
   writeFileSync(option('--out'), Buffer.from('${onePixelPng.toString('base64')}', 'base64'));
 }
 `;

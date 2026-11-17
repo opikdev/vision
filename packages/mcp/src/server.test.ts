@@ -21,6 +21,7 @@ describe('createServer', () => {
       ['set_tokens', { destructiveHint: false, idempotentHint: true }],
       ['validate', { readOnlyHint: true, idempotentHint: true }],
       ['screenshot', { readOnlyHint: true, idempotentHint: true }],
+      ['review', { readOnlyHint: true, idempotentHint: true }],
       ['get_selection', { readOnlyHint: true }],
     ]);
   });
@@ -37,7 +38,7 @@ describe('createServer', () => {
 
   it('tells the model to start with get_guide', () => {
     expect(session.client.getInstructions()).toBe(
-      "Vision designs are .vis files that the Vision app draws and redraws on every save. Call get_guide once before your first edit: it explains the format, the HTML that write_html accepts and the Tailwind classes. Always pass file as the absolute path of a .vis file; it doesn't need to exist yet, since the first edit creates it. After building or changing an artboard, check your work with validate and screenshot. When the user mentions the selected layer or the selection, call get_selection.",
+      "Vision designs are .vis files that the Vision app draws and redraws on every save. Call get_guide once before your first edit: it explains the format, the HTML that write_html accepts and the Tailwind classes. Always pass file as the absolute path of a .vis file; it doesn't need to exist yet, since the first edit creates it. After building or changing an artboard, check your work with validate, review and screenshot, and fix every error review finds. When the user mentions the selected layer or the selection, call get_selection.",
     );
   });
 
