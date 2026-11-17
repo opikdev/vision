@@ -1,10 +1,10 @@
-import { Cursor02Icon, FrameIcon, Note01Icon } from '@hugeicons/core-free-icons';
+import { Cursor02Icon, Note01Icon } from '@hugeicons/core-free-icons';
 import type { Artboard, Diagnostic, VisionDocument } from '@vision/format';
 import { SidebarMenu } from '@/components/ui/sidebar';
 import { useViewStore } from '../../stores/view-store';
 import { Icon } from '@/components/Icon';
 import { useAgentOn } from '../agents/agent-store';
-import { zoomToBounds } from '../canvas/canvas-commands';
+import { LayerTree } from '../layers/LayerTree';
 import { pageIn } from '../canvas/current-page';
 import { artboardErrorCounts, plural } from '../problems/problems';
 import { SidebarRow, SidebarSection } from './SidebarSection';
@@ -37,23 +37,18 @@ export function DesignSidebar({
           ))}
         </SidebarMenu>
       </SidebarSection>
-      <SidebarSection title="Artboards">
+      <SidebarSection title="Layers">
         {page?.artboards.length === 0 && (
           <p className="px-2 text-xs text-muted-foreground">This page has no artboards yet.</p>
         )}
-        <SidebarMenu>
-          {page?.artboards.map((artboard) => (
-            <SidebarRow
-              key={artboard.id}
-              icon={<Icon icon={FrameIcon} className="shrink-0 text-muted-foreground" />}
-              label={artboard.name}
-              trailing={<ArtboardMeta artboard={artboard} errors={errors.get(artboard.id) ?? 0} />}
-              onClick={() => {
-                zoomToBounds(artboard);
-              }}
-            />
-          ))}
-        </SidebarMenu>
+        {page !== undefined && page.artboards.length > 0 && (
+          <LayerTree
+            page={page}
+            artboardMeta={(artboard) => (
+              <ArtboardMeta artboard={artboard} errors={errors.get(artboard.id) ?? 0} />
+            )}
+          />
+        )}
       </SidebarSection>
     </>
   );

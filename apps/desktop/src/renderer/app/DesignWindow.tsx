@@ -8,6 +8,7 @@ import { useReveal } from '../features/agents/use-reveal';
 import { Canvas } from '../features/canvas/Canvas';
 import { pageIn } from '../features/canvas/current-page';
 import { EmptyDesignHint } from '../features/canvas/EmptyDesignHint';
+import { useSyncLayers } from '../features/layers/layer-store';
 import { BlockedState } from '../features/problems/BlockedState';
 import { ErrorStrip } from '../features/problems/ErrorStrip';
 import { SaveStatus } from '../features/problems/SaveStatus';
@@ -27,6 +28,7 @@ export function DesignWindow({ state }: { state: DocumentState }) {
   const diagnostics =
     state.status === 'ok' ? [...state.diagnostics, ...classWarnings] : state.diagnostics;
   const shownPage = pageIn(compiled?.document ?? null, pageId);
+  useSyncLayers(pageIn(state.document, pageId));
   const isEmpty = state.document?.pages.every((page) =>
     page.artboards.every((artboard) => artboard.children.length === 0),
   );
