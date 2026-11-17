@@ -1,7 +1,8 @@
-import { diffDocuments, type Artboard, type VisionDocument } from '@vision/format';
+import type { Artboard, VisionDocument } from '@vision/format';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { AgentTracker } from './agent-tracker';
 import { drawnBounds, drawnNode } from '../canvas/drawn-nodes';
+import { changedNodes } from './changed-nodes';
 import { nodeTarget } from './cursor-geometry';
 import { RevealScheduler } from './reveal-scheduler';
 
@@ -49,7 +50,7 @@ export function useReveal(document: VisionDocument | null, tracker: AgentTracker
 }
 
 function stepsBetween(before: VisionDocument, after: VisionDocument): Step[] {
-  return diffDocuments(before, after).touched.flatMap(({ change, located }) => {
+  return changedNodes(before, after).flatMap(({ change, located }) => {
     if (located.kind !== 'node') return [];
     const element = drawnNode(located.artboard.id, located.node.id);
     if (element === null) return [];
