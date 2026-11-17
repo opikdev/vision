@@ -56,11 +56,11 @@ export function runCanvasCommand(command: CanvasCommand): void {
   }
 }
 
-export function zoomToBounds(bounds: Bounds): void {
+export function zoomToBounds(bounds: Bounds, zoomLimit = 1): void {
   const page = currentPage();
   const { canvasSize, setViewport } = useViewStore.getState();
   if (page !== undefined && canvasSize !== null) {
-    setViewport(page.id, fitBounds(bounds, canvasSize, fitPadding));
+    setViewport(page.id, fitBounds(bounds, canvasSize, fitPadding, 0, zoomLimit));
   }
 }
 

@@ -22,6 +22,7 @@ import {
 import { cn } from 'cn';
 import { Icon, type IconSvgElement } from '@/components/Icon';
 import { isArtboard, labelFor, visibleRows, type Layer, type LayerRow } from './layer-rows';
+import { LayerMenu } from './LayerMenu';
 import { useLayerStore } from './layer-store';
 
 const typeIcons: Record<string, IconSvgElement> = {
@@ -116,28 +117,38 @@ export function LayerTree({
   };
 
   return (
-    <div
-      ref={tree}
-      role="tree"
-      aria-label="Layers"
-      className="flex flex-col"
-      onKeyDown={onKeyDown}
-      onPointerLeave={() => {
-        useLayerStore.getState().hover(null);
-      }}
-    >
-      {rows.map((row) => (
-        <LayerTreeRow
-          key={row.id}
-          row={row}
-          pageId={page.id}
-          selected={row.id === selectedId}
-          tabbable={row.id === tabStopId}
-          meta={isArtboard(row.layer) ? artboardMeta(row.layer) : null}
-          onFocus={setFocusedId}
-        />
-      ))}
-    </div>
+    <LayerMenu page={page}>
+      <div
+        ref={tree}
+        role="tree"
+        aria-label="Layers"
+        className="flex flex-col"
+        onKeyDown={onKeyDown}
+        onPointerLeave={() => {
+          useLayerStore.getState().hover(null);
+        }}
+        onContextMenu={(event) => {
+          const id =
+            event.target instanceof Element
+              ? event.target.closest('[data-layer-id]')?.getAttribute('data-layer-id')
+              : undefined;
+          if (id == null) event.stopPropagation();
+          else useLayerStore.getState().select({ pageId: page.id, id });
+        }}
+      >
+        {rows.map((row) => (
+          <LayerTreeRow
+            key={row.id}
+            row={row}
+            pageId={page.id}
+            selected={row.id === selectedId}
+            tabbable={row.id === tabStopId}
+            meta={isArtboard(row.layer) ? artboardMeta(row.layer) : null}
+            onFocus={setFocusedId}
+          />
+        ))}
+      </div>
+    </LayerMenu>
   );
 }
 

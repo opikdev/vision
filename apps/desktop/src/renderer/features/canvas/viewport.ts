@@ -54,12 +54,15 @@ export function fitBounds(
   size: Size,
   padding: number,
   reserveBottom = 0,
+  zoomLimit = 1,
 ): Viewport {
   const area = {
     width: Math.max(1, size.width - padding * 2),
     height: Math.max(1, size.height - padding * 2 - reserveBottom),
   };
-  const zoom = clampZoom(Math.min(area.width / bounds.width, area.height / bounds.height, 1));
+  const zoom = clampZoom(
+    Math.min(area.width / bounds.width, area.height / bounds.height, zoomLimit),
+  );
   return {
     x: padding + (area.width - bounds.width * zoom) / 2 - bounds.x * zoom,
     y: padding + (area.height - bounds.height * zoom) / 2 - bounds.y * zoom,

@@ -5,7 +5,13 @@ export const appCommands = ['new-design', 'open', 'show-in-finder', 'copy-path',
 export type AppCommand = (typeof appCommands)[number];
 
 export type ViewCommand =
-  'toggle-sidebar' | 'zoom-in' | 'zoom-out' | 'zoom-reset' | 'zoom-fit' | 'connect-ai';
+  | 'toggle-sidebar'
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'zoom-reset'
+  | 'zoom-fit'
+  | 'zoom-layer'
+  | 'connect-ai';
 
 export type DocumentStatus = 'ok' | 'invalid' | 'missing' | 'read-error';
 

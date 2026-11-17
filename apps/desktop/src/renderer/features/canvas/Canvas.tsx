@@ -80,6 +80,7 @@ export function Canvas({
       }}
       onPointerCancel={handlers.onPointerCancel}
       onPointerLeave={layers.onPointerLeave}
+      onContextMenu={layers.onContextMenu}
     >
       {viewport !== null && css !== null && (
         <>

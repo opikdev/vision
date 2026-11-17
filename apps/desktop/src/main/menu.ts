@@ -82,6 +82,7 @@ export function buildMenu({ hasDesign, run }: MenuContext): Menu {
         view('Zoom out', 'zoom-out', 'CommandOrControl+-'),
         view('Actual size', 'zoom-reset', 'CommandOrControl+0'),
         view('Zoom to fit', 'zoom-fit', 'Shift+1'),
+        view('Zoom to layer', 'zoom-layer', 'Shift+2'),
         ...development,
         { type: 'separator' },
         { role: 'togglefullscreen' },

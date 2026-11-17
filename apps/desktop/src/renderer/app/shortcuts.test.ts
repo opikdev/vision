@@ -18,12 +18,14 @@ describe('shortcutCommand', () => {
     [{ key: '-', ctrlKey: true }, 'zoom-out'],
     [{ key: '0', metaKey: true }, 'zoom-reset'],
     [{ key: '!', code: 'Digit1', shiftKey: true }, 'zoom-fit'],
+    [{ key: '@', code: 'Digit2', shiftKey: true }, 'zoom-layer'],
   ] as const)('maps %j to %s', (press, command) => {
     expect(shortcutCommand({ ...none, ...press })).toBe(command);
   });
 
   it.each([
     [{ key: '1', code: 'Digit1' }],
+    [{ key: '2', code: 'Digit2' }],
     [{ key: '=', metaKey: true, altKey: true }],
     [{ key: '!', code: 'Digit1', shiftKey: true, metaKey: true }],
     [{ key: 'n', metaKey: true }],

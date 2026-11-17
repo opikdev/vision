@@ -88,6 +88,13 @@ describe('fitBounds', () => {
     ).toEqual({ x: 200, y: 150, zoom: 1 });
   });
 
+  it('zooms in up to the given limit', () => {
+    const bounds = { x: 100, y: 100, width: 200, height: 100 };
+    const size = { width: 800, height: 600 };
+    expect(fitBounds(bounds, size, 40, 0, 8)).toEqual({ x: -320, y: -240, zoom: 3.6 });
+    expect(fitBounds(bounds, size, 40, 0, 2)).toEqual({ x: 0, y: 0, zoom: 2 });
+  });
+
   it('leaves room below the bounds when asked', () => {
     expect(
       fitBounds({ x: 0, y: 0, width: 1000, height: 1000 }, { width: 1100, height: 1100 }, 50, 500),

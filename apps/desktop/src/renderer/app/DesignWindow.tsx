@@ -9,6 +9,7 @@ import { Canvas } from '../features/canvas/Canvas';
 import { pageIn } from '../features/canvas/current-page';
 import { EmptyDesignHint } from '../features/canvas/EmptyDesignHint';
 import { useSyncLayers } from '../features/layers/layer-store';
+import { LayerMenu } from '../features/layers/LayerMenu';
 import { LayerOverlays } from '../features/layers/LayerOverlays';
 import { useLayerKeys } from '../features/layers/use-layer-keys';
 import { BlockedState } from '../features/problems/BlockedState';
@@ -55,26 +56,30 @@ export function DesignWindow({ state }: { state: DocumentState }) {
         <BlockedState state={state} diagnostics={diagnostics} />
       ) : (
         <>
-          <Canvas
-            page={shownPage}
-            css={compiled?.css ?? null}
-            assetToken={state.assetToken}
-            assetsVersion={state.assetsVersion}
-            overlay={(viewport) => (
-              <>
-                {isEmpty === true && (
-                  <EmptyDesignHint
-                    artboard={shownPage?.artboards[0]}
-                    viewport={viewport}
-                    path={state.path}
-                    displayPath={state.displayPath}
-                  />
-                )}
-                {shownPage !== undefined && <LayerOverlays page={shownPage} viewport={viewport} />}
-                <AgentCursors page={shownPage} viewport={viewport} />
-              </>
-            )}
-          />
+          <LayerMenu page={shownPage}>
+            <Canvas
+              page={shownPage}
+              css={compiled?.css ?? null}
+              assetToken={state.assetToken}
+              assetsVersion={state.assetsVersion}
+              overlay={(viewport) => (
+                <>
+                  {isEmpty === true && (
+                    <EmptyDesignHint
+                      artboard={shownPage?.artboards[0]}
+                      viewport={viewport}
+                      path={state.path}
+                      displayPath={state.displayPath}
+                    />
+                  )}
+                  {shownPage !== undefined && (
+                    <LayerOverlays page={shownPage} viewport={viewport} />
+                  )}
+                  <AgentCursors page={shownPage} viewport={viewport} />
+                </>
+              )}
+            />
+          </LayerMenu>
           {state.status === 'invalid' && (
             <ErrorStrip diagnostics={diagnostics} document={state.document} />
           )}

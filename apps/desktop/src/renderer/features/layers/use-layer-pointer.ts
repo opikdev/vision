@@ -1,33 +1,33 @@
 import type { Page } from '@vision/format';
 import { useRef, type MouseEvent, type PointerEvent } from 'react';
-import { layerAt } from './canvas-layers';
+import { layerPathAt } from './canvas-layers';
 import { useLayerStore } from './layer-store';
 
 const clickSlop = 4;
 
-export function useLayerPointer(page: Page | undefined, panning: boolean) {
+export function useLayerPointer(page: Page | undefined, grabbing: boolean) {
   const down = useRef<{ x: number; y: number } | null>(null);
 
-  const pointed = (event: MouseEvent): string | null => {
-    if (page === undefined || !(event.target instanceof Element)) return null;
-    const label = event.target.closest('[data-artboard-label]');
-    if (label !== null) return label.getAttribute('data-artboard-label');
-    return layerAt(page, { x: event.clientX, y: event.clientY });
+  const pointedPath = (event: MouseEvent): string[] => {
+    if (page === undefined || !(event.target instanceof Element)) return [];
+    if (isOnControl(event)) return [];
+    const label = event.target
+      .closest('[data-artboard-label]')
+      ?.getAttribute('data-artboard-label');
+    if (label != null) return [label];
+    return layerPathAt(page, { x: event.clientX, y: event.clientY });
   };
-
-  const onControl = (event: MouseEvent) =>
-    event.target instanceof Element && event.target.closest('button, a, input') !== null;
 
   return {
     onPointerDown: (event: PointerEvent) => {
       down.current =
-        event.button === 0 && !panning && !onControl(event)
+        event.button === 0 && !grabbing && !isOnControl(event)
           ? { x: event.clientX, y: event.clientY }
           : null;
     },
     onPointerMove: (event: PointerEvent) => {
-      if (event.buttons !== 0 || panning) return;
-      useLayerStore.getState().hover(onControl(event) ? null : pointed(event));
+      if (event.buttons !== 0 || grabbing) return;
+      useLayerStore.getState().hover(pointedPath(event)[0] ?? null);
     },
     onPointerUp: (event: PointerEvent) => {
       const start = down.current;
@@ -35,12 +35,23 @@ export function useLayerPointer(page: Page | undefined, panning: boolean) {
       if (start === null || page === undefined) return;
       const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y);
       if (moved > clickSlop) return;
-      const id = pointed(event);
-      if (id === null) useLayerStore.getState().select(null);
+      const id = pointedPath(event)[0];
+      if (id === undefined) useLayerStore.getState().select(null);
       else useLayerStore.getState().reveal(page, id);
     },
     onPointerLeave: () => {
       useLayerStore.getState().hover(null);
     },
+    onContextMenu: (event: MouseEvent) => {
+      const path = pointedPath(event);
+      const selected = useLayerStore.getState().selection?.id;
+      const id = selected !== undefined && path.includes(selected) ? selected : path[0];
+      if (id === undefined || page === undefined) event.stopPropagation();
+      else useLayerStore.getState().reveal(page, id);
+    },
   };
+}
+
+function isOnControl(event: MouseEvent): boolean {
+  return event.target instanceof Element && event.target.closest('button, a, input') !== null;
 }
