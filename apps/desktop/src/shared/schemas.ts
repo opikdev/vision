@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export { selectionSchema } from '@vision/activity';
 import { appCommands } from './contract';
 
 export const pathSchema = z.string().min(1).max(4096);

@@ -1,3 +1,4 @@
+import type { Selection } from '@vision/activity';
 import { assetsDirFor } from '@vision/format/node';
 import { app, BrowserWindow } from 'electron';
 import { join } from 'node:path';
@@ -14,7 +15,10 @@ interface Entry {
   path: string | null;
   session: DocumentSession | null;
   assetToken: string | null;
+  selection: Selection;
 }
+
+const nothingSelected: Selection = { pageId: null, nodeIds: [] };
 
 export function createBrowserWindow(
   options: Electron.BrowserWindowConstructorOptions,
@@ -55,7 +59,12 @@ export class WindowRegistry {
       titleBarStyle: 'hiddenInset',
       trafficLightPosition: { x: 18, y: 17 },
     });
-    this.#entries.set(window, { path: null, session: null, assetToken: null });
+    this.#entries.set(window, {
+      path: null,
+      session: null,
+      assetToken: null,
+      selection: nothingSelected,
+    });
     window.once('ready-to-show', () => {
       window.show();
     });
@@ -77,6 +86,15 @@ export class WindowRegistry {
 
   pathOf(window: BrowserWindow): string | null {
     return this.#entries.get(window)?.path ?? null;
+  }
+
+  selectionOf(window: BrowserWindow): Selection {
+    return this.#entries.get(window)?.selection ?? nothingSelected;
+  }
+
+  setSelection(window: BrowserWindow, selection: Selection): void {
+    const entry = this.#entries.get(window);
+    if (entry !== undefined) entry.selection = selection;
   }
 
   stateOf(window: BrowserWindow): DocumentState | null {

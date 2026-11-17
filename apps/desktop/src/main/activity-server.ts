@@ -1,25 +1,40 @@
-import { maxLineBytes, parseActivity, type ActivityMessage } from '@vision/activity';
+import {
+  encodeLine,
+  maxLineBytes,
+  parseActivity,
+  parseSelectionRequest,
+  type ActivityMessage,
+  type Selection,
+  type SelectionRequest,
+  type SelectionResponse,
+} from '@vision/activity';
 import { chmod, mkdir, realpath, unlink } from 'node:fs/promises';
 import { createConnection, createServer, type Server, type Socket } from 'node:net';
 import { dirname } from 'node:path';
 import { isMissingFileError } from '@vision/format/node';
 
 export type ActivityDelivery = (message: ActivityMessage, file: string) => void;
+export type SelectionLookup = (file: string) => Selection | undefined;
 
 const maxCachedPaths = 256;
 
 export class ActivityServer {
   readonly #server: Server;
   readonly #deliver: ActivityDelivery;
+  readonly #lookUp: SelectionLookup;
   readonly #sockets = new Set<Socket>();
   readonly #realpaths = new Map<string, string>();
   #queue = Promise.resolve();
 
-  static async start(path: string, deliver: ActivityDelivery): Promise<ActivityServer | undefined> {
+  static async start(
+    path: string,
+    deliver: ActivityDelivery,
+    lookUp: SelectionLookup,
+  ): Promise<ActivityServer | undefined> {
     await mkdir(dirname(path), { recursive: true, mode: 0o700 });
     if (await answers(path)) return undefined;
     await removeStale(path);
-    const activity = new ActivityServer(deliver);
+    const activity = new ActivityServer(deliver, lookUp);
     await new Promise<void>((resolve, reject) => {
       activity.#server.once('error', reject);
       activity.#server.listen(path, () => {
@@ -31,8 +46,9 @@ export class ActivityServer {
     return activity;
   }
 
-  private constructor(deliver: ActivityDelivery) {
+  private constructor(deliver: ActivityDelivery, lookUp: SelectionLookup) {
     this.#deliver = deliver;
+    this.#lookUp = lookUp;
     this.#server = createServer((socket) => {
       this.#accept(socket);
     });
@@ -63,7 +79,7 @@ export class ActivityServer {
       for (let end = buffer.indexOf('\n'); end >= 0; end = buffer.indexOf('\n')) {
         const line = buffer.slice(0, end);
         buffer = buffer.slice(end + 1);
-        if (!skipping && Buffer.byteLength(line) <= maxLineBytes) this.#receive(line, open);
+        if (!skipping && Buffer.byteLength(line) <= maxLineBytes) this.#receive(line, open, socket);
         skipping = false;
       }
       if (Buffer.byteLength(buffer) > maxLineBytes) {
@@ -82,7 +98,12 @@ export class ActivityServer {
     });
   }
 
-  #receive(line: string, open: Map<string, ActivityMessage>): void {
+  #receive(line: string, open: Map<string, ActivityMessage>, socket: Socket): void {
+    const request = parseSelectionRequest(line);
+    if (request !== undefined) {
+      this.#answer(request, socket);
+      return;
+    }
     const message = parseActivity(line);
     if (message === undefined) return;
     const key = `${message.session}\u0000${message.file}`;
@@ -99,6 +120,22 @@ export class ActivityServer {
       })
       .catch((error: unknown) => {
         console.error(`Routing agent activity for ${message.file} failed:`, error);
+      });
+  }
+
+  #answer(request: SelectionRequest, socket: Socket): void {
+    this.#queue = this.#queue
+      .then(async () => {
+        // A path that can't be resolved can't be the file a window shows.
+        const file = await this.#realpath(request.file).catch(() => undefined);
+        const selection = file === undefined ? undefined : this.#lookUp(file);
+        const response: SelectionResponse['response'] =
+          selection === undefined ? { status: 'not-open' } : { status: 'open', selection };
+        const line = encodeLine({ v: 1, id: request.id, response });
+        if (line !== undefined && !socket.destroyed) socket.write(line);
+      })
+      .catch((error: unknown) => {
+        console.error(`Answering a selection request for ${request.file} failed:`, error);
       });
   }
 

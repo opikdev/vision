@@ -89,10 +89,17 @@ export function startApp(): void {
 }
 
 function listenForAgents(windows: WindowRegistry): void {
-  ActivityServer.start(socketPath(), ({ session, agent, activity }, file) => {
-    const update: AgentActivity = { session, agent, activity };
-    windows.findByPath(file)?.webContents.send(channels.agentActivity, update);
-  }).then(
+  ActivityServer.start(
+    socketPath(),
+    ({ session, agent, activity }, file) => {
+      const update: AgentActivity = { session, agent, activity };
+      windows.findByPath(file)?.webContents.send(channels.agentActivity, update);
+    },
+    (file) => {
+      const window = windows.findByPath(file);
+      return window === undefined ? undefined : windows.selectionOf(window);
+    },
+  ).then(
     (server) => {
       app.once('will-quit', () => {
         server?.close().catch((error: unknown) => {

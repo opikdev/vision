@@ -26,6 +26,7 @@ const api: VisionApi = {
   captureReady: () => ipcRenderer.invoke(channels.captureReady),
   captureFailed: (message) => ipcRenderer.invoke(channels.captureFailed, message),
   onAgentActivity: (listener) => subscribe(channels.agentActivity, listener),
+  setSelection: (selection) => ipcRenderer.invoke(channels.setSelection, selection),
   getPathForFile: (file) => webUtils.getPathForFile(file),
 };
 

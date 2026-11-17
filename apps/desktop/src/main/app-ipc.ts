@@ -1,6 +1,11 @@
 import { app, clipboard } from 'electron';
 import { channels } from '../shared/channels';
-import { appCommandSchema, clipboardTextSchema, pathSchema } from '../shared/schemas';
+import {
+  appCommandSchema,
+  clipboardTextSchema,
+  pathSchema,
+  selectionSchema,
+} from '../shared/schemas';
 import type { Commands } from './commands';
 import { handle, handleWith } from './ipc';
 import { resolveMcpServer } from './mcp-command';
@@ -19,6 +24,9 @@ export function registerAppIpc(
   handleWith(channels.runCommand, appCommandSchema, (window, command) =>
     commands.run(command, window),
   );
+  handleWith(channels.setSelection, selectionSchema, (window, selection) => {
+    windows.setSelection(window, selection);
+  });
   handleWith(channels.writeClipboard, clipboardTextSchema, (_window, text) =>
     clipboard.writeText(text),
   );

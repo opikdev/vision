@@ -12,6 +12,7 @@ import { useSyncLayers } from '../features/layers/layer-store';
 import { LayerMenu } from '../features/layers/LayerMenu';
 import { LayerOverlays } from '../features/layers/LayerOverlays';
 import { useLayerKeys } from '../features/layers/use-layer-keys';
+import { useShareSelection } from '../features/layers/use-share-selection';
 import { BlockedState } from '../features/problems/BlockedState';
 import { ErrorStrip } from '../features/problems/ErrorStrip';
 import { SaveStatus } from '../features/problems/SaveStatus';
@@ -31,7 +32,9 @@ export function DesignWindow({ state }: { state: DocumentState }) {
   const diagnostics =
     state.status === 'ok' ? [...state.diagnostics, ...classWarnings] : state.diagnostics;
   const shownPage = pageIn(compiled?.document ?? null, pageId);
-  useSyncLayers(pageIn(state.document, pageId));
+  const page = pageIn(state.document, pageId);
+  useSyncLayers(page);
+  useShareSelection(page?.id ?? null);
   useLayerKeys();
   const isEmpty = state.document?.pages.every((page) =>
     page.artboards.every((artboard) => artboard.children.length === 0),
@@ -40,7 +43,7 @@ export function DesignWindow({ state }: { state: DocumentState }) {
   return (
     <WindowFrame
       title={
-        <DocumentTitle name={state.name} pageName={pageIn(state.document, pageId)?.name}>
+        <DocumentTitle name={state.name} pageName={page?.name}>
           <AgentStatus />
           <SaveStatus state={state} diagnostics={diagnostics} showUpdated={!agentWorking} />
         </DocumentTitle>

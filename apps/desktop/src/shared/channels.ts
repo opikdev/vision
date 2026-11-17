@@ -12,4 +12,5 @@ export const channels = {
   captureReady: 'capture:ready',
   captureFailed: 'capture:failed',
   agentActivity: 'agent:activity',
+  setSelection: 'selection:set',
 } as const;
