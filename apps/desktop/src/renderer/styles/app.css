@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+
+@theme {
+  --color-*: initial;
+  --color-bg: #1c1c1c;
+  --color-canvas: #161616;
+  --color-hover: #262626;
+  --color-active: #2b2b2b;
+  --color-line: #2a2a2a;
+  --color-line-strong: #333333;
+  --color-popover: #232323;
+  --color-ink: #e5e5e5;
+  --color-ink-subtle: #a1a1a1;
+  --color-red: #f87171;
+  --color-red-tint: #341c1c;
+  --color-focus: #60a5fa;
+
+  --radius-*: initial;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --font-*: initial;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  --text-*: initial;
+  --text-sm: 12px;
+  --text-sm--line-height: 16px;
+  --text-base: 13px;
+  --text-base--line-height: 20px;
+  --text-title: 17px;
+  --text-title--line-height: 24px;
+
+  --shadow-*: initial;
+  --shadow-popover: 0 8px 24px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    letter-spacing: -0.15px;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    cursor: default;
+  }
+
+  code,
+  kbd {
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 1px;
+  }
+}
+
+@utility drag-region {
+  -webkit-app-region: drag;
+}
+
+@utility no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(circle, var(--color-hover) 1px, transparent 1.5px);
+  background-size: 18px 18px;
+}
