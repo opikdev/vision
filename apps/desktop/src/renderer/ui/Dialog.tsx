@@ -12,11 +12,15 @@ export function Dialog({
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const opener = useRef(document.activeElement);
   const titleId = useId();
   useEffect(() => {
     const dialog = ref.current;
-    dialog?.showModal();
-    return () => dialog?.close();
+    const returnTo = opener.current;
+    if (dialog !== null && !dialog.open) dialog.showModal();
+    return () => {
+      if (returnTo instanceof HTMLElement) returnTo.focus();
+    };
   }, []);
   return (
     <dialog
