@@ -45,5 +45,6 @@ export {
 } from './schema';
 export { serializeDocument } from './serialize';
 export { sanitizeSvg, SvgError } from './svg';
+export { createTailwindEngine, type TailwindEngine, type TailwindStylesheets } from './tailwind';
 export { tokensToThemeCss } from './tokens';
 export { validateDocument } from './validate';
