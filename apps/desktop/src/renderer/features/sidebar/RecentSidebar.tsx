@@ -3,7 +3,7 @@ import { SidebarMenu, SidebarMenuAction, SidebarMenuItem } from '@/components/ui
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { reportError, vision } from '../../bridge';
 import { useRecentStore } from '../../stores/recent-store';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 import { SidebarRow, SidebarSection } from './SidebarSection';
 
 export function RecentSidebar() {

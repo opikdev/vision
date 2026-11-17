@@ -1,8 +1,8 @@
 import type { Artboard, Page } from '@vision/format';
 import { memo, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
+import { cn } from 'cn';
 import { ArtboardFrame } from '../../design/ArtboardFrame';
 import { useViewStore, type Viewport } from '../../stores/view-store';
-import { cx } from '../../ui/cx';
 import { fitPage, resizeCanvas } from './canvas-commands';
 import { useCanvasGestures } from './use-canvas-gestures';
 import { labelRoom } from './viewport';
@@ -62,7 +62,7 @@ export function Canvas({
       role="region"
       aria-label="Canvas"
       tabIndex={-1}
-      className={cx('dot-grid absolute inset-0 overflow-hidden outline-none', cursor)}
+      className={cn('dot-grid absolute inset-0 overflow-hidden outline-none', cursor)}
       style={{ backgroundPosition: `${x}px ${y}px` }}
       {...handlers}
     >

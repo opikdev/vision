@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/empty';
 import { Kbd } from '@/components/ui/kbd';
 import { reportError, vision } from '../../bridge';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 
 export function StartPanel() {
   return (

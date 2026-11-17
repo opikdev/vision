@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
+import { cn } from 'cn';
 import { Separator } from '@/components/ui/separator';
 import { useViewStore } from '../../stores/view-store';
-import { cx } from '../../ui/cx';
 import { AppMenu } from '../app-menu/AppMenu';
 import { SidebarToggle } from './SidebarToggle';
 
@@ -10,7 +10,7 @@ export function TopBar({ title, actions }: { title: ReactNode; actions?: ReactNo
   return (
     <header className="drag-region flex h-12 shrink-0 items-center">
       <div
-        className={cx(
+        className={cn(
           'flex h-full shrink-0 items-center pl-[76px]',
           sidebarVisible ? 'w-62 justify-between pr-2' : 'gap-2.5',
         )}

@@ -4,7 +4,7 @@ import { cn } from 'cn';
 import type * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Icon } from '@/ui/Icon';
+import { Icon } from '@/components/Icon';
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;

@@ -4,8 +4,8 @@ import { useRef } from 'react';
 import { IconButton } from '@/components/IconButton';
 import { Alert, AlertAction, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Icon } from '../../ui/Icon';
-import { useCopy } from '../../ui/use-copy';
+import { Icon } from '@/components/Icon';
+import { useCopy } from '@/hooks/use-copy';
 import { ProblemsPopover } from './ProblemsPopover';
 import { ProblemText } from './ProblemText';
 

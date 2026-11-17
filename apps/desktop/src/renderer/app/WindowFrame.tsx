@@ -1,5 +1,5 @@
-import { cn } from 'cn';
 import type { ReactNode } from 'react';
+import { cn } from 'cn';
 import { Sidebar, SidebarContent, SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { useViewStore } from '../stores/view-store';
 import { ConnectAiDialog } from '../features/connect-ai/ConnectAiDialog';

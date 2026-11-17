@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { cn } from 'cn';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,8 +12,7 @@ import type { McpServer } from '../../../shared/contract';
 import { reportError, vision } from '../../bridge';
 import { useDocumentStore } from '../../stores/document-store';
 import { useViewStore } from '../../stores/view-store';
-import { cx } from '../../ui/cx';
-import { useCopy } from '../../ui/use-copy';
+import { useCopy } from '@/hooks/use-copy';
 import { claudeCodeSetup, codexSetup, jsonSetup, samplePrompt } from './setup';
 
 export function ConnectAiDialog() {
@@ -99,7 +99,7 @@ function Snippet({
         </Button>
       </div>
       <pre
-        className={cx(
+        className={cn(
           'mt-1 max-h-48 overflow-auto rounded-md border border-border bg-background px-3 py-2 whitespace-pre-wrap select-text [overflow-wrap:anywhere]',
           prose ? 'font-sans' : 'font-mono text-xs tracking-normal',
         )}

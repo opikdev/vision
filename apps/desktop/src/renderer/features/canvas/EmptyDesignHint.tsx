@@ -2,9 +2,9 @@ import { Copy01Icon, PlugSocketIcon } from '@hugeicons/core-free-icons';
 import type { Artboard } from '@vision/format';
 import { Button } from '@/components/ui/button';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 import { useViewStore } from '../../stores/view-store';
-import { useCopy } from '../../ui/use-copy';
+import { useCopy } from '@/hooks/use-copy';
 import type { Viewport } from '../../stores/view-store';
 
 export function EmptyDesignHint({

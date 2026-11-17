@@ -2,7 +2,7 @@ import { Alert02Icon } from '@hugeicons/core-free-icons';
 import type { Diagnostic } from '@vision/format';
 import { Badge } from '@/components/ui/badge';
 import type { DocumentState } from '../../../shared/contract';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 import { UpdatedAgo } from '../toolbar/UpdatedAgo';
 import { countProblems, plural } from './problems';
 import { ProblemsPopover } from './ProblemsPopover';

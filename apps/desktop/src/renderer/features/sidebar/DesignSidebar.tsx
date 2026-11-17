@@ -2,7 +2,7 @@ import { Cursor02Icon, FrameIcon, Note01Icon } from '@hugeicons/core-free-icons'
 import type { Artboard, Diagnostic, VisionDocument } from '@vision/format';
 import { SidebarMenu } from '@/components/ui/sidebar';
 import { useViewStore } from '../../stores/view-store';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 import { useAgentOn } from '../agents/agent-store';
 import { zoomToBounds } from '../canvas/canvas-commands';
 import { pageIn } from '../canvas/current-page';

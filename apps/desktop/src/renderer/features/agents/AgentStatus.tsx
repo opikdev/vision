@@ -1,6 +1,6 @@
 import { Cursor02Icon } from '@hugeicons/core-free-icons';
-import { cx } from '../../ui/cx';
-import { Icon } from '../../ui/Icon';
+import { cn } from 'cn';
+import { Icon } from '@/components/Icon';
 import { useLatestAgent } from './agent-store';
 
 export function AgentStatus() {
@@ -8,7 +8,7 @@ export function AgentStatus() {
   return (
     <span
       role="status"
-      className={cx(
+      className={cn(
         'flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground transition-opacity duration-200',
         presence?.leaving === true && 'opacity-0',
       )}

@@ -1,6 +1,6 @@
 import { Note01Icon } from '@hugeicons/core-free-icons';
 import type { ReactNode } from 'react';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 
 export function DocumentTitle({
   name,

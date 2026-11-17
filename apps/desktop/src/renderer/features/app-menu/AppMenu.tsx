@@ -28,7 +28,7 @@ import { reportError, vision } from '../../bridge';
 import { useDocumentStore } from '../../stores/document-store';
 import { useRecentStore } from '../../stores/recent-store';
 import { useViewStore } from '../../stores/view-store';
-import { Icon, type IconSvgElement } from '../../ui/Icon';
+import { Icon, type IconSvgElement } from '@/components/Icon';
 
 const run = (command: AppCommand) => () => {
   vision.runCommand(command).catch(reportError);

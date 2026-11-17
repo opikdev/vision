@@ -7,9 +7,9 @@ import {
 } from '@hugeicons/core-free-icons';
 import type { Page } from '@vision/format';
 import type { CSSProperties } from 'react';
+import { cn } from 'cn';
 import { useViewStore, type Viewport } from '../../stores/view-store';
-import { cx } from '../../ui/cx';
-import { Icon } from '../../ui/Icon';
+import { Icon } from '@/components/Icon';
 import { panTo } from '../canvas/canvas-commands';
 import { useAgentStore, type AgentPresence } from './agent-store';
 import {
@@ -76,7 +76,7 @@ function AgentCursor({
   return (
     <div
       aria-hidden="true"
-      className={cx(
+      className={cn(
         'pointer-events-none absolute top-0 left-0 origin-top-left transition-opacity duration-200 starting:opacity-0',
         (hidden || presence.leaving) && 'opacity-0',
       )}
@@ -128,7 +128,7 @@ function EdgePill({
     <button
       type="button"
       aria-label={`Go to ${artboardName}, where ${presence.agent} is working`}
-      className={cx(
+      className={cn(
         'absolute flex h-8 items-center gap-2 rounded-md border border-border-strong bg-popover pr-1.5 pl-2.5 text-xs whitespace-nowrap text-muted-foreground shadow-popover transition-opacity duration-200 starting:opacity-0 hover:bg-active hover:text-foreground active:bg-active',
         presence.leaving && 'opacity-0',
       )}

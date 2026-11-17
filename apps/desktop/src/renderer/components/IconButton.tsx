@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Icon, type IconSvgElement } from '../ui/Icon';
+import { Icon, type IconSvgElement } from '@/components/Icon';
 
 export function IconButton({
   icon,
