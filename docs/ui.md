@@ -40,10 +40,18 @@ The rules for Vision's own interface (not for the designs it shows). The approve
 - **Zoom**: zoom out, the zoom level, zoom in and an icon-only "Zoom to fit" (`FitToScreen`), right-aligned in the top bar.
 - **States**: every interactive element has hover, pressed, disabled and a visible focus ring (the global 2px `ring` outline, not shadcn's `ring-*` utilities). Nothing moves focus on its own, and redraws on save never steal focus or reset the viewport.
 - **Motion**: menus, popovers, tooltips and the dialog fade and zoom in over 100ms, and the sidebar slides over 200ms. With reduced motion, every shadcn component (`[data-slot]`) appears at once.
+- **Layers**: the sidebar's "Layers" section is a tree (WAI-ARIA tree view) under "Pages".
+  - **Rows**: artboards at the top level with their size in 12px `muted-foreground`; nodes indent 12px per level. Rows are 28px with 8px radius: a 16px chevron slot (`ArrowRight01`/`ArrowDown01` at 12px), a 16px type icon in `muted-foreground` (`foreground` when selected), then the label, cut with an ellipsis. Hover fills `accent`, selected fills `active`.
+  - **Type icons**: artboard `Frame`, frame `Square`, text `Text`, image `Image01`, svg `VectorSquare`.
+  - **Labels**: a layer's `name`, or one derived by `layerLabel` in `@vision/format` (text, image alt or file name, icon title, meaningful id, or role and first text such as "List · Cortado"). Never a generated id like `div-23`.
+  - **Keyboard**: ↑/↓ move, → expands or goes to the first child, ← collapses or goes to the parent, Home/End, Enter/Space select, Escape clears the selection.
+  - **Canvas**: hovering a row or an element draws a 1px `ring` outline around it; the selected layer gets a 1.5px `ring` outline and a size chip 6px below it (`ring` fill, `primary-foreground` 12px medium tabular text, 20px tall, 6px radius, design pixels such as `330 × 48`). Clicking an element selects the deepest layer under the pointer, expands its ancestors and scrolls its row into view without moving the viewport; clicking an artboard's name selects the artboard; clicking empty canvas clears. Outlines live above the iframes, never in the design.
+  - **Context menu**: right-clicking a row or an element selects it and opens "Zoom to layer" (`ZoomInArea`, ⇧2, also a global shortcut) and "Copy layer id" (`Copy01`, the id in JetBrains Mono where a shortcut would be). Zoom to layer fits the layer with the zoom-to-fit padding.
 - **Agent activity**: shown only while an AI works, never moving the viewport on its own.
   - **Cursor**: Hugeicons `Cursor02`, 18px, `background` fill with a `foreground` stroke, and a name pill below-right (`background` fill, `border-strong` border, 6px radius, 20px tall, 12px medium text). It glides 300ms to each new element and stays pinned to the design while you pan or zoom. It's `aria-hidden`; the status carries the meaning.
   - **Status**: after the breadcrumb, a 14px cursor icon and "**Claude Code** is adding 4 elements to Cart" in 12px `muted-foreground`, with the name in `foreground` medium, inside `role="status"`. It replaces "Updated …" while shown, says "is thinking" between steps, and fades after `done` or a minute without messages.
   - **Sidebar**: the artboard row shows a 12px cursor and the agent's name instead of its size.
+  - **Looking at a layer**: when an AI calls `get_selection`, its cursor moves to the selected layer.
   - **Reveal**: on every save, each new element fades in and rises 4px over 160ms with a 1.5px `#1C1C1C` outline that fades over 400ms; changed elements get only the outline. Elements follow each other every `min(60ms, 1500ms / count)`, and a newer save finishes the running reveal at once. Nothing is revealed on opening, page switches, screenshots or with reduced motion. Animate only opacity and transform.
   - **Off screen**: when the cursor is outside the canvas, a pill sits 16px in from the nearest edge: `popover` fill, `border-strong` border, 8px radius, 32px tall, menu shadow, "**Claude Code** on Payment" and a chevron pointing to that edge. Clicking it pans, without zooming, to centre the cursor.
 - **Copy**: sentence case, plain words, specific button labels ("New design", "Copy path"), and errors that say what happened and how to fix it.
@@ -57,13 +65,14 @@ The interface is built from [shadcn/ui](https://ui.shadcn.com) components (style
 | Buttons, icon buttons, the app menu trigger             | `button` (`default` is primary, `secondary`, `ghost` is quiet) |
 | Shortcut hints, tooltips, the top bar separator         | `kbd`, `tooltip`, `separator`                                  |
 | App menu                                                | `dropdown-menu`                                                |
+| Layer menu on rows and the canvas                       | `context-menu`                                                 |
 | Connect an AI                                           | `dialog`                                                       |
 | Window frame: sidebar, sections, rows, the canvas inset | `sidebar` (`variant="inset"`, slides out when hidden)          |
 | Problems, "Save has an error", the error strip          | `popover`, `badge`, `alert`                                    |
 | Start screen, "This file can't be drawn yet"            | `empty`                                                        |
 | "This design is empty" hint                             | `item`                                                         |
 
-Custom pieces: `components/Icon.tsx` (Hugeicons at stroke 1.5), `components/IconButton.tsx` (an icon `Button` with its `Tooltip`), the setup snippets in Connect an AI, and the canvas, artboard labels and agent cursor.
+Custom pieces: `components/Icon.tsx` (Hugeicons at stroke 1.5), `components/IconButton.tsx` (an icon `Button` with its `Tooltip`), the setup snippets in Connect an AI, the layer tree (shadcn has no tree), and the canvas, artboard labels, layer outlines and agent cursor.
 
 To add a component:
 

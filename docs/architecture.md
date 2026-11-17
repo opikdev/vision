@@ -10,8 +10,10 @@ flowchart LR
     Main -- IPC: document + diagnostics --> Renderer[app renderer]
     MCP -- screenshot: runs the app headless --> Main
     MCP -- activity: one JSON line per tool call --> Socket([activity.sock])
+    MCP -- get_selection: request, response --> Socket
     Socket --> Main
     Main -- IPC: agent activity --> Renderer
+    Renderer -- IPC: selection --> Main
 ```
 
 ## Repository
@@ -19,11 +21,11 @@ flowchart LR
 | Path                | Package            | Role                                                                                                                                               |
 | ------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/format`   | `@vision/format`   | The `.vis` schema, parsing, validation, deterministic serialization, tokens → Tailwind theme, HTML → nodes, edit operations. No Electron or React. |
-| `packages/activity` | `@vision/activity` | The agent activity message: zod schema, encoding, the socket path, display names for MCP clients.                                                  |
+| `packages/activity` | `@vision/activity` | The socket protocol: agent activity messages, selection requests and responses, the socket path and client, display names for MCP clients.         |
 | `packages/mcp`      | `@vision/mcp`      | The `vision-mcp` stdio server: MCP tools over `@vision/format`.                                                                                    |
 | `apps/desktop`      | `@vision/desktop`  | The Electron app.                                                                                                                                  |
 
-Dependencies point one way: `desktop → format, activity` and `mcp → format, activity`. The desktop app and the MCP server never import each other; at runtime they meet only through the `screenshot` tool launching the app and the activity socket.
+Dependencies point one way: `desktop → format, activity` and `mcp → format, activity`. The desktop app and the MCP server never import each other; at runtime they meet only through the `screenshot` tool launching the app and the activity socket. Layer labels (`layerLabel`) live in `@vision/format`, so the layer list and `get_selection` name layers the same way.
 
 ## Desktop app
 
@@ -34,7 +36,7 @@ apps/desktop/src/
   shared/     the IPC contract: channel names, zod schemas, types
   renderer/   React UI
     app/          root, routing between start and design views, global shortcuts
-    features/     start, sidebar, toolbar, canvas, problems, app-menu, connect-ai, agents
+    features/     start, sidebar, toolbar, canvas, layers, problems, app-menu, connect-ai, agents
     design/       Tailwind runtime compiler and the node → DOM renderer
     components/   ui/: shadcn/ui components on Base UI (owned, restyled); Icon, IconButton
     hooks/        shared React hooks
@@ -47,6 +49,7 @@ apps/desktop/src/
 - **Drawing** ([ADR 002](decisions/002-tailwind-in-sandboxed-iframes.md)). The renderer compiles Tailwind CSS at runtime for the classes in the document, with the tokens as theme variables. Each artboard is an `<iframe sandbox="allow-same-origin">` sized to the artboard, so responsive variants follow its width, its styles can't leak into the app, and nothing inside it can run scripts. React renders the nodes into each iframe through a portal.
 - **Assets.** Images load through a privileged `vision-asset://` protocol that serves only files inside the open design's assets folder.
 - **Canvas.** Artboards are placed by their `x`/`y` on a transformed layer. Pan with scroll or drag, and zoom with pinch, ⌘-scroll or the toolbar.
+- **Layers.** The sidebar's layer tree renders only expanded rows. Hover and selection outlines are drawn in the app above the iframes, never inside a design: the renderer finds an element by `data-node-id` in its artboard's iframe, reads its box in artboard pixels and maps it through the viewport. A canvas click hit-tests with the iframe document's `elementFromPoint`, since the iframes themselves ignore the pointer. The selection is kept per window in a zustand store, survives saves while its id exists and is cleared on page switches.
 
 ## MCP server
 
@@ -66,3 +69,12 @@ While an AI works, the app shows its cursor, a status in the top bar and new ele
 - **Server.** After each tool call, `vision-mcp` sends `{ v, session, agent, file, at, activity }` to the socket. `activity` is `edit` (the touched node ids, from `diffDocuments` before and after the write), `look` (reading or a screenshot) or `done` (sent when stdin closes). `agent` is the client's display name from `clientInfo`, such as "Claude Code".
 - **Main.** `ActivityServer` validates each line, resolves `file` to its real path and forwards the message to that file's window. A connection that closes sends `done` for its sessions.
 - **Renderer.** On every save, the renderer diffs the previous and new documents and reveals touched nodes one after another, by toggling `data-reveal` on the elements found by `data-node-id` in each artboard's iframe. `AgentTracker` moves each session's cursor to the node being revealed, or to the artboard's name for a `look`, and switches the status to "is thinking" when the step ends. Everything is keyed by session, so two agents get two cursors.
+
+## Selection
+
+AIs can ask which layer the user selected ([ADR 007](decisions/007-share-the-selection-over-the-activity-socket.md)).
+
+1. Whenever the selection or the page changes, the renderer sends `{ pageId, nodeIds }` to main over IPC; main validates it and keeps it per window.
+2. `get_selection` connects to the activity socket and writes `{ v, id, request: "selection", file }`.
+3. `ActivityServer` resolves `file` to its real path and answers on the same connection with `{ v, id, response }`: `not-open`, or `open` with the window's selection. The answer holds only ids; the server never reads files for a request.
+4. The tool reads the file itself, describes each selected layer, and reports a `look` activity with the node id, so the app's cursor points at it. It waits at most one second and says so when Vision isn't running, the file isn't open or nothing is selected.
