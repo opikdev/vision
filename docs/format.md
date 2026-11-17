@@ -76,7 +76,7 @@ checkout.assets/     images referenced by the design (optional)
 - `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_-]+`.
 - `name` is an optional label shown in Vision's layer list.
 - `src` is a path inside the assets folder (`photos/hero.jpg` means `checkout.assets/photos/hero.jpg`) or an `https:` URL. Paths can't leave the assets folder.
-- `svg` must be a single `<svg>` element. Scripts, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon.
+- `svg` must be a single `<svg>` element. Scripts, styles, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon.
 
 ## Classes
 
@@ -154,7 +154,13 @@ Warnings don't stop drawing:
 | `svg`                                                                                                       | `svg` (its markup)                                   |
 | `input`, `textarea`, `select`                                                                               | `frame` showing the `placeholder` or `value` as text |
 
-`class` and `id` attributes are kept and missing ids are generated. A frame's bare text becomes a text node. `style` attributes and scripts are not allowed.
+`class` and `id` attributes are kept; other attributes are dropped. Missing ids are generated from the tag (`div-1`, `h1-2`), and an `id` that's already used is an error. Whitespace collapses as in a browser.
+
+- A frame's bare text becomes a text node.
+- Inline formatting inside text (`b`, `i`, `u`, `s`, `code`, `mark`, `sub`, `sup`, `time`) keeps only its text; on its own it becomes a text node like `span`.
+- A text element that holds an image, an SVG or a block element, such as `<a class="flex gap-2"><svg>…</svg>Back</a>`, becomes a frame instead.
+- An `<svg>`'s `class` and `id` move to its node.
+- `style` attributes, `<script>`, `<style>` and other elements (`table`, `hr`, …) are errors; use `div`s with Tailwind classes.
 
 ### A good loop
 

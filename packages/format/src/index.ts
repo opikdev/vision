@@ -8,6 +8,7 @@ export {
   type JsonPath,
   type Severity,
 } from './diagnostics';
+export { HtmlError, htmlToNodes } from './html';
 export { generateId } from './ids';
 export { parseDocument, type ParseResult } from './parse';
 export { collectClasses, findById, outline, type Container, type Located } from './query';
@@ -26,5 +27,6 @@ export {
   type VisionDocument,
 } from './schema';
 export { serializeDocument } from './serialize';
+export { sanitizeSvg, SvgError } from './svg';
 export { tokensToThemeCss } from './tokens';
 export { validateDocument } from './validate';
