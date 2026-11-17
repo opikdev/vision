@@ -1,0 +1,12 @@
+import { createTailwindEngine } from '@vision/format';
+import preflight from 'tailwindcss/preflight.css?raw';
+import theme from 'tailwindcss/theme.css?raw';
+import utilities from 'tailwindcss/utilities.css?raw';
+
+export const tailwindEngine = createTailwindEngine({ theme, preflight, utilities });
+
+export const frameBaseCss = `@layer base {
+  html, body { height: 100%; overflow: hidden; }
+  [data-artboard] { height: 100%; }
+  p { white-space: pre-line; }
+}`;
