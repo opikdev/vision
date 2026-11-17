@@ -8,6 +8,23 @@ export {
   type JsonPath,
   type Severity,
 } from './diagnostics';
+export {
+  createArtboard,
+  updateArtboard,
+  type ArtboardPatch,
+  type CreateArtboardOptions,
+} from './edit/artboard';
+export { deleteById } from './edit/delete';
+export { EditError } from './edit/error';
+export {
+  insertHtml,
+  moveNode,
+  updateNode,
+  type InsertHtmlOptions,
+  type NodePatch,
+} from './edit/node';
+export { createPage } from './edit/page';
+export { setTokens, type TokensPatch } from './edit/tokens';
 export { HtmlError, htmlToNodes } from './html';
 export { generateId } from './ids';
 export { parseDocument, type ParseResult } from './parse';
