@@ -28,5 +28,9 @@ export default tseslint.config(
     ...reactHooks.configs.flat.recommended,
     languageOptions: { globals: { ...globals.browser } },
   },
+  {
+    files: ['apps/desktop/e2e/**/*.ts'],
+    rules: { 'no-empty-pattern': ['error', { allowObjectPatternsAsParameters: true }] },
+  },
   prettier,
 );

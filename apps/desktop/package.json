@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
-    "typecheck": "tsc -p tsconfig.node.json && tsc -p tsconfig.web.json",
+    "typecheck": "tsc -p tsconfig.node.json && tsc -p tsconfig.web.json && tsc -p tsconfig.e2e.json",
     "test:e2e": "electron-vite build && playwright test",
     "package": "pnpm --filter @vision/mcp build && electron-vite build && electron-builder --mac"
   },
