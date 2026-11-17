@@ -1,8 +1,8 @@
 import { diffDocuments, type Artboard, type VisionDocument } from '@vision/format';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { AgentTracker } from './agent-tracker';
+import { drawnBounds, drawnNode } from '../canvas/drawn-nodes';
 import { nodeTarget } from './cursor-geometry';
-import { drawnNode } from './drawn-nodes';
 import { RevealScheduler } from './reveal-scheduler';
 
 interface Step {
@@ -30,7 +30,7 @@ export function useReveal(document: VisionDocument | null, tracker: AgentTracker
     tracker.revealStarted(ids);
     scheduler.start(steps, {
       step: ({ id, added, element, artboard }) => {
-        tracker.revealed(id, nodeTarget(artboard, element.getBoundingClientRect()));
+        tracker.revealed(id, nodeTarget(artboard.id, drawnBounds(artboard, element)));
         element.setAttribute('data-reveal', added ? 'added' : 'changed');
       },
       end: () => {

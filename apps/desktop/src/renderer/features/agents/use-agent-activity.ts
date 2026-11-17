@@ -3,7 +3,7 @@ import { vision } from '../../bridge';
 import { currentPage } from '../canvas/current-page';
 import { useAgentStore } from './agent-store';
 import { AgentTracker } from './agent-tracker';
-import { pageLocator } from './drawn-nodes';
+import { pageLocator } from './page-locator';
 
 export function useAgentActivity(): AgentTracker {
   const [tracker] = useState(() => new AgentTracker(pageLocator(currentPage)));

@@ -5,13 +5,13 @@ const payment = { id: 'payment', x: 1990, y: 0 };
 
 describe('nodeTarget', () => {
   it('points at the top-left area of the element, in page coordinates', () => {
-    expect(nodeTarget(payment, { left: 40, top: 100, width: 300, height: 48 })).toEqual({
+    expect(nodeTarget('payment', { x: 2030, y: 100, width: 300, height: 48 })).toEqual({
       artboardId: 'payment',
       x: 2042,
       y: 112,
       onLabel: false,
     });
-    expect(nodeTarget(payment, { left: 0, top: 0, width: 8, height: 4 })).toEqual({
+    expect(nodeTarget('payment', { x: 1990, y: 0, width: 8, height: 4 })).toEqual({
       artboardId: 'payment',
       x: 1994,
       y: 2,
@@ -22,7 +22,7 @@ describe('nodeTarget', () => {
 
 describe('screenPoint', () => {
   it('follows the viewport', () => {
-    const target = nodeTarget(payment, { left: 40, top: 100, width: 300, height: 48 });
+    const target = nodeTarget('payment', { x: 2030, y: 100, width: 300, height: 48 });
     expect(screenPoint(target, { x: 10, y: 20, zoom: 0.5 })).toEqual({ x: 1031, y: 76 });
     expect(screenPoint(target, { x: -990, y: 20, zoom: 0.5 })).toEqual({ x: 31, y: 76 });
   });

@@ -1,24 +1,12 @@
 import type { Size, Viewport } from '../../stores/view-store';
-import type { Point } from '../canvas/viewport';
+import type { Placed } from '../canvas/drawn-nodes';
+import type { Bounds, Point } from '../canvas/viewport';
 
 export interface CursorTarget {
   artboardId: string;
   x: number;
   y: number;
   onLabel: boolean;
-}
-
-export interface Placed {
-  id: string;
-  x: number;
-  y: number;
-}
-
-export interface Box {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
 }
 
 export type Edge = 'left' | 'right' | 'top' | 'bottom';
@@ -32,11 +20,11 @@ const nodeInset = 12;
 const labelOffset = { x: 24, y: -16 };
 const edgeRoom = { side: 32, end: 140 };
 
-export function nodeTarget(artboard: Placed, box: Box): CursorTarget {
+export function nodeTarget(artboardId: string, bounds: Bounds): CursorTarget {
   return {
-    artboardId: artboard.id,
-    x: artboard.x + box.left + Math.min(box.width / 2, nodeInset),
-    y: artboard.y + box.top + Math.min(box.height / 2, nodeInset),
+    artboardId,
+    x: bounds.x + Math.min(bounds.width / 2, nodeInset),
+    y: bounds.y + Math.min(bounds.height / 2, nodeInset),
     onLabel: false,
   };
 }
