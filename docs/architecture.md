@@ -1,6 +1,6 @@
 # Architecture
 
-Vision is two programs that share one TypeScript package and nothing else at runtime: the desktop app, which draws a `.vis` file and redraws it on every save, and `vision-mcp`, which AIs use to edit it.
+Vision is two programs that share TypeScript packages and talk only through the design file and a local socket: the desktop app, which draws a `.vis` file and redraws it on every save, and `vision-mcp`, which AIs use to edit it.
 
 ```mermaid
 flowchart LR
@@ -9,17 +9,21 @@ flowchart LR
     File -- watcher, debounced --> Main[app main process]
     Main -- IPC: document + diagnostics --> Renderer[app renderer]
     MCP -- screenshot: runs the app headless --> Main
+    MCP -- activity: one JSON line per tool call --> Socket([activity.sock])
+    Socket --> Main
+    Main -- IPC: agent activity --> Renderer
 ```
 
 ## Repository
 
-| Path              | Package           | Role                                                                                                                                               |
-| ----------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/format` | `@vision/format`  | The `.vis` schema, parsing, validation, deterministic serialization, tokens → Tailwind theme, HTML → nodes, edit operations. No Electron or React. |
-| `packages/mcp`    | `@vision/mcp`     | The `vision-mcp` stdio server: MCP tools over `@vision/format`.                                                                                    |
-| `apps/desktop`    | `@vision/desktop` | The Electron app.                                                                                                                                  |
+| Path                | Package            | Role                                                                                                                                               |
+| ------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/format`   | `@vision/format`   | The `.vis` schema, parsing, validation, deterministic serialization, tokens → Tailwind theme, HTML → nodes, edit operations. No Electron or React. |
+| `packages/activity` | `@vision/activity` | The agent activity message: zod schema, encoding, the socket path, display names for MCP clients.                                                  |
+| `packages/mcp`      | `@vision/mcp`      | The `vision-mcp` stdio server: MCP tools over `@vision/format`.                                                                                    |
+| `apps/desktop`      | `@vision/desktop`  | The Electron app.                                                                                                                                  |
 
-Dependencies point one way: `desktop → format` and `mcp → format`. The desktop app and the MCP server never import each other; the only runtime link is the `screenshot` tool launching the app.
+Dependencies point one way: `desktop → format, activity` and `mcp → format, activity`. The desktop app and the MCP server never import each other; at runtime they meet only through the `screenshot` tool launching the app and the activity socket.
 
 ## Desktop app
 
@@ -30,7 +34,7 @@ apps/desktop/src/
   shared/     the IPC contract: channel names, zod schemas, types
   renderer/   React UI
     app/          root, routing between start and design views, global shortcuts
-    features/     start, sidebar, toolbar, canvas, problems, app-menu, connect-ai
+    features/     start, sidebar, toolbar, canvas, problems, app-menu, connect-ai, agents
     design/       Tailwind runtime compiler and the node → DOM renderer
     ui/           primitives: Button, IconButton, Menu, Tooltip, Kbd
 ```
@@ -52,3 +56,11 @@ apps/desktop/src/
   4. Serialize deterministically to a temp file beside the real file (following a symlink, keeping its permissions), then rename it over the original. If the file changed since step 1, the edit is rejected instead.
 - `screenshot` runs the Vision app with `--vision-screenshot=<file.vis> --artboard=<id> --out=<file.png> [--scale=<n>]`. Each option is one argument, so a value can never be read as a Chromium switch. The server lowers the scale (to a fraction if needed) so the PNG's longest side is at most 2000 px, the most AI clients accept. The app renders the artboard in an offscreen window (so artboards taller than the screen work), waits for the first frame that shows a marker pixel the page paints below the artboard once it has drawn, writes the PNG and exits, so screenshots match what people see. Its profile (`--user-data-dir`) sits in the server's temp folder, which the server removes afterwards. Every failure exits with code 1 and one line on stderr. [How the server finds the app](../packages/mcp/README.md#screenshots).
 - The packaged app ships the server at `Contents/Resources/mcp/vision-mcp.mjs`, run by the app's own binary with `ELECTRON_RUN_AS_NODE=1`, so users need no separate Node install. [Releasing](releasing.md) explains the fuses that allow it.
+
+## Agent activity
+
+While an AI works, the app shows its cursor, a status in the top bar and new elements appearing in turn ([ADR 005](decisions/005-agent-activity-over-a-local-socket.md)).
+
+- **Server.** After each tool call, `vision-mcp` sends `{ v, session, agent, file, at, activity }` to the socket. `activity` is `edit` (the touched node ids, from `diffDocuments` before and after the write), `look` (reading or a screenshot) or `done` (sent when stdin closes). `agent` is the client's display name from `clientInfo`, such as "Claude Code".
+- **Main.** `ActivityServer` validates each line, resolves `file` to its real path and forwards the message to that file's window. A connection that closes sends `done` for its sessions.
+- **Renderer.** On every save, the renderer diffs the previous and new documents and reveals touched nodes one after another, by toggling `data-reveal` on the elements found by `data-node-id` in each artboard's iframe. `AgentTracker` moves each session's cursor to the node being revealed, or to the artboard's name for a `look`, and switches the status to "is thinking" when the step ends. Everything is keyed by session, so two agents get two cursors.
