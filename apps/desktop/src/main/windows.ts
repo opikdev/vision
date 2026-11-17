@@ -81,22 +81,28 @@ export class WindowRegistry {
   }
 
   async attach(window: BrowserWindow, path: string): Promise<void> {
-    const entry = this.#entries.get(window);
-    if (entry === undefined) throw new Error('The window was closed before the design opened');
-    entry.path = path;
     const assetToken = this.#assets.register(assetsDirFor(path));
-    entry.assetToken = assetToken;
-    const session = await openDocumentSession({
-      path,
-      assetToken,
-      onChange: (state) => {
-        if (!window.isDestroyed()) window.webContents.send(channels.state, state);
-      },
-    });
-    if (window.isDestroyed()) {
+    let session: DocumentSession;
+    try {
+      session = await openDocumentSession({
+        path,
+        assetToken,
+        onChange: (state) => {
+          if (!window.isDestroyed()) window.webContents.send(channels.state, state);
+        },
+      });
+    } catch (error) {
+      this.#assets.unregister(assetToken);
+      throw error;
+    }
+    const entry = this.#entries.get(window);
+    if (entry === undefined || window.isDestroyed()) {
+      this.#assets.unregister(assetToken);
       await session.close();
       return;
     }
+    entry.path = path;
+    entry.assetToken = assetToken;
     entry.session = session;
     window.setTitle(session.state().name);
     window.setRepresentedFilename(path);

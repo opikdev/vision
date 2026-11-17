@@ -11,6 +11,7 @@ function state(path: string, revision: number): DocumentState {
     status: 'ok',
     document: null,
     diagnostics: [],
+    readError: null,
     mtimeMs: 1,
     assetToken: 't',
   };

@@ -5,6 +5,7 @@ import { stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { basename, dirname, sep } from 'node:path';
 import type { DocumentState } from '../shared/contract';
+import { errorMessage } from './errors';
 import { sanitizeDocument } from './sanitize-document';
 
 export interface DocumentSessionOptions {
@@ -43,6 +44,7 @@ export async function openDocumentSession(
     status: 'missing',
     document: null,
     diagnostics: [],
+    readError: null,
     mtimeMs: null,
     assetToken,
   };
@@ -59,15 +61,28 @@ export async function openDocumentSession(
       status: snapshot.status,
       document: snapshot.document,
       diagnostics: snapshot.diagnostics,
+      readError: null,
       mtimeMs: snapshot.mtimeMs,
     };
     onChange(current);
   };
 
+  const reportReadError = (error: unknown): void => {
+    if (closed) return;
+    key = '';
+    current = {
+      ...current,
+      revision: current.revision + 1,
+      status: 'read-error',
+      document: lastValid,
+      diagnostics: [],
+      readError: errorMessage(error),
+    };
+    onChange(current);
+  };
+
   const schedule = (): void => {
-    queue = queue.then(refresh).catch((error: unknown) => {
-      console.error(`Couldn't read ${path}:`, error);
-    });
+    queue = queue.then(refresh).catch(reportReadError);
   };
 
   const watcher = watch(dir, {
@@ -89,17 +104,19 @@ export async function openDocumentSession(
       resolve();
     }),
   );
-  await refresh();
-
-  return {
-    path,
-    state: () => current,
-    async close() {
-      closed = true;
-      clearTimeout(timer);
-      await watcher.close();
-    },
+  const close = async (): Promise<void> => {
+    closed = true;
+    clearTimeout(timer);
+    await watcher.close();
   };
+  try {
+    await refresh();
+  } catch (error) {
+    await close();
+    throw error;
+  }
+
+  return { path, state: () => current, close };
 }
 
 async function readSnapshot(path: string, lastValid: VisionDocument | null): Promise<Snapshot> {

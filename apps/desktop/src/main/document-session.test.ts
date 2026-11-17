@@ -1,11 +1,26 @@
 import { createDocument, serializeDocument } from '@vision/format';
 import { writeDesign } from '@vision/format/node';
-import { mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
+import type * as Chokidar from 'chokidar';
+import { mkdir, mkdtemp, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentState } from '../shared/contract';
 import { openDocumentSession, type DocumentSession } from './document-session';
+
+const watchers = vi.hoisted(() => [] as Chokidar.FSWatcher[]);
+
+vi.mock('chokidar', async (importOriginal) => {
+  const chokidar = await importOriginal<typeof Chokidar>();
+  return {
+    ...chokidar,
+    watch: (...args: Parameters<typeof chokidar.watch>) => {
+      const watcher = chokidar.watch(...args);
+      watchers.push(watcher);
+      return watcher;
+    },
+  };
+});
 
 let dir: string;
 let path: string;
@@ -62,6 +77,7 @@ describe('openDocumentSession', () => {
       status: 'ok',
       document: valid,
       diagnostics: [],
+      readError: null,
       assetToken: 'token',
     });
     expect(states).toHaveLength(1);
@@ -160,6 +176,31 @@ describe('openDocumentSession', () => {
     expect((await open()).state().diagnostics.map((d) => [d.severity, d.code])).toEqual([
       ['warning', 'missing-asset'],
     ]);
+  });
+
+  it('fails to open an unreadable file and stops watching', async () => {
+    await mkdir(path);
+    await expect(open()).rejects.toThrow('EISDIR');
+    expect(watchers.at(-1)?.closed).toBe(true);
+  });
+
+  it('reports a file it cannot read, then recovers', async () => {
+    await writeDesign(path, valid);
+    await open();
+    await rm(path);
+    await mkdir(path);
+    await expect
+      .poll(() => states.at(-1))
+      .toMatchObject({
+        status: 'read-error',
+        readError: expect.stringContaining('EISDIR') as string,
+        document: valid,
+      });
+    await rm(path, { recursive: true });
+    await writeDesign(path, renamed);
+    await expect
+      .poll(() => states.at(-1))
+      .toMatchObject({ status: 'ok', readError: null, document: renamed });
   });
 
   it('stops reporting changes once closed', async () => {

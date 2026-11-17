@@ -13,7 +13,7 @@ export const viewCommands = [
 ] as const;
 export type ViewCommand = (typeof viewCommands)[number];
 
-export type DocumentStatus = 'ok' | 'invalid' | 'missing';
+export type DocumentStatus = 'ok' | 'invalid' | 'missing' | 'read-error';
 
 export interface DocumentState {
   revision: number;
@@ -23,6 +23,7 @@ export interface DocumentState {
   status: DocumentStatus;
   document: VisionDocument | null;
   diagnostics: Diagnostic[];
+  readError: string | null;
   mtimeMs: number | null;
   assetToken: string;
 }

@@ -72,6 +72,7 @@ async function capture({
     status: 'ok',
     document: sanitizeDocument(result.document).document,
     diagnostics: [],
+    readError: null,
     mtimeMs: null,
     assetToken: assets.register(assetsDirFor(file)),
   };

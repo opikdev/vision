@@ -30,6 +30,14 @@ export function SaveStatus({
       </>
     );
   }
+  if (state.status === 'read-error') {
+    return (
+      <>
+        <Badge>Can't read the file</Badge>
+        <Note>{state.readError ?? ''}</Note>
+      </>
+    );
+  }
   const { warnings } = countProblems(diagnostics);
   return (
     <>

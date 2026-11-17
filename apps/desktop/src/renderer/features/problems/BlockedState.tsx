@@ -33,6 +33,15 @@ export function BlockedState({
       </Centered>
     );
   }
+  if (state.status === 'read-error') {
+    return (
+      <Centered title={`Can't read ${state.name}`}>
+        <p className="mt-1 text-ink-subtle select-text">
+          {state.readError}. Vision tries again the next time the file is saved.
+        </p>
+      </Centered>
+    );
+  }
   return (
     <Centered title="This file can't be drawn yet">
       <p className="mt-1 text-ink-subtle">
