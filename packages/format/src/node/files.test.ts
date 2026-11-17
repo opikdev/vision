@@ -288,6 +288,18 @@ describe('assetDiagnostics', () => {
     ]);
   });
 
+  it('warns about every image that uses a missing file', async () => {
+    const path = join(dir, 'checkout.vis');
+    const doc = docWith([
+      { type: 'image', id: 'first', src: 'gone.png' },
+      { type: 'image', id: 'second', src: 'gone.png' },
+    ]);
+    expect((await assetDiagnostics(path, doc)).map((d) => [d.code, d.nodeId])).toEqual([
+      ['missing-asset', 'first'],
+      ['missing-asset', 'second'],
+    ]);
+  });
+
   it('treats image files it cannot reach as missing', async () => {
     const path = join(dir, 'checkout.vis');
     await mkdir(join(dir, 'checkout.assets', 'locked'), { recursive: true });
