@@ -1,6 +1,6 @@
 import { findById, formatDiagnostic } from '@vision/format';
 import { assetsDirFor, readDesign } from '@vision/format/node';
-import { app } from 'electron';
+import { app, nativeImage } from 'electron';
 import { writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
@@ -18,6 +18,8 @@ import { hardenSessions, hardenWebContents } from './security';
 import { createBrowserWindow } from './windows';
 
 const timeoutMs = 20_000;
+const quietMs = 250;
+const settleLimitMs = 3_000;
 
 export function failScreenshot(message: string): void {
   process.stderr.write(`${message.replace(/\s*\n\s*/g, ' ')}\n`);
@@ -111,8 +113,8 @@ async function capture({
       useContentSize: true,
       show: false,
       frame: false,
-      paintWhenInitiallyHidden: true,
       enableLargerThanScreen: true,
+      webPreferences: { offscreen: { deviceScaleFactor: scale > 1 ? 2 : 1 } },
     },
     { mode: 'capture', artboard: artboardId },
     (error) => {
@@ -123,10 +125,8 @@ async function capture({
     reject(new Error(`Drawing "${artboardId}" stopped: the renderer ${details.reason}`));
   });
   await rendered;
-  const image = await window.webContents.capturePage(
-    { x: 0, y: 0, width, height },
-    { stayHidden: true },
-  );
+  const image = await settledFrame(window.webContents);
+  if (image.isEmpty()) throw new Error(`Vision didn't paint "${artboardId}"`);
   const size = {
     width: Math.max(1, Math.round(width * scale)),
     height: Math.max(1, Math.round(height * scale)),
@@ -138,4 +138,31 @@ async function capture({
       : image.resize({ ...size, quality: 'best' });
   await writeFile(out, exact.toPNG());
   window.destroy();
+}
+
+// Offscreen frames reach main tens of milliseconds after the renderer commits them, so wait
+// until painting goes quiet and keep the last frame.
+function settledFrame(contents: Electron.WebContents): Promise<Electron.NativeImage> {
+  return new Promise((resolve) => {
+    let latest = nativeImage.createEmpty();
+    let quiet: NodeJS.Timeout | undefined;
+    const settle = (): void => {
+      clearTimeout(quiet);
+      clearTimeout(limit);
+      contents.off('paint', onPaint);
+      resolve(latest);
+    };
+    const onPaint = (
+      _event: Electron.Event,
+      _dirty: Electron.Rectangle,
+      image: Electron.NativeImage,
+    ): void => {
+      latest = image;
+      clearTimeout(quiet);
+      quiet = setTimeout(settle, quietMs);
+    };
+    const limit = setTimeout(settle, settleLimitMs);
+    contents.on('paint', onPaint);
+    contents.invalidate();
+  });
 }

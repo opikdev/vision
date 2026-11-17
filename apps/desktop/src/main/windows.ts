@@ -24,7 +24,7 @@ export function createBrowserWindow(
   const window = new BrowserWindow({
     ...options,
     backgroundColor: '#1C1C1C',
-    webPreferences: secureWebPreferences(preloadPath),
+    webPreferences: { ...options.webPreferences, ...secureWebPreferences(preloadPath) },
   });
   window.loadURL(rendererUrl(search)).catch(onLoadFailed);
   return window;
