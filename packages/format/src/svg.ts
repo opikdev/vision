@@ -9,7 +9,21 @@ export class SvgError extends Error {
 
 const removedElements = new Set(['script', 'foreignObject', 'style']);
 
+const sanitized = new Map<string, string>();
+const maxSanitized = 1000;
+
+// Designs repeat the same icons, and both validation and drawing sanitize every one on each save.
 export function sanitizeSvg(svg: string): string {
+  let result = sanitized.get(svg);
+  if (result === undefined) {
+    result = sanitizeOnce(svg);
+    if (sanitized.size >= maxSanitized) sanitized.clear();
+    sanitized.set(svg, result);
+  }
+  return result;
+}
+
+function sanitizeOnce(svg: string): string {
   const roots = parseFragment(svg).childNodes.filter(isSignificant);
   const root = roots[0];
   if (roots.length !== 1 || root === undefined || !isElement(root) || !isSvgElement(root)) {
