@@ -1,20 +1,17 @@
 import { registerPrivilegedSchemes } from './protocols';
 import { startApp } from './app';
 import { failHeadless } from './headless';
+import { runReview } from './review';
+import { parseReviewArgs } from './review-args';
 import { runScreenshot } from './screenshot';
 import { parseScreenshotArgs } from './screenshot-args';
 
 registerPrivilegedSchemes();
 
 const screenshot = parseScreenshotArgs(process.argv);
-switch (screenshot.kind) {
-  case 'none':
-    startApp();
-    break;
-  case 'invalid':
-    failHeadless(screenshot.message);
-    break;
-  case 'request':
-    runScreenshot(screenshot.request);
-    break;
-}
+const review = parseReviewArgs(process.argv);
+if (screenshot.kind === 'invalid') failHeadless(screenshot.message);
+else if (screenshot.kind === 'request') runScreenshot(screenshot.request);
+else if (review.kind === 'invalid') failHeadless(review.message);
+else if (review.kind === 'request') runReview(review.request);
+else startApp();

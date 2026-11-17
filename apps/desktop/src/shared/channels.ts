@@ -11,6 +11,7 @@ export const channels = {
   getMcpServer: 'mcp:get-server',
   captureReady: 'capture:ready',
   captureFailed: 'capture:failed',
+  reviewReady: 'review:ready',
   agentActivity: 'agent:activity',
   setSelection: 'selection:set',
 } as const;

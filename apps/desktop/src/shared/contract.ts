@@ -1,5 +1,5 @@
 import type { ActivityMessage, Selection } from '@vision/activity';
-import type { Diagnostic, VisionDocument } from '@vision/format';
+import type { Diagnostic, Layout, VisionDocument } from '@vision/format';
 
 export const appCommands = ['new-design', 'open', 'show-in-finder', 'copy-path', 'quit'] as const;
 export type AppCommand = (typeof appCommands)[number];
@@ -56,6 +56,7 @@ export interface VisionApi {
   getMcpServer(): Promise<McpServer>;
   captureReady(): Promise<void>;
   captureFailed(message: string): Promise<void>;
+  reviewReady(layout: Layout): Promise<void>;
   onAgentActivity(listener: (activity: AgentActivity) => void): () => void;
   setSelection(selection: Selection): Promise<void>;
   getPathForFile(file: File): string;

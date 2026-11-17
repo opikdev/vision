@@ -25,6 +25,7 @@ const api: VisionApi = {
   getMcpServer: () => ipcRenderer.invoke(channels.getMcpServer),
   captureReady: () => ipcRenderer.invoke(channels.captureReady),
   captureFailed: (message) => ipcRenderer.invoke(channels.captureFailed, message),
+  reviewReady: (layout) => ipcRenderer.invoke(channels.reviewReady, layout),
   onAgentActivity: (listener) => subscribe(channels.agentActivity, listener),
   setSelection: (selection) => ipcRenderer.invoke(channels.setSelection, selection),
   getPathForFile: (file) => webUtils.getPathForFile(file),

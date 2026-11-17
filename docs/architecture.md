@@ -31,12 +31,12 @@ Dependencies point one way: `desktop → format, activity` and `mcp → format, 
 
 ```
 apps/desktop/src/
-  main/       lifecycle, windows, native menu, IPC handlers, file watching, recent files, asset protocol, screenshot mode
+  main/       lifecycle, windows, native menu, IPC handlers, file watching, recent files, asset protocol, screenshot and review modes
   preload/    the typed bridge exposed as window.vision
   shared/     the IPC contract: channel names, zod schemas, types
   renderer/   React UI
     app/          root, routing between start and design views, global shortcuts
-    features/     start, sidebar, toolbar, canvas, layers, problems, app-menu, connect-ai, agents
+    features/     start, sidebar, toolbar, canvas, layers, problems, app-menu, connect-ai, agents, review
     design/       Tailwind runtime compiler and the node → DOM renderer
     components/   ui/: shadcn/ui components on Base UI (owned, restyled); Icon, IconButton
     hooks/        shared React hooks
@@ -52,6 +52,14 @@ apps/desktop/src/
 - **Canvas.** Artboards are placed by their `x`/`y` on a transformed layer. Pan with scroll or drag, and zoom with pinch, ⌘-scroll or the toolbar.
 - **Culling.** Only artboards within 600 screen px of the canvas get an iframe, plus the one holding the selection and the ones an agent is on, so a zoomed-in view keeps the DOM and style work of a few artboards. Artboards that come into view mount one per frame, nearest the middle first, so zooming out stays responsive; artboards that leave it unmount once the viewport has been still for 500 ms, so panning back and forth doesn't rebuild them. The viewport never moves for culling. Code that needs a drawn element (outlines, zoom to layer, reveals, the agent cursor) finds it only in drawn artboards; the selection's artboard is always drawn, so zoom to layer can measure it. An agent's artboard is drawn as soon as its activity message arrives; an edit drawn before that has no reveal, and a cursor aimed at a node that isn't drawn points at the artboard's name.
 - **Layers.** The sidebar's layer tree renders only expanded rows. Hover and selection outlines are drawn in the app above the iframes, never inside a design: the renderer finds an element by `data-node-id` in its artboard's iframe, reads its box in artboard pixels and maps it through the viewport. A canvas click hit-tests with the iframe document's `elementFromPoint`, since the iframes themselves ignore the pointer. The selection is kept per window in a zustand store, survives saves while its id exists and is cleared on page switches.
+
+## Review mode
+
+The app reviews a design as it draws it ([ADR 008](decisions/008-review-designs-as-the-app-draws-them.md)), so findings match what people see. [Design review](review.md) lists the rules and the score.
+
+1. `--vision-review=<file.vis> --out=<file.json> [--artboard=<id>]`, one argument per option as in screenshot mode, opens an offscreen window that draws every artboard, or the one given, in its own iframe.
+2. Once fonts and images have settled, the renderer measures each node and each artboard's root: its box in artboard pixels, client and scroll sizes, and the computed styles the rules use. Colors are painted on a canvas to read them as sRGB, since computed colors can be `oklch()`; margins come from the computed value, so `auto` isn't read as pixels.
+3. Main validates the measurements with zod, runs `reviewDesign` from `@vision/format` and writes the report as JSON. Every failure exits with code 1 and one line on stderr.
 
 ## MCP server
 
