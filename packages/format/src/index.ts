@@ -8,6 +8,7 @@ export {
   type JsonPath,
   type Severity,
 } from './diagnostics';
+export { diffDocuments, type DocumentChange, type DocumentDiff } from './diff';
 export {
   createArtboard,
   updateArtboard,
