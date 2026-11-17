@@ -1,6 +1,7 @@
 import type { CallToolResult } from '@modelcontextprotocol/server';
 import { EditError, validateDocument, type Diagnostic, type VisionDocument } from '@vision/format';
 import { editDesign } from '@vision/format/node';
+import type { EditListener } from './activity/tool-activity';
 import { fileChecks, fileExists, listDiagnostics } from './design';
 import { errorResult, textResult } from './results';
 
@@ -17,6 +18,7 @@ interface Applied {
 
 export async function runEdit(
   file: string,
+  onSaved: EditListener,
   change: (document: VisionDocument) => EditOutcome,
 ): Promise<CallToolResult> {
   const existed = await fileExists(file);
@@ -33,6 +35,7 @@ export async function runEdit(
   }
   if (run.applied === undefined) throw new Error(`The edit of ${file} finished without running`);
   const { before, outcome } = run.applied;
+  onSaved(before, outcome.document);
   const lines = [
     ...(existed ? [] : [`Created ${file} with page "page-1" and artboard "desktop".`]),
     outcome.summary,

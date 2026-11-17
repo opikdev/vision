@@ -2,6 +2,7 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { findById, idPattern } from '@vision/format';
 import { readDesign } from '@vision/format/node';
 import { z } from 'zod';
+import type { ToolActivity } from '../activity/tool-activity';
 import { invalidText } from '../design';
 import { errorResult, imageResult } from '../results';
 import { file, id } from '../schemas';
@@ -17,7 +18,7 @@ import {
 const appHint =
   'To use another build of Vision, set VISION_APP to its executable, and VISION_APP_ENTRY to its app folder for a development build.';
 
-export function registerScreenshotTool(server: McpServer): void {
+export function registerScreenshotTool(server: McpServer, activity: ToolActivity): void {
   server.registerTool(
     'screenshot',
     {
@@ -36,7 +37,7 @@ export function registerScreenshotTool(server: McpServer): void {
       }),
       annotations: { readOnlyHint: true, idempotentHint: true },
     },
-    async ({ file, artboard, scale }) => {
+    async ({ file, artboard, scale }, ctx) => {
       const { exists, result } = await readDesign(file);
       if (!exists) return errorResult(`${file} doesn't exist yet. Create an artboard first.`);
       if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
@@ -44,6 +45,7 @@ export function registerScreenshotTool(server: McpServer): void {
       if (located?.kind !== 'artboard') {
         return errorResult(`No artboard has id "${artboard}". Call get_overview to see the ids.`);
       }
+      activity.screenshotting(ctx, file, located.artboard);
       const { width, height } = located.artboard;
       const size = screenshotSize(width, height, scale);
       const app = resolveApp(currentRuntime());

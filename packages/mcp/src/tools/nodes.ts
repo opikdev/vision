@@ -2,12 +2,13 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { deleteById, insertHtml, moveNode, outline, updateNode } from '@vision/format';
 import { z } from 'zod';
 import { plural } from '../design';
+import type { ToolActivity } from '../activity/tool-activity';
 import { runEdit } from '../edit';
 import { file, id, index } from '../schemas';
 
 const field = (description: string) => z.string().nullable().exactOptional().describe(description);
 
-export function registerNodeTools(server: McpServer): void {
+export function registerNodeTools(server: McpServer, activity: ToolActivity): void {
   server.registerTool(
     'write_html',
     {
@@ -32,8 +33,8 @@ export function registerNodeTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: false },
     },
-    ({ file, ...options }) =>
-      runEdit(file, (doc) => {
+    ({ file, ...options }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => {
         const { document, ids } = insertHtml(doc, options);
         const tree = ids.map((id) => outline(document, id)).join('\n');
         return {
@@ -64,8 +65,8 @@ export function registerNodeTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: true },
     },
-    ({ file, id, ...patch }) =>
-      runEdit(file, (doc) => ({
+    ({ file, id, ...patch }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => ({
         document: updateNode(doc, id, patch),
         summary: `Updated node ${id}.`,
       })),
@@ -87,8 +88,8 @@ export function registerNodeTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: true },
     },
-    ({ file, id, ...target }) =>
-      runEdit(file, (doc) => ({
+    ({ file, id, ...target }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => ({
         document: moveNode(doc, id, target),
         summary: `Moved node ${id} into ${target.parent}.`,
       })),
@@ -102,8 +103,8 @@ export function registerNodeTools(server: McpServer): void {
       inputSchema: z.object({ file, id: id('Id of the node, artboard or page to delete.') }),
       annotations: { destructiveHint: true, idempotentHint: true },
     },
-    ({ file, id }) =>
-      runEdit(file, (doc) => ({
+    ({ file, id }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => ({
         document: deleteById(doc, id),
         summary: `Deleted ${id} and everything inside it.`,
       })),

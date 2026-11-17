@@ -25,10 +25,14 @@ afterEach(async () => {
 describe('runEdit', () => {
   it('reports a saved edit as saved when checking for warnings fails', async () => {
     const file = join(dir, 'app.vis');
-    const result = await runEdit(file, (doc) => ({
-      document: createPage(doc, { name: 'Shop', id: 'shop' }).document,
-      summary: 'Added page shop.',
-    }));
+    const result = await runEdit(
+      file,
+      () => undefined,
+      (doc) => ({
+        document: createPage(doc, { name: 'Shop', id: 'shop' }).document,
+        summary: 'Added page shop.',
+      }),
+    );
     expect(result).toEqual({
       content: [
         {

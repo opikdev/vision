@@ -1,6 +1,7 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 import { createArtboard, createPage, updateArtboard } from '@vision/format';
 import { z } from 'zod';
+import type { ToolActivity } from '../activity/tool-activity';
 import { runEdit } from '../edit';
 import { file, id, newId } from '../schemas';
 
@@ -13,7 +14,7 @@ const size = (side: string) =>
 const coordinate = (axis: string) =>
   z.number().describe(`${axis} position on the page's canvas, in px. Artboards shouldn't overlap.`);
 
-export function registerArtboardTools(server: McpServer): void {
+export function registerArtboardTools(server: McpServer, activity: ToolActivity): void {
   server.registerTool(
     'create_page',
     {
@@ -26,8 +27,8 @@ export function registerArtboardTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: false },
     },
-    ({ file, ...options }) =>
-      runEdit(file, (doc) => {
+    ({ file, ...options }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => {
         const { document, page } = createPage(doc, options);
         return {
           document,
@@ -61,8 +62,8 @@ export function registerArtboardTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: false },
     },
-    ({ file, ...options }) =>
-      runEdit(file, (doc) => {
+    ({ file, ...options }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => {
         const { document, artboard } = createArtboard(doc, options);
         return {
           document,
@@ -95,8 +96,8 @@ export function registerArtboardTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: true },
     },
-    ({ file, id, ...patch }) =>
-      runEdit(file, (doc) => ({
+    ({ file, id, ...patch }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => ({
         document: updateArtboard(doc, id, patch),
         summary: `Updated artboard ${id}.`,
       })),

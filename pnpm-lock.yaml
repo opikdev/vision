@@ -299,6 +299,9 @@ importers:
       '@modelcontextprotocol/server':
         specifier: 2.4.0
         version: 2.4.0
+      '@vision/activity':
+        specifier: workspace:*
+        version: link:../activity
       '@vision/format':
         specifier: workspace:*
         version: link:../format

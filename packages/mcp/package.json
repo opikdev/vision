@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.4.0",
+    "@vision/activity": "workspace:*",
     "@vision/format": "workspace:*",
     "tailwindcss": "4.3.4",
     "zod": "4.6.7"

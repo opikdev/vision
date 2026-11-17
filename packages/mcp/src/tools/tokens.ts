@@ -1,10 +1,11 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 import { setTokens, tokenGroups } from '@vision/format';
 import { z } from 'zod';
+import type { ToolActivity } from '../activity/tool-activity';
 import { runEdit } from '../edit';
 import { file } from '../schemas';
 
-export function registerTokenTools(server: McpServer): void {
+export function registerTokenTools(server: McpServer, activity: ToolActivity): void {
   server.registerTool(
     'set_tokens',
     {
@@ -21,8 +22,8 @@ export function registerTokenTools(server: McpServer): void {
       }),
       annotations: { destructiveHint: false, idempotentHint: true },
     },
-    ({ file, tokens }) =>
-      runEdit(file, (doc) => {
+    ({ file, tokens }, ctx) =>
+      runEdit(file, activity.editing(ctx, file), (doc) => {
         const document = setTokens(doc, tokens);
         const groups = tokenGroups.flatMap((group) => {
           const names = Object.keys(document.tokens?.[group] ?? {});

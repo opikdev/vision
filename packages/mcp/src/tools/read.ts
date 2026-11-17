@@ -2,6 +2,7 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { findById, outline, tokenGroups, type Located, type VisionDocument } from '@vision/format';
 import { readDesign } from '@vision/format/node';
 import { z } from 'zod';
+import type { ToolActivity } from '../activity/tool-activity';
 import { inspectDesign, invalidText, missingText, plural, problemCounts } from '../design';
 import { guide } from '../guide';
 import { errorResult, textResult } from '../results';
@@ -10,7 +11,7 @@ import { file, id } from '../schemas';
 const readOnly = { readOnlyHint: true, idempotentHint: true } as const;
 const designDepth = 3;
 
-export function registerReadTools(server: McpServer): void {
+export function registerReadTools(server: McpServer, activity: ToolActivity): void {
   server.registerTool(
     'get_guide',
     {
@@ -32,7 +33,8 @@ export function registerReadTools(server: McpServer): void {
       inputSchema: z.object({ file }),
       annotations: readOnly,
     },
-    async ({ file }) => {
+    async ({ file }, ctx) => {
+      activity.reading(ctx, file);
       const { exists, document, diagnostics } = await inspectDesign(file);
       if (!exists) return textResult(missingText(file));
       if (document === undefined) return textResult(invalidText(file, diagnostics));
@@ -72,7 +74,8 @@ export function registerReadTools(server: McpServer): void {
       }),
       annotations: readOnly,
     },
-    async ({ file, id, depth }) => {
+    async ({ file, id, depth }, ctx) => {
+      activity.reading(ctx, file);
       const { result } = await readDesign(file);
       if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
       if (id !== undefined && findById(result.document, id) === undefined) {
@@ -99,7 +102,8 @@ export function registerReadTools(server: McpServer): void {
       inputSchema: z.object({ file, id: id('Id of the node, artboard or page.') }),
       annotations: readOnly,
     },
-    async ({ file, id }) => {
+    async ({ file, id }, ctx) => {
+      activity.reading(ctx, file);
       const { result } = await readDesign(file);
       if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
       const located = findById(result.document, id);
