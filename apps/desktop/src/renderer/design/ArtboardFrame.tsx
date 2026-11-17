@@ -53,6 +53,7 @@ export function ArtboardFrame({
       <iframe
         ref={iframeRef}
         title={artboard.name}
+        data-artboard-id={artboard.id}
         sandbox="allow-same-origin"
         tabIndex={-1}
         width={artboard.width}

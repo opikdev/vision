@@ -25,12 +25,12 @@ describe('DesignNodes', () => {
       />,
     );
     expect(container.innerHTML).toBe(
-      '<div class="flex gap-2">' +
-        '<p class="text-xl">Two\nlines</p>' +
-        '<img alt="" src="vision-asset://tok/photos/hero%201.png?v=1">' +
-        '<img alt="A cup" src="https://example.com/a.png">' +
+      '<div class="flex gap-2" data-node-id="card">' +
+        '<p class="text-xl" data-node-id="title">Two\nlines</p>' +
+        '<img data-node-id="hero" alt="" src="vision-asset://tok/photos/hero%201.png?v=1">' +
+        '<img data-node-id="remote" alt="A cup" src="https://example.com/a.png">' +
         '</div>' +
-        '<div></div>',
+        '<div data-node-id="empty"></div>',
     );
   });
 
@@ -52,6 +52,7 @@ describe('DesignNodes', () => {
     const svg = container.querySelector('svg');
     expect(container.children).toHaveLength(1);
     expect(svg?.getAttribute('class')).toBe('size-4 text-brand');
+    expect(svg?.getAttribute('data-node-id')).toBe('icon');
     expect(svg?.getAttribute('viewBox')).toBe('0 0 24 24');
     expect(svg?.getAttribute('stroke-width')).toBe('1.5');
     expect(svg?.innerHTML).toBe('<path d="M0 0h24"></path>');

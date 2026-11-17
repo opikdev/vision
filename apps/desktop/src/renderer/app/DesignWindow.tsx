@@ -1,5 +1,6 @@
 import type { DocumentState } from '../../shared/contract';
 import { useClassWarnings, useCompiledDesign } from '../design/use-compiled-design';
+import { useReveal } from '../features/agents/use-reveal';
 import { Canvas } from '../features/canvas/Canvas';
 import { pageIn } from '../features/canvas/current-page';
 import { EmptyDesignHint } from '../features/canvas/EmptyDesignHint';
@@ -15,6 +16,7 @@ import { WindowFrame } from './WindowFrame';
 export function DesignWindow({ state }: { state: DocumentState }) {
   const compiled = useCompiledDesign(state.document);
   const classWarnings = useClassWarnings(state.document);
+  useReveal(compiled?.document ?? null);
   const pageId = useViewStore((store) => store.pageId);
   const diagnostics =
     state.status === 'ok' ? [...state.diagnostics, ...classWarnings] : state.diagnostics;

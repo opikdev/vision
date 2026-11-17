@@ -9,4 +9,12 @@ export const frameBaseCss = `@layer base {
   html, body { height: 100%; overflow: hidden; }
   [data-artboard] { height: 100%; }
   p { white-space: pre-line; }
+}
+[data-reveal='hidden'] { opacity: 0; }
+[data-reveal='added'] { animation: vision-rise 160ms ease-out, vision-outline 400ms ease-out; }
+[data-reveal='changed'] { animation: vision-outline 400ms ease-out; }
+@keyframes vision-rise { from { opacity: 0; translate: 0 4px; } }
+@keyframes vision-outline {
+  from { outline: 1.5px solid #1c1c1c; }
+  to { outline: 1.5px solid transparent; }
 }`;
