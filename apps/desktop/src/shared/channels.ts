@@ -1,0 +1,14 @@
+export const channels = {
+  getState: 'document:get-state',
+  state: 'document:state',
+  listRecent: 'recent:list',
+  recentChanged: 'recent:changed',
+  removeRecent: 'recent:remove',
+  openPath: 'file:open-path',
+  runCommand: 'command:run',
+  viewCommand: 'view:command',
+  writeClipboard: 'clipboard:write',
+  getMcpServer: 'mcp:get-server',
+  captureReady: 'capture:ready',
+  captureFailed: 'capture:failed',
+} as const;
