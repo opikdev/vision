@@ -9,7 +9,7 @@ export const onePixelPng = Buffer.from(
 const script = `#!/usr/bin/env node
 import { writeFileSync } from 'node:fs';
 const args = process.argv.slice(2);
-const option = (name) => args[args.indexOf(name) + 1];
+const option = (name) => args.find((arg) => arg.startsWith(name + '='))?.slice(name.length + 1);
 writeFileSync(process.env.FAKE_VISION_LOG, JSON.stringify({ args, electronRunAsNode: process.env.ELECTRON_RUN_AS_NODE ?? null }));
 if (option('--artboard') === 'broken') {
   process.stderr.write('No artboard has id "broken".\\n');

@@ -5,14 +5,14 @@ export const screenshotFlag = '--vision-screenshot';
 
 const requestSchema = z.object({
   file: z
-    .string({ error: `Missing ${screenshotFlag} <absolute .vis path>` })
+    .string({ error: `Missing ${screenshotFlag}=<absolute .vis path>` })
     .refine((value) => isAbsolute(value) && value.endsWith('.vis'), {
       error: (issue) =>
         `${screenshotFlag} needs an absolute .vis path, got "${String(issue.input)}"`,
     }),
-  artboard: z.string({ error: 'Missing --artboard <id>' }).min(1, 'Missing --artboard <id>'),
+  artboard: z.string({ error: 'Missing --artboard=<id>' }).min(1, 'Missing --artboard=<id>'),
   out: z
-    .string({ error: 'Missing --out <absolute .png path>' })
+    .string({ error: 'Missing --out=<absolute .png path>' })
     .refine((value) => isAbsolute(value) && value.endsWith('.png'), {
       error: (issue) => `--out needs an absolute .png path, got "${String(issue.input)}"`,
     }),
@@ -37,13 +37,15 @@ const flags = {
 } as const;
 
 export function parseScreenshotArgs(argv: readonly string[]): ScreenshotArgs {
-  if (!argv.includes(screenshotFlag)) return { kind: 'none' };
+  if (!argv.some((arg) => arg === screenshotFlag || arg.startsWith(`${screenshotFlag}=`))) {
+    return { kind: 'none' };
+  }
   const values: Partial<Record<(typeof flags)[keyof typeof flags], string>> = {};
-  for (const [index, arg] of argv.entries()) {
-    if (!Object.hasOwn(flags, arg)) continue;
-    const value = argv[index + 1];
-    if (value !== undefined && !value.startsWith('--'))
-      values[flags[arg as keyof typeof flags]] = value;
+  for (const arg of argv) {
+    const separator = arg.indexOf('=');
+    const name = arg.slice(0, separator);
+    if (separator === -1 || !Object.hasOwn(flags, name)) continue;
+    values[flags[name as keyof typeof flags]] = arg.slice(separator + 1);
   }
   const parsed = requestSchema.safeParse(values);
   if (!parsed.success)

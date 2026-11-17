@@ -58,14 +58,10 @@ export async function takeScreenshot(app: VisionApp, options: ScreenshotOptions)
     const out = join(dir, 'screenshot.png');
     await run(app.command, [
       ...app.args,
-      '--vision-screenshot',
-      options.file,
-      '--artboard',
-      options.artboard,
-      '--out',
-      out,
-      '--scale',
-      String(options.scale),
+      `--vision-screenshot=${options.file}`,
+      `--artboard=${options.artboard}`,
+      `--out=${out}`,
+      `--scale=${options.scale}`,
     ]);
     return await readPng(out);
   } finally {

@@ -1,3 +1,4 @@
+import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { onePixelPng, writeFakeVision } from '../fake-vision';
@@ -47,6 +48,14 @@ describe('screenshot', () => {
       isError: true,
       structured: undefined,
     });
+  });
+
+  it('rejects an artboard id that could be read as a switch', async () => {
+    await session.call('create_page', { file, name: 'Shop' });
+    expect((await session.call('screenshot', { file, artboard: '-no-sandbox' })).isError).toBe(
+      true,
+    );
+    await expect(access(join(session.dir, 'log.json'))).rejects.toThrow('ENOENT');
   });
 
   it('rejects a scale other than 1 or 2', async () => {

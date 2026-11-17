@@ -102,16 +102,12 @@ describe('takeScreenshot', () => {
     );
     expect(png).toEqual(onePixelPng);
     const { args, electronRunAsNode } = await logged();
-    const out = args[5] ?? '';
+    const out = args[2]?.slice('--out='.length) ?? '';
     expect(args).toEqual([
-      '--vision-screenshot',
-      '/designs/app.vis',
-      '--artboard',
-      'cart',
-      '--out',
-      out,
-      '--scale',
-      '2',
+      '--vision-screenshot=/designs/app.vis',
+      '--artboard=cart',
+      `--out=${out}`,
+      '--scale=2',
     ]);
     expect(out).toMatch(/vision-screenshot-[^/]+\/screenshot\.png$/);
     expect(electronRunAsNode).toBeNull();

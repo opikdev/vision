@@ -1,4 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/server';
+import { idPattern } from '@vision/format';
 import { z } from 'zod';
 import { fileExists } from '../design';
 import { errorResult, imageResult } from '../results';
@@ -17,7 +18,7 @@ export function registerScreenshotTool(server: McpServer): void {
         'Render an artboard to a PNG with the Vision app, exactly as Vision draws it. Use it to check your work.',
       inputSchema: z.object({
         file,
-        artboard: id('Id of the artboard to render.'),
+        artboard: id('Id of the artboard to render.').regex(idPattern),
         scale: z
           .union([z.literal(1), z.literal(2)])
           .default(1)
