@@ -1,10 +1,18 @@
 import type { McpServer } from '@modelcontextprotocol/server';
-import { idPattern } from '@vision/format';
+import { findById, idPattern } from '@vision/format';
+import { readDesign } from '@vision/format/node';
 import { z } from 'zod';
-import { fileExists } from '../design';
+import { invalidText } from '../design';
 import { errorResult, imageResult } from '../results';
 import { file, id } from '../schemas';
-import { currentRuntime, resolveApp, ScreenshotError, takeScreenshot } from '../screenshot';
+import {
+  currentRuntime,
+  maxScreenshotSide,
+  resolveApp,
+  ScreenshotError,
+  screenshotSize,
+  takeScreenshot,
+} from '../screenshot';
 
 const appHint =
   'To use another build of Vision, set VISION_APP to its executable, and VISION_APP_ENTRY to its app folder for a development build.';
@@ -22,21 +30,33 @@ export function registerScreenshotTool(server: McpServer): void {
         scale: z
           .union([z.literal(1), z.literal(2)])
           .default(1)
-          .describe('Pixel density: 1 for 1x, 2 for sharper 2x images with four times the pixels.'),
+          .describe(
+            `Pixel density: 1 for 1x, 2 for sharper 2x images with four times the pixels. Images are scaled down so their longest side is at most ${maxScreenshotSide} px.`,
+          ),
       }),
       annotations: { readOnlyHint: true, idempotentHint: true },
     },
     async ({ file, artboard, scale }) => {
-      if (!(await fileExists(file))) {
-        return errorResult(`${file} doesn't exist yet. Create an artboard first.`);
+      const { exists, result } = await readDesign(file);
+      if (!exists) return errorResult(`${file} doesn't exist yet. Create an artboard first.`);
+      if (!result.ok) return errorResult(invalidText(file, result.diagnostics));
+      const located = findById(result.document, artboard);
+      if (located?.kind !== 'artboard') {
+        return errorResult(`No artboard has id "${artboard}". Call get_overview to see the ids.`);
       }
+      const { width, height } = located.artboard;
+      const size = screenshotSize(width, height, scale);
       const app = resolveApp(currentRuntime());
       if (app === undefined) {
         return errorResult(`Vision isn't installed. Install Vision in /Applications. ${appHint}`);
       }
       try {
-        const png = await takeScreenshot(app, { file, artboard, scale });
-        return imageResult(`Artboard ${artboard} at ${scale}x.`, png);
+        const png = await takeScreenshot(app, { file, artboard, scale: size.scale });
+        const used = Number(size.scale.toFixed(2));
+        return imageResult(
+          `Artboard ${artboard} at ${used}x (${width}×${height} → ${size.width}×${size.height}).`,
+          png,
+        );
       } catch (error) {
         if (error instanceof ScreenshotError) return errorResult(`${error.message}\n${appHint}`);
         throw error;

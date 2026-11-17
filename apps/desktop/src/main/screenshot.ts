@@ -108,7 +108,10 @@ async function capture({
     { x: 0, y: 0, width, height },
     { stayHidden: true },
   );
-  const size = { width: width * scale, height: height * scale };
+  const size = {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
   const captured = image.getSize();
   const exact =
     captured.width === size.width && captured.height === size.height

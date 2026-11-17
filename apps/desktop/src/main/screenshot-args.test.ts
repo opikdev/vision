@@ -24,6 +24,12 @@ describe('parseScreenshotArgs', () => {
     });
   });
 
+  it('accepts a fractional scale', () => {
+    expect(parseScreenshotArgs([...base, '--scale=0.2222222222222222'])).toMatchObject({
+      request: { scale: 0.2222222222222222 },
+    });
+  });
+
   it('keeps values that look like switches inside their own argument', () => {
     expect(
       parseScreenshotArgs([
@@ -52,7 +58,9 @@ describe('parseScreenshotArgs', () => {
       ['/Vision', '--vision-screenshot=/d/a.vis', '--artboard=x', '--out=/tmp/a.jpg'],
       '--out needs an absolute .png path, got "/tmp/a.jpg"',
     ],
-    [[...base, '--scale=3'], '--scale must be 1 or 2, got "3"'],
+    [[...base, '--scale=3'], '--scale must be a number above 0, up to 2, got "3"'],
+    [[...base, '--scale=0'], '--scale must be a number above 0, up to 2, got "0"'],
+    [[...base, '--scale=1e-3'], '--scale must be a number above 0, up to 2, got "1e-3"'],
     [
       ['/Vision', '--vision-screenshot', '/d/a.vis', '--artboard=x', '--out=/tmp/a.png'],
       'Missing --vision-screenshot=<absolute .vis path>',

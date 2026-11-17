@@ -3,7 +3,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { onePixelPng, writeFakeVision } from './fake-vision';
-import { resolveApp, ScreenshotError, takeScreenshot, type Runtime } from './screenshot';
+import {
+  resolveApp,
+  ScreenshotError,
+  screenshotSize,
+  takeScreenshot,
+  type Runtime,
+} from './screenshot';
 
 function runtime(overrides: Partial<Runtime> = {}): Runtime {
   return {
@@ -68,6 +74,20 @@ describe('resolveApp', () => {
 
   it('finds nothing elsewhere', () => {
     expect(resolveApp(runtime({ platform: 'linux', exists: () => true }))).toBeUndefined();
+  });
+});
+
+describe('screenshotSize', () => {
+  it.each([
+    [1440, 900, 1, { scale: 1, width: 1440, height: 900 }],
+    [800, 600, 2, { scale: 2, width: 1600, height: 1200 }],
+    [1440, 900, 2, { scale: 2000 / 1440, width: 2000, height: 1250 }],
+    [1000, 2000, 2, { scale: 1, width: 1000, height: 2000 }],
+    [1440, 9000, 1, { scale: 2000 / 9000, width: 320, height: 2000 }],
+    [1440, 9000, 2, { scale: 2000 / 9000, width: 320, height: 2000 }],
+    [10000, 1, 1, { scale: 0.2, width: 2000, height: 1 }],
+  ])('fits %ix%i at %ix', (width, height, requested, size) => {
+    expect(screenshotSize(width, height, requested)).toEqual(size);
   });
 });
 

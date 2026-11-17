@@ -17,8 +17,11 @@ const requestSchema = z.object({
       error: (issue) => `--out needs an absolute .png path, got "${String(issue.input)}"`,
     }),
   scale: z
-    .enum(['1', '2'], { error: (issue) => `--scale must be 1 or 2, got "${String(issue.input)}"` })
+    .string()
     .default('1')
+    .refine((value) => /^\d*\.?\d+$/.test(value) && Number(value) > 0 && Number(value) <= 2, {
+      error: (issue) => `--scale must be a number above 0, up to 2, got "${String(issue.input)}"`,
+    })
     .transform(Number),
 });
 

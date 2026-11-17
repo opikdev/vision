@@ -127,22 +127,22 @@ Warnings don't stop drawing:
 
 `vision-mcp` is a stdio MCP server. Every tool takes `file`, the absolute path of a `.vis` file. The file doesn't need to exist yet; the first edit creates it.
 
-| Tool              | Purpose                                                                      |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `get_guide`       | This page.                                                                   |
-| `get_overview`    | Pages, artboards, tokens and problem counts.                                 |
-| `get_tree`        | An outline of a page or an artboard.                                         |
-| `get_node`        | One node, page or artboard as JSON.                                          |
-| `create_page`     | Add a page.                                                                  |
-| `create_artboard` | Add an artboard, placed to the right of the others unless `x`/`y` are given. |
-| `update_artboard` | Rename, move, resize or restyle an artboard.                                 |
-| `write_html`      | Convert HTML with Tailwind classes into nodes inside an artboard or frame.   |
-| `update_node`     | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`.              |
-| `move_node`       | Move a node to another parent or position.                                   |
-| `delete`          | Remove a node, artboard or page by id.                                       |
-| `set_tokens`      | Merge tokens; `null` deletes one.                                            |
-| `validate`        | List every error and warning.                                                |
-| `screenshot`      | A PNG of an artboard, rendered by Vision.                                    |
+| Tool              | Purpose                                                                        |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `get_guide`       | This page.                                                                     |
+| `get_overview`    | Pages, artboards, tokens and problem counts.                                   |
+| `get_tree`        | An outline of a page or an artboard.                                           |
+| `get_node`        | One node, page or artboard as JSON.                                            |
+| `create_page`     | Add a page.                                                                    |
+| `create_artboard` | Add an artboard, placed to the right of the others unless `x`/`y` are given.   |
+| `update_artboard` | Rename, move, resize or restyle an artboard.                                   |
+| `write_html`      | Convert HTML with Tailwind classes into nodes inside an artboard or frame.     |
+| `update_node`     | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`.                |
+| `move_node`       | Move a node to another parent or position.                                     |
+| `delete`          | Remove a node, artboard or page by id.                                         |
+| `set_tokens`      | Merge tokens; `null` deletes one.                                              |
+| `validate`        | List every error and warning.                                                  |
+| `screenshot`      | A PNG of an artboard, rendered by Vision, at most 2000 px on its longest side. |
 
 ### HTML for `write_html`
 

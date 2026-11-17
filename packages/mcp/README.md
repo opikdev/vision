@@ -24,7 +24,7 @@ claude mcp add --scope user vision -- node <repo>/packages/mcp/dist/vision-mcp.m
 `screenshot` runs the Vision app:
 
 ```sh
-<app> [<entry>] --vision-screenshot=<file.vis> --artboard=<id> --out=<file.png> [--scale=1|2]
+<app> [<entry>] --vision-screenshot=<file.vis> --artboard=<id> --out=<file.png> [--scale=<n>]
 ```
 
 The server looks for the app in this order:

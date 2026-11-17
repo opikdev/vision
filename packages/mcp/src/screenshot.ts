@@ -20,7 +20,13 @@ export interface Runtime {
 export interface ScreenshotOptions {
   file: string;
   artboard: string;
-  scale: 1 | 2;
+  scale: number;
+}
+
+export interface ScreenshotSize {
+  scale: number;
+  width: number;
+  height: number;
 }
 
 export class ScreenshotError extends Error {
@@ -28,7 +34,17 @@ export class ScreenshotError extends Error {
 }
 
 export const macAppPath = '/Applications/Vision.app/Contents/MacOS/Vision';
+export const maxScreenshotSide = 2000;
 const timeoutSeconds = 30;
+
+export function screenshotSize(width: number, height: number, requested: number): ScreenshotSize {
+  const scale = Math.min(requested, maxScreenshotSide / Math.max(width, height));
+  return {
+    scale,
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
 
 export function currentRuntime(): Runtime {
   return {
