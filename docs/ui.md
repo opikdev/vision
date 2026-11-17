@@ -35,8 +35,8 @@ The rules for Vision's own interface (not for the designs it shows). The approve
 - **Icons**: Hugeicons (`@hugeicons/react` with `@hugeicons/core-free-icons`), stroke 1.5, 16px in rows and buttons. No other icon set.
 - **Radii**: 6px (`rounded-sm`) for buttons and badges, 8px (`rounded-md`) for rows and inner blocks, 12px (`rounded-lg`) for the canvas, cards, menus and dialogs. No other radii are defined.
 - **Primary button**: `primary` fill with `primary-foreground` text. Everything else is a quiet button: text or icon in `muted-foreground`, `accent` fill on hover.
-- **Layout**: no border around the main area. The sidebar (248px) and the 48px top bar form one `background` frame; the canvas is inset 8px from the window's right and bottom edges (and left, when the sidebar is hidden) with 12px corners. The traffic lights, the app icon and the sidebar toggle share the top row.
-- **Sidebar toggle**: `Layout2Column` while the sidebar shows, `LayoutAlignLeft` while it's hidden; ⌘\ toggles it. A vertical separator follows it.
+- **Layout**: no border around the main area. The sidebar (248px) and the 48px top bar form one `background` frame; the canvas is inset 8px from the window's right and bottom edges (and left, when the sidebar is hidden) with 12px corners. The traffic lights, the app menu (the V mark, 16px after the traffic lights) and the sidebar toggle share the top row.
+- **Sidebar toggle**: `LayoutLeft` while the sidebar shows, `LayoutAlignLeft` while it's hidden; ⌘\ toggles it. A vertical separator follows it.
 - **Zoom**: zoom out, the zoom level, zoom in and an icon-only "Zoom to fit" (`FitToScreen`), right-aligned in the top bar.
 - **States**: every interactive element has hover, pressed, disabled and a visible focus ring (the global 2px `ring` outline, not shadcn's `ring-*` utilities). Nothing moves focus on its own, and redraws on save never steal focus or reset the viewport.
 - **Motion**: menus, popovers, tooltips and the dialog fade and zoom in over 100ms, and the sidebar slides over 200ms. With reduced motion, every shadcn component (`[data-slot]`) appears at once.
