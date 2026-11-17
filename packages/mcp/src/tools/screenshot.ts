@@ -6,14 +6,8 @@ import type { ToolActivity } from '../activity/tool-activity';
 import { invalidText } from '../design';
 import { errorResult, imageResult } from '../results';
 import { file, id } from '../schemas';
-import {
-  currentRuntime,
-  maxScreenshotSide,
-  resolveApp,
-  ScreenshotError,
-  screenshotSize,
-  takeScreenshot,
-} from '../screenshot';
+import { maxScreenshotSide, screenshotSize, takeScreenshot } from '../screenshot';
+import { currentRuntime, resolveApp, VisionAppError } from '../vision-app';
 
 const appHint =
   'To use another build of Vision, set VISION_APP to its executable, and VISION_APP_ENTRY to its app folder for a development build.';
@@ -60,7 +54,7 @@ export function registerScreenshotTool(server: McpServer, activity: ToolActivity
           png,
         );
       } catch (error) {
-        if (error instanceof ScreenshotError) return errorResult(`${error.message}\n${appHint}`);
+        if (error instanceof VisionAppError) return errorResult(`${error.message}\n${appHint}`);
         throw error;
       }
     },

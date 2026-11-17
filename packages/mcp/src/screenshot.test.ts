@@ -3,79 +3,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { onePixelPng, writeFakeVision } from './fake-vision';
-import {
-  resolveApp,
-  ScreenshotError,
-  screenshotSize,
-  takeScreenshot,
-  type Runtime,
-} from './screenshot';
-
-function runtime(overrides: Partial<Runtime> = {}): Runtime {
-  return {
-    env: {},
-    execPath: '/usr/local/bin/node',
-    electron: undefined,
-    platform: 'darwin',
-    exists: () => false,
-    ...overrides,
-  };
-}
-
-describe('resolveApp', () => {
-  it('uses VISION_APP first, with VISION_APP_ENTRY as the first argument', () => {
-    expect(
-      resolveApp(
-        runtime({
-          env: {
-            VISION_APP: '/dev/electron',
-            VISION_APP_ENTRY: '/dev/vision',
-            ELECTRON_RUN_AS_NODE: '1',
-          },
-          electron: '45.2.2',
-          exists: () => true,
-        }),
-      ),
-    ).toEqual({ command: '/dev/electron', args: ['/dev/vision'] });
-  });
-
-  it('uses VISION_APP alone when there is no entry', () => {
-    expect(resolveApp(runtime({ env: { VISION_APP: '/opt/Vision' } }))).toEqual({
-      command: '/opt/Vision',
-      args: [],
-    });
-  });
-
-  it('uses its own binary when it runs inside the packaged app', () => {
-    expect(
-      resolveApp(
-        runtime({
-          env: { ELECTRON_RUN_AS_NODE: '1' },
-          execPath: '/Applications/Vision.app/Contents/MacOS/Vision',
-          electron: '45.2.2',
-        }),
-      ),
-    ).toEqual({ command: '/Applications/Vision.app/Contents/MacOS/Vision', args: [] });
-  });
-
-  it('ignores ELECTRON_RUN_AS_NODE under plain Node', () => {
-    expect(resolveApp(runtime({ env: { ELECTRON_RUN_AS_NODE: '1' } }))).toBeUndefined();
-  });
-
-  it('falls back to the app in /Applications on macOS', () => {
-    const exists = vi.fn(
-      (path: string) => path === '/Applications/Vision.app/Contents/MacOS/Vision',
-    );
-    expect(resolveApp(runtime({ exists }))).toEqual({
-      command: '/Applications/Vision.app/Contents/MacOS/Vision',
-      args: [],
-    });
-  });
-
-  it('finds nothing elsewhere', () => {
-    expect(resolveApp(runtime({ platform: 'linux', exists: () => true }))).toBeUndefined();
-  });
-});
+import { screenshotSize, takeScreenshot } from './screenshot';
+import { VisionAppError } from './vision-app';
 
 describe('screenshotSize', () => {
   it.each([
@@ -152,7 +81,7 @@ describe('takeScreenshot', () => {
         { file: '/designs/app.vis', artboard: 'broken', scale: 1 },
       ),
     ).rejects.toThrow(
-      new ScreenshotError(
+      new VisionAppError(
         `Vision couldn't take the screenshot (exit code 1): No artboard has id "broken".`,
       ),
     );
@@ -165,7 +94,7 @@ describe('takeScreenshot', () => {
         { command: process.execPath, args: [fake] },
         { file: '/designs/app.vis', artboard: 'silent', scale: 1 },
       ),
-    ).rejects.toThrow(new ScreenshotError('Vision exited without writing the PNG.'));
+    ).rejects.toThrow(new VisionAppError('Vision exited without writing the PNG.'));
   });
 
   it('reports an app that cannot start', async () => {
@@ -176,7 +105,7 @@ describe('takeScreenshot', () => {
         { file: '/designs/app.vis', artboard: 'cart', scale: 1 },
       ),
     ).rejects.toThrow(
-      new ScreenshotError(`Couldn't start Vision at ${missing}: spawn ${missing} ENOENT`),
+      new VisionAppError(`Couldn't start Vision at ${missing}: spawn ${missing} ENOENT`),
     );
   });
 });
