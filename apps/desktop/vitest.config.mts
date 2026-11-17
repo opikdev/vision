@@ -6,6 +6,6 @@ export default defineProject({
   test: {
     name: 'desktop',
     environment: 'node',
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'bench/**/*.test.ts'],
   },
 });

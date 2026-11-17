@@ -10,6 +10,7 @@
     "build": "electron-vite build",
     "typecheck": "tsc -p tsconfig.node.json && tsc -p tsconfig.web.json && tsc -p tsconfig.e2e.json",
     "test:e2e": "electron-vite build && playwright test",
+    "bench": "electron-vite build && playwright test -c playwright.bench.config.ts",
     "package": "pnpm --filter @vision/mcp build && electron-vite build && electron-builder --mac"
   },
   "dependencies": {

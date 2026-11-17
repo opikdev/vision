@@ -89,3 +89,4 @@ codex mcp add vision --env ELECTRON_RUN_AS_NODE=1 -- /Applications/Vision.app/Co
 - [Architecture](docs/architecture.md) and [decisions](docs/decisions/)
 - [App UI rules](docs/ui.md)
 - [Releasing](docs/releasing.md)
+- [Measuring performance](docs/performance.md)

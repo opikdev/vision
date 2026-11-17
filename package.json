@@ -16,6 +16,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "test:e2e": "pnpm --filter @vision/desktop test:e2e",
+    "bench": "pnpm --filter @vision/desktop bench",
     "package": "pnpm --filter @vision/desktop package"
   },
   "devDependencies": {
