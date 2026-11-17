@@ -5,10 +5,10 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from 'react';
-import { useViewStore } from '../../stores/view-store';
+import { useViewStore, type Viewport } from '../../stores/view-store';
 import { viewportFor } from './canvas-commands';
 import { currentPage } from './current-page';
-import { wheelZoomFactor, zoomAt, type Viewport } from './viewport';
+import { wheelZoomFactor, zoomAt } from './viewport';
 
 export function useCanvasGestures(container: RefObject<HTMLElement | null>) {
   const [spaceHeld, setSpaceHeld] = useState(false);

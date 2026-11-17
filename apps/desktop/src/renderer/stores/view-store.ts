@@ -1,7 +1,17 @@
 import { create } from 'zustand';
-import type { Size, Viewport } from '../features/canvas/viewport';
 
 export type DialogName = 'connect-ai';
+
+export interface Viewport {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export interface Size {
+  width: number;
+  height: number;
+}
 
 interface ViewStore {
   sidebarVisible: boolean;

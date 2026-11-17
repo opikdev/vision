@@ -1,15 +1,7 @@
 import type { Page } from '@vision/format';
-import { useViewStore } from '../../stores/view-store';
+import { useViewStore, type Size, type Viewport } from '../../stores/view-store';
 import { currentPage } from './current-page';
-import {
-  fitBounds,
-  nextZoomStep,
-  unionBounds,
-  zoomAt,
-  type Bounds,
-  type Size,
-  type Viewport,
-} from './viewport';
+import { fitBounds, nextZoomStep, unionBounds, zoomAt, type Bounds } from './viewport';
 
 const fitPadding = 64;
 const emptyHintSpace = 120;

@@ -3,7 +3,7 @@ import type { Artboard } from '@vision/format';
 import { useViewStore } from '../../stores/view-store';
 import { Button } from '../../ui/Button';
 import { useCopy } from '../../ui/use-copy';
-import type { Viewport } from './viewport';
+import type { Viewport } from '../../stores/view-store';
 
 export function EmptyDesignHint({
   artboard,

@@ -1,11 +1,11 @@
 import type { Artboard, Page } from '@vision/format';
 import { memo, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { ArtboardFrame } from '../../design/ArtboardFrame';
-import { useViewStore } from '../../stores/view-store';
+import { useViewStore, type Viewport } from '../../stores/view-store';
 import { cx } from '../../ui/cx';
 import { fitPage } from './canvas-commands';
 import { useCanvasGestures } from './use-canvas-gestures';
-import { labelRoom, type Viewport } from './viewport';
+import { labelRoom } from './viewport';
 
 export function Canvas({
   page,
