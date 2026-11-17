@@ -13,6 +13,7 @@ export interface Vision {
 
 export const test = base.extend<{
   dir: string;
+  activitySocket: string;
   exampleCopy: string;
   launch: (...files: string[]) => Promise<Vision>;
 }>({
@@ -21,16 +22,20 @@ export const test = base.extend<{
     await use(dir);
     await rm(dir, { recursive: true, force: true });
   },
+  activitySocket: async ({ dir }, use) => {
+    await use(join(dir, 'activity.sock'));
+  },
   exampleCopy: async ({ dir }, use) => {
     const file = join(dir, 'checkout.vis');
     await copyFile(example, file);
     await use(file);
   },
-  launch: async ({ dir }, use) => {
+  launch: async ({ dir, activitySocket }, use) => {
     const apps: ElectronApplication[] = [];
     await use(async (...files) => {
       const app = await _electron.launch({
         args: [appDir, `--user-data-dir=${join(dir, 'user-data')}`, ...files],
+        env: { ...process.env, VISION_ACTIVITY_SOCKET: activitySocket },
       });
       apps.push(app);
       return { app, window: await app.firstWindow() };
