@@ -9,3 +9,12 @@ export {
   type Activity,
   type ActivityMessage,
 } from './message';
+export {
+  encodeLine,
+  parseSelectionRequest,
+  parseSelectionResponse,
+  selectionSchema,
+  type Selection,
+  type SelectionRequest,
+  type SelectionResponse,
+} from './selection';

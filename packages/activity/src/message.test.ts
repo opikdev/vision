@@ -47,6 +47,11 @@ describe('encodeActivity and parseActivity', () => {
   it('accepts done and look messages', () => {
     const done = { ...edit, activity: { kind: 'done' } };
     const look = { ...edit, activity: { kind: 'look', summary: 'is reading the design' } };
+    const lookAtNode = {
+      ...edit,
+      activity: { kind: 'look', artboard: 'cart', node: 'title', summary: 'is looking at Title' },
+    };
+    expect(parseActivity(JSON.stringify(lookAtNode))).toEqual(lookAtNode);
     expect(parseActivity(JSON.stringify(done))).toEqual(done);
     expect(parseActivity(JSON.stringify(look))).toEqual(look);
   });

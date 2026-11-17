@@ -3,7 +3,8 @@ import { z } from 'zod';
 export const maxLineBytes = 64 * 1024;
 export const maxNodes = 500;
 
-const id = z.string().min(1).max(256);
+export const idSchema = z.string().min(1).max(256);
+const id = idSchema;
 const summary = z.string().min(1).max(200);
 
 export const activitySchema = z.discriminatedUnion('kind', [
@@ -13,7 +14,12 @@ export const activitySchema = z.discriminatedUnion('kind', [
     nodes: z.array(id).max(maxNodes),
     summary,
   }),
-  z.object({ kind: z.literal('look'), artboard: id.exactOptional(), summary }),
+  z.object({
+    kind: z.literal('look'),
+    artboard: id.exactOptional(),
+    node: id.exactOptional(),
+    summary,
+  }),
   z.object({ kind: z.literal('done') }),
 ]);
 
@@ -35,12 +41,19 @@ export function encodeActivity(message: ActivityMessage): string | undefined {
 }
 
 export function parseActivity(line: string): ActivityMessage | undefined {
+  return parseLine(activityMessageSchema, line);
+}
+
+export function parseLine<Schema extends z.ZodType>(
+  schema: Schema,
+  line: string,
+): z.output<Schema> | undefined {
   let value: unknown;
   try {
     value = JSON.parse(line);
   } catch {
     return undefined;
   }
-  const result = activityMessageSchema.safeParse(value);
+  const result = schema.safeParse(value);
   return result.success ? result.data : undefined;
 }
