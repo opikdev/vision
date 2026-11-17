@@ -1,5 +1,5 @@
-import type { Page } from '@vision/format';
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import type { Artboard, Page } from '@vision/format';
+import { memo, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react';
 import { ArtboardFrame } from '../../design/ArtboardFrame';
 import { useViewStore } from '../../stores/view-store';
 import { cx } from '../../ui/cx';
@@ -50,7 +50,10 @@ export function Canvas({
   const x = Math.round(viewport?.x ?? 0);
   const y = Math.round(viewport?.y ?? 0);
   const zoom = viewport?.zoom ?? 1;
-  const artboards = [...(page?.artboards ?? [])].sort((a, b) => (a.id < b.id ? -1 : 1));
+  const artboards = useMemo(
+    () => [...(page?.artboards ?? [])].sort((a, b) => (a.id < b.id ? -1 : 1)),
+    [page],
+  );
 
   return (
     <div
@@ -68,15 +71,7 @@ export function Canvas({
             className="absolute top-0 left-0 origin-top-left"
             style={{ transform: `translate(${x}px, ${y}px) scale(${zoom})` }}
           >
-            {artboards.map((artboard) => (
-              <div
-                key={artboard.id}
-                className="absolute"
-                style={{ left: artboard.x, top: artboard.y }}
-              >
-                <ArtboardFrame artboard={artboard} css={css} assetToken={assetToken} />
-              </div>
-            ))}
+            <ArtboardLayer artboards={artboards} css={css} assetToken={assetToken} />
           </div>
           {artboards.map((artboard) => (
             <div
@@ -100,3 +95,19 @@ export function Canvas({
     </div>
   );
 }
+
+const ArtboardLayer = memo(function ArtboardLayer({
+  artboards,
+  css,
+  assetToken,
+}: {
+  artboards: Artboard[];
+  css: string;
+  assetToken: string;
+}) {
+  return artboards.map((artboard) => (
+    <div key={artboard.id} className="absolute" style={{ left: artboard.x, top: artboard.y }}>
+      <ArtboardFrame artboard={artboard} css={css} assetToken={assetToken} />
+    </div>
+  ));
+});
