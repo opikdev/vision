@@ -38,20 +38,23 @@ export function parseDocument(text: string): ParseResult {
     : { ok: true, document: structure.document, diagnostics };
 }
 
+const jsonOptions = { disallowComments: true, allowTrailingComma: false };
+
 export function parseStructure(input: string): StructureResult {
   const text = input.startsWith('\uFEFF') ? input.slice(1) : input;
-  const position = positionFinder(text);
-  const errors: ParseError[] = [];
-  const tree = parseTree(text, errors, { disallowComments: true, allowTrailingComma: false });
-  const syntaxError = errors[0];
-  if (syntaxError !== undefined || tree === undefined) {
-    return { ok: false, diagnostics: [syntaxDiagnostic(text, syntaxError, position)] };
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch (error) {
+    return { ok: false, diagnostics: [syntaxError(text, error)] };
   }
-  const value = JSON.parse(text) as unknown;
-  const locate = (diagnostic: Diagnostic): Diagnostic => ({
-    ...diagnostic,
-    ...position(offsetOf(tree, diagnostic.path)),
-  });
+  let offsetIn: ((path: JsonPath) => number) | undefined;
+  let position: ((offset: number) => { line: number; column: number }) | undefined;
+  const locate = (diagnostic: Diagnostic): Diagnostic => {
+    offsetIn ??= offsetFinder(text);
+    position ??= positionFinder(text);
+    return { ...diagnostic, ...position(offsetIn(diagnostic.path)) };
+  };
   const parsed = documentSchema.safeParse(value);
   if (parsed.success) return { ok: true, document: parsed.data, locate };
   return {
@@ -60,6 +63,18 @@ export function parseStructure(input: string): StructureResult {
       .flatMap((issue) => schemaDiagnostics(issue, value))
       .map(locate),
   };
+}
+
+function syntaxError(text: string, cause: unknown): Diagnostic {
+  const errors: ParseError[] = [];
+  const tree = parseTree(text, errors, jsonOptions);
+  if (errors[0] === undefined && tree !== undefined) throw cause;
+  return syntaxDiagnostic(text, errors[0], positionFinder(text));
+}
+
+function offsetFinder(text: string): (path: JsonPath) => number {
+  const tree = parseTree(text, [], jsonOptions);
+  return (path) => (tree === undefined ? 0 : offsetOf(tree, path));
 }
 
 function positionFinder(text: string): (offset: number) => { line: number; column: number } {
