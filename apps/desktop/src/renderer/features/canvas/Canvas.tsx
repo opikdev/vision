@@ -11,11 +11,13 @@ export function Canvas({
   page,
   css,
   assetToken,
+  assetsVersion,
   overlay,
 }: {
   page: Page | undefined;
   css: string | null;
   assetToken: string;
+  assetsVersion: number;
   overlay?: (viewport: Viewport) => ReactNode;
 }) {
   const container = useRef<HTMLDivElement>(null);
@@ -71,7 +73,12 @@ export function Canvas({
             className="absolute top-0 left-0 origin-top-left"
             style={{ transform: `translate(${x}px, ${y}px) scale(${zoom})` }}
           >
-            <ArtboardLayer artboards={artboards} css={css} assetToken={assetToken} />
+            <ArtboardLayer
+              artboards={artboards}
+              css={css}
+              assetToken={assetToken}
+              assetsVersion={assetsVersion}
+            />
           </div>
           {artboards.map((artboard) => (
             <div
@@ -100,14 +107,21 @@ const ArtboardLayer = memo(function ArtboardLayer({
   artboards,
   css,
   assetToken,
+  assetsVersion,
 }: {
   artboards: Artboard[];
   css: string;
   assetToken: string;
+  assetsVersion: number;
 }) {
   return artboards.map((artboard) => (
     <div key={artboard.id} className="absolute" style={{ left: artboard.x, top: artboard.y }}>
-      <ArtboardFrame artboard={artboard} css={css} assetToken={assetToken} />
+      <ArtboardFrame
+        artboard={artboard}
+        css={css}
+        assetToken={assetToken}
+        assetsVersion={assetsVersion}
+      />
     </div>
   ));
 });

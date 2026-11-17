@@ -79,6 +79,7 @@ describe('openDocumentSession', () => {
       diagnostics: [],
       readError: null,
       assetToken: 'token',
+      assetsVersion: 0,
     });
     expect(states).toHaveLength(1);
   });
@@ -201,6 +202,25 @@ describe('openDocumentSession', () => {
     await expect
       .poll(() => states.at(-1))
       .toMatchObject({ status: 'ok', readError: null, document: renamed });
+  });
+
+  it('redraws when images are added to or changed in the assets folder', async () => {
+    const withImage = createDocument();
+    for (const artboard of withImage.pages.flatMap((page) => page.artboards)) {
+      artboard.children = [{ type: 'image', id: 'hero', src: 'photos/hero.png' }];
+    }
+    await writeDesign(path, withImage);
+    await open();
+    expect(states.at(-1)?.diagnostics.map((d) => d.code)).toEqual(['missing-asset']);
+
+    await mkdir(join(dir, 'design.assets', 'photos'), { recursive: true });
+    await writeFile(join(dir, 'design.assets', 'photos', 'hero.png'), 'one');
+    await expect.poll(() => states.at(-1)?.diagnostics).toEqual([]);
+    const version = states.at(-1)?.assetsVersion ?? 0;
+    expect(version).toBeGreaterThan(0);
+
+    await writeFile(join(dir, 'design.assets', 'photos', 'hero.png'), 'two');
+    await expect.poll(() => states.at(-1)?.assetsVersion).toBeGreaterThan(version);
   });
 
   it('stops reporting changes once closed', async () => {

@@ -14,6 +14,7 @@ function state(path: string, revision: number): DocumentState {
     readError: null,
     mtimeMs: 1,
     assetToken: 't',
+    assetsVersion: 0,
   };
 }
 

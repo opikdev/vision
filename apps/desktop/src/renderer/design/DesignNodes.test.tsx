@@ -8,6 +8,7 @@ describe('DesignNodes', () => {
     const container = await render(
       <DesignNodes
         assetToken="tok"
+        assetsVersion={1}
         nodes={[
           {
             type: 'frame',
@@ -26,7 +27,7 @@ describe('DesignNodes', () => {
     expect(container.innerHTML).toBe(
       '<div class="flex gap-2">' +
         '<p class="text-xl">Two\nlines</p>' +
-        '<img alt="" src="vision-asset://tok/photos/hero%201.png">' +
+        '<img alt="" src="vision-asset://tok/photos/hero%201.png?v=1">' +
         '<img alt="A cup" src="https://example.com/a.png">' +
         '</div>' +
         '<div></div>',
@@ -37,6 +38,7 @@ describe('DesignNodes', () => {
     const container = await render(
       <DesignNodes
         assetToken="tok"
+        assetsVersion={1}
         nodes={[
           {
             type: 'svg',

@@ -2,23 +2,32 @@ import type { Node } from '@vision/format';
 import { useLayoutEffect, useRef } from 'react';
 import { assetUrl } from './asset-url';
 
-export function DesignNodes({ nodes, assetToken }: { nodes: Node[]; assetToken: string }) {
-  return nodes.map((node) => <DesignNode key={node.id} node={node} assetToken={assetToken} />);
+interface Assets {
+  assetToken: string;
+  assetsVersion: number;
 }
 
-function DesignNode({ node, assetToken }: { node: Node; assetToken: string }) {
+export function DesignNodes({ nodes, ...assets }: { nodes: Node[] } & Assets) {
+  return nodes.map((node) => <DesignNode key={node.id} node={node} {...assets} />);
+}
+
+function DesignNode({ node, ...assets }: { node: Node } & Assets) {
   switch (node.type) {
     case 'frame':
       return (
         <div className={node.class}>
-          {node.children && <DesignNodes nodes={node.children} assetToken={assetToken} />}
+          {node.children && <DesignNodes nodes={node.children} {...assets} />}
         </div>
       );
     case 'text':
       return <p className={node.class}>{node.text}</p>;
     case 'image':
       return (
-        <img className={node.class} src={assetUrl(node.src, assetToken)} alt={node.alt ?? ''} />
+        <img
+          className={node.class}
+          src={assetUrl(node.src, assets.assetToken, assets.assetsVersion)}
+          alt={node.alt ?? ''}
+        />
       );
     case 'svg':
       return <SvgMarkup className={node.class} markup={node.svg} />;

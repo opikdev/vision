@@ -8,11 +8,13 @@ export function ArtboardFrame({
   artboard,
   css,
   assetToken,
+  assetsVersion,
   onRendered,
 }: {
   artboard: Artboard;
   css: string;
   assetToken: string;
+  assetsVersion: number;
   onRendered?: (document: Document) => void;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -60,7 +62,11 @@ export function ArtboardFrame({
       {body !== null &&
         createPortal(
           <div data-artboard="" className={artboard.class}>
-            <DesignNodes nodes={artboard.children} assetToken={assetToken} />
+            <DesignNodes
+              nodes={artboard.children}
+              assetToken={assetToken}
+              assetsVersion={assetsVersion}
+            />
           </div>,
           body,
         )}

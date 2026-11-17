@@ -26,6 +26,7 @@ export interface DocumentState {
   readError: string | null;
   mtimeMs: number | null;
   assetToken: string;
+  assetsVersion: number;
 }
 
 export interface RecentFile {

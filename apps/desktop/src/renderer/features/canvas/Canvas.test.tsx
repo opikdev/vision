@@ -20,7 +20,7 @@ describe('Canvas', () => {
     const page = createDocument().pages[0];
     if (page === undefined) throw new Error('No page');
     useViewStore.getState().setViewport(page.id, { x: 0, y: 0, zoom: 1 });
-    const container = await render(<Canvas page={page} css="" assetToken="t" />);
+    const container = await render(<Canvas page={page} css="" assetToken="t" assetsVersion={0} />);
     const before = drawn.count;
 
     act(() => {

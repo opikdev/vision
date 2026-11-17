@@ -45,6 +45,7 @@ export function DesignWindow({ state }: { state: DocumentState }) {
             page={shownPage}
             css={compiled?.css ?? null}
             assetToken={state.assetToken}
+            assetsVersion={state.assetsVersion}
             overlay={(viewport) =>
               isEmpty === true && (
                 <EmptyDesignHint

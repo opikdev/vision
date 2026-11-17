@@ -43,6 +43,7 @@ export function CaptureView({ artboardId }: { artboardId: string }) {
         artboard={artboard}
         css={compiled.css}
         assetToken={state.assetToken}
+        assetsVersion={state.assetsVersion}
         onRendered={onRendered}
       />
     </div>

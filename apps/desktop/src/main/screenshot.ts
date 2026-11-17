@@ -87,6 +87,7 @@ async function capture({
     readError: null,
     mtimeMs: null,
     assetToken: assets.register(assetsDirFor(file)),
+    assetsVersion: 0,
   };
 
   const { promise: rendered, resolve, reject } = Promise.withResolvers<undefined>();

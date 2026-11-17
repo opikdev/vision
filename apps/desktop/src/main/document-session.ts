@@ -1,4 +1,9 @@
-import { assetDiagnostics, isMissingFileError, readDesign } from '@vision/format/node';
+import {
+  assetDiagnostics,
+  assetsDirFor,
+  isMissingFileError,
+  readDesign,
+} from '@vision/format/node';
 import type { VisionDocument } from '@vision/format';
 import { watch } from 'chokidar';
 import { stat } from 'node:fs/promises';
@@ -31,6 +36,10 @@ export async function openDocumentSession(
   const { path, assetToken, onChange, debounceMs = 75 } = options;
   const dir = dirname(path);
   const name = basename(path);
+  const assetsDir = assetsDirFor(path);
+  const isAsset = (candidate: string): boolean =>
+    candidate === assetsDir || candidate.startsWith(`${assetsDir}${sep}`);
+  let assetsVersion = 0;
   let lastValid: VisionDocument | null = null;
   let key = '';
   let closed = false;
@@ -47,12 +56,18 @@ export async function openDocumentSession(
     readError: null,
     mtimeMs: null,
     assetToken,
+    assetsVersion,
   };
 
   const refresh = async (): Promise<void> => {
     const snapshot = await readSnapshot(path, lastValid);
     if (snapshot.status === 'ok') lastValid = snapshot.document;
-    const nextKey = JSON.stringify([snapshot.status, snapshot.text, snapshot.diagnostics]);
+    const nextKey = JSON.stringify([
+      snapshot.status,
+      snapshot.text,
+      snapshot.diagnostics,
+      assetsVersion,
+    ]);
     if (closed || nextKey === key) return;
     key = nextKey;
     current = {
@@ -63,6 +78,7 @@ export async function openDocumentSession(
       diagnostics: snapshot.diagnostics,
       readError: null,
       mtimeMs: snapshot.mtimeMs,
+      assetsVersion,
     };
     onChange(current);
   };
@@ -86,13 +102,14 @@ export async function openDocumentSession(
   };
 
   const watcher = watch(dir, {
-    depth: 0,
     ignoreInitial: true,
     atomic: true,
-    ignored: (candidate) => candidate !== dir && basename(candidate) !== name,
+    ignored: (candidate) =>
+      candidate !== dir && basename(candidate) !== name && !isAsset(candidate),
   });
   watcher.on('all', (_event, changed) => {
-    if (changed !== path && !changed.endsWith(`${sep}${name}`)) return;
+    if (isAsset(changed)) assetsVersion++;
+    else if (changed !== path && !changed.endsWith(`${sep}${name}`)) return;
     clearTimeout(timer);
     timer = setTimeout(schedule, debounceMs);
   });
