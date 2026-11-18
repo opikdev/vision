@@ -51,7 +51,7 @@ afterEach(() => {
 });
 
 describe('AgentTracker', () => {
-  it('follows each element as the save that adds them is revealed, then thinks', () => {
+  it('follows each element the playback shows, then thinks', () => {
     tracker.receive(edit(['a', 'b']));
     expect(presence()).toEqual({
       summary: 'is adding 2 elements to Cart',
@@ -60,24 +60,41 @@ describe('AgentTracker', () => {
       artboardId: 'cart',
     });
 
-    tracker.revealStarted(['a', 'b']);
-    tracker.revealed('a', at(10));
+    tracker.playing(session, at(10), 'is adding 2 elements to Cart');
     expect(presence()?.target).toEqual(at(10));
     vi.advanceTimersByTime(5000);
-    tracker.revealed('b', at(20));
+    tracker.playing(session, at(20), 'is adding 2 elements to Cart');
     expect(presence()).toMatchObject({ summary: 'is adding 2 elements to Cart', target: at(20) });
 
-    tracker.revealEnded(['a', 'b']);
+    tracker.played(session);
     expect(presence()).toMatchObject({ summary: 'is thinking', target: at(20) });
   });
 
-  it('joins a reveal that started before the message arrived', () => {
-    tracker.revealStarted(['a', 'b']);
+  it('keeps showing the playback while newer messages arrive', () => {
     tracker.receive(edit(['a', 'b']));
-    tracker.revealed('b', at(20));
-    expect(presence()?.target).toEqual(at(20));
-    tracker.revealEnded(['a', 'b']);
+    tracker.playing(session, at(10), 'is adding 2 elements to Cart');
+    tracker.receive({
+      session,
+      agent: 'Claude Code',
+      activity: { kind: 'look', artboard: 'payment', summary: 'is taking a screenshot of Payment' },
+    });
+    expect(presence()).toEqual({
+      summary: 'is adding 2 elements to Cart',
+      target: at(10),
+      leaving: false,
+      artboardId: 'payment',
+    });
+    vi.advanceTimersByTime(5000);
+    expect(presence()?.summary).toBe('is adding 2 elements to Cart');
+    tracker.played(session);
     expect(presence()?.summary).toBe('is thinking');
+  });
+
+  it('claims a save once, for the session whose last edit touched it', () => {
+    tracker.receive(edit(['a', 'b']));
+    expect(tracker.claim(['x'])).toBeNull();
+    expect(tracker.claim(['x', 'b'])).toEqual({ session, summary: 'is adding 2 elements to Cart' });
+    expect(tracker.claim(['b'])).toBeNull();
   });
 
   it('points at an element that is already drawn and thinks when no reveal follows', () => {
@@ -89,10 +106,9 @@ describe('AgentTracker', () => {
     expect(presence()?.summary).toBe('is thinking');
   });
 
-  it('shows no cursor for reveals no agent asked for', () => {
-    tracker.revealStarted(['a']);
-    tracker.revealed('a', at(10));
-    tracker.revealEnded(['a']);
+  it('shows no cursor for playback no agent is present for', () => {
+    tracker.playing(session, at(10), 'is adding 1 element to Cart');
+    tracker.played(session);
     expect(useAgentStore.getState()).toEqual({ agents: {}, latest: null });
   });
 

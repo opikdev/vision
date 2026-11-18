@@ -73,6 +73,95 @@ test('shows the agent and reveals what it adds', async ({
   socket.destroy();
 });
 
+const herbs = ['Basil', 'Mint', 'Thyme', 'Sage', 'Dill', 'Chives'];
+const herb = (window: Page, list: string, index: number) =>
+  cart(window).locator(`[data-node-id="${list}-${index}"]`);
+
+async function addList(file: string, list: string): Promise<void> {
+  const design = JSON.parse(await readFile(file, 'utf8')) as {
+    pages: { artboards: { children: unknown[] }[] }[];
+  };
+  design.pages[0]?.artboards[0]?.children.push({
+    type: 'frame',
+    id: list,
+    class: 'flex flex-col gap-2 p-6 bg-neutral-100',
+    children: herbs.map((text, index) => ({ type: 'text', id: `${list}-${index}`, text })),
+  });
+  await writeFile(file, JSON.stringify(design));
+}
+
+async function startList(window: Page, socket: Socket, file: string, list: string) {
+  send(socket, file, {
+    kind: 'edit',
+    artboard: 'cart',
+    nodes: [list, ...herbs.map((_, index) => `${list}-${index}`)],
+    summary: 'is adding 7 elements to Cart',
+  });
+  await addList(file, list);
+  await expect(herb(window, list, 0)).toBeAttached();
+  await expect(herb(window, list, 0)).not.toHaveAttribute('data-reveal', 'hidden');
+}
+
+test("plays an agent's new elements one at a time, in reading order", async ({
+  launch,
+  exampleCopy,
+  activitySocket,
+}) => {
+  const { window } = await launch(exampleCopy);
+  await expect(cart(window).getByText('Your order', { exact: true })).toBeVisible();
+  const socket = await connect(activitySocket);
+
+  await startList(window, socket, exampleCopy, 'herbs');
+
+  const last = herb(window, 'herbs', 5);
+  await expect(last).toHaveAttribute('data-reveal', 'hidden');
+  await expect(last).toHaveCSS('opacity', '0');
+  await expect(window.getByRole('status')).toHaveText('Claude Code is adding 7 elements to Cart');
+  await expect(last).not.toHaveAttribute('data-reveal');
+  await expect(last).toHaveCSS('opacity', '1');
+  await expect(window.getByRole('status')).toHaveText('Claude Code is thinking');
+  socket.destroy();
+});
+
+test('shows the rest of the playback at once when the user zooms or the agent is done', async ({
+  launch,
+  exampleCopy,
+  activitySocket,
+}) => {
+  const { window } = await launch(exampleCopy);
+  await expect(cart(window).getByText('Your order', { exact: true })).toBeVisible();
+  const socket = await connect(activitySocket);
+
+  await startList(window, socket, exampleCopy, 'zoomed');
+  await window.getByRole('button', { name: 'Zoom in' }).click();
+  await expect(herb(window, 'zoomed', 5)).not.toHaveAttribute('data-reveal', 'hidden', {
+    timeout: 1000,
+  });
+
+  await startList(window, socket, exampleCopy, 'done');
+  send(socket, exampleCopy, { kind: 'done' });
+  await expect(herb(window, 'done', 5)).not.toHaveAttribute('data-reveal', 'hidden', {
+    timeout: 1000,
+  });
+  socket.destroy();
+});
+
+test('shows edits at once when motion is reduced', async ({
+  launch,
+  exampleCopy,
+  activitySocket,
+}) => {
+  const { window } = await launch(exampleCopy);
+  await window.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(cart(window).getByText('Your order', { exact: true })).toBeVisible();
+  const socket = await connect(activitySocket);
+
+  await startList(window, socket, exampleCopy, 'still');
+
+  await expect(herb(window, 'still', 5)).not.toHaveAttribute('data-reveal', { timeout: 100 });
+  socket.destroy();
+});
+
 test('points to an agent working off screen and pans to it', async ({
   launch,
   exampleCopy,

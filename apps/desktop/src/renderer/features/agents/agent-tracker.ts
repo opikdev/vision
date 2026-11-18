@@ -21,11 +21,16 @@ interface Timers {
   settle?: ReturnType<typeof setTimeout> | undefined;
 }
 
+export interface Claim {
+  session: string;
+  summary: string;
+}
+
 export class AgentTracker {
   readonly #locate: Locator;
-  readonly #following = new Map<string, Set<string>>();
+  readonly #following = new Map<string, { summary: string; nodes: ReadonlySet<string> }>();
   readonly #timers = new Map<string, Timers>();
-  #revealing = new Set<string>();
+  readonly #playing = new Set<string>();
 
   constructor(locate: Locator) {
     this.#locate = locate;
@@ -36,35 +41,44 @@ export class AgentTracker {
       this.#leave(session);
       return;
     }
-    const joinsReveal =
-      activity.kind === 'edit' && activity.nodes.some((id) => this.#revealing.has(id));
-    if (activity.kind === 'edit') this.#following.set(session, new Set(activity.nodes));
-    const previous = useAgentStore.getState().agents[session]?.target ?? null;
+    if (activity.kind === 'edit') {
+      const { summary } = activity;
+      this.#following.set(session, { summary, nodes: new Set(activity.nodes) });
+    }
+    const current = useAgentStore.getState().agents[session];
+    const playing = this.#playing.has(session) && current !== undefined;
     this.#put({
       session,
       agent,
-      summary: activity.summary,
+      summary: playing ? current.summary : activity.summary,
       artboardId: activity.artboard ?? null,
-      target: joinsReveal ? previous : (this.#targetOf(activity) ?? previous),
+      target: playing ? current.target : (this.#targetOf(activity) ?? current?.target ?? null),
       leaving: false,
     });
     useAgentStore.setState({ latest: session });
-    const settleAfter = activity.kind === 'look' ? lookMs : settleMs;
-    this.#schedule(session, joinsReveal ? undefined : settleAfter);
+    if (playing) this.#schedule(session, undefined);
+    else this.#schedule(session, activity.kind === 'look' ? lookMs : settleMs);
   }
 
-  revealStarted(ids: readonly string[]): void {
-    this.#revealing = new Set(ids);
-    for (const session of this.#sessionsFollowing(ids)) this.#schedule(session, undefined);
+  claim(ids: readonly string[]): Claim | null {
+    for (const [session, { summary, nodes }] of this.#following) {
+      if (!ids.some((id) => nodes.has(id))) continue;
+      this.#following.delete(session);
+      return { session, summary };
+    }
+    return null;
   }
 
-  revealed(id: string, target: CursorTarget): void {
-    for (const session of this.#sessionsFollowing([id])) this.#patch(session, { target });
+  playing(session: string, target: CursorTarget, summary: string): void {
+    if (useAgentStore.getState().agents[session]?.leaving !== false) return;
+    this.#playing.add(session);
+    clearTimeout(this.#timers.get(session)?.settle);
+    this.#patch(session, { target, summary });
   }
 
-  revealEnded(ids: readonly string[]): void {
-    this.#revealing = new Set();
-    for (const session of this.#sessionsFollowing(ids)) this.#settle(session);
+  played(session: string): void {
+    if (!this.#playing.delete(session)) return;
+    this.#settle(session);
   }
 
   dispose(): void {
@@ -75,12 +89,6 @@ export class AgentTracker {
     const first = activity.kind === 'edit' ? activity.nodes[0] : activity.node;
     const node = first === undefined ? null : this.#locate.node(first);
     return node ?? (activity.artboard === undefined ? null : this.#locate.label(activity.artboard));
-  }
-
-  #sessionsFollowing(ids: readonly string[]): string[] {
-    return [...this.#following].flatMap(([session, nodes]) =>
-      ids.some((id) => nodes.has(id)) ? [session] : [],
-    );
   }
 
   #schedule(session: string, settleAfter: number | undefined): void {
@@ -101,7 +109,6 @@ export class AgentTracker {
 
   #settle(session: string): void {
     clearTimeout(this.#timers.get(session)?.settle);
-    this.#following.delete(session);
     this.#patch(session, { summary: thinking });
   }
 
@@ -124,6 +131,7 @@ export class AgentTracker {
     clearTimeout(timers?.settle);
     this.#timers.delete(session);
     this.#following.delete(session);
+    this.#playing.delete(session);
   }
 
   #put(presence: AgentPresence): void {

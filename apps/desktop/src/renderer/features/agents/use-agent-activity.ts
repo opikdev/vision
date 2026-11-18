@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
 import { vision } from '../../bridge';
 import { currentPage } from '../canvas/current-page';
+import { AgentPlayback } from './agent-playback';
 import { useAgentStore } from './agent-store';
 import { AgentTracker } from './agent-tracker';
+import { drawnStage } from './drawn-stage';
 import { pageLocator } from './page-locator';
 
-export function useAgentActivity(): AgentTracker {
-  const [tracker] = useState(() => new AgentTracker(pageLocator(currentPage)));
+export function useAgentActivity(): AgentPlayback {
+  const [{ tracker, playback }] = useState(() => {
+    const tracker = new AgentTracker(pageLocator(currentPage));
+    return { tracker, playback: new AgentPlayback(tracker, drawnStage) };
+  });
   useEffect(() => {
     const unsubscribe = vision.onAgentActivity((activity) => {
+      playback.receive(activity);
       tracker.receive(activity);
     });
     return () => {
@@ -16,6 +22,6 @@ export function useAgentActivity(): AgentTracker {
       tracker.dispose();
       useAgentStore.setState({ agents: {}, latest: null });
     };
-  }, [tracker]);
-  return tracker;
+  }, [tracker, playback]);
+  return playback;
 }

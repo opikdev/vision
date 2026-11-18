@@ -25,8 +25,8 @@ import { WindowFrame } from './WindowFrame';
 export function DesignWindow({ state }: { state: DocumentState }) {
   const compiled = useCompiledDesign(state.document);
   const classWarnings = useClassWarnings(compiled?.document ?? null);
-  const tracker = useAgentActivity();
-  useReveal(compiled?.document ?? null, tracker);
+  const playback = useAgentActivity();
+  useReveal(compiled?.document ?? null, playback);
   const agentWorking = useLatestAgent() !== null;
   const pageId = useViewStore((store) => store.pageId);
   const diagnostics =
