@@ -45,11 +45,12 @@ Scoring always uses the app built in `apps/desktop`, so every round is scored by
 | `generate`  | Only runs the AI.                                                                                            |
 | `score`     | Reviews, screenshots and judges an earlier round's designs.                                                  |
 | `judge`     | Only judges an earlier round's screenshots.                                                                  |
+| `summary`   | Only writes `summary.md` again from an earlier round's files.                                                |
 | `calibrate` | Judges the first screenshot of each brief's first run `--repeats` times, to show how much the judge wobbles. |
 
 ### Visual judge
 
-The review checks rules, not taste, and saturates near 100. The judge sends each artboard's screenshot and the brief to headless Claude (`claude -p`, the same model, no tools) with the fixed rubric in [`evals/design/judge.md`](../evals/design/judge.md): hierarchy, typography, color, spacing, polish and fit to the brief, each 1–10 with a short reason. A run's judge score is the mean of the six criteria over its artboards. One judgement costs about $0.03; the summary shows the judge's total cost apart from the designs'.
+The review checks rules, not taste, and saturates near 100. The judge sends each artboard's screenshot and the brief to headless Claude (`claude -p`, the same model, no tools) with the fixed rubric in [`evals/design/judge.md`](../evals/design/judge.md): hierarchy, typography, color, spacing, polish and fit to the brief, each 1–10 with a short reason. A run's judge score is the mean of the six criteria over its artboards. One judgement costs about $0.03, and a failed one is retried once; the summary shows the judge's total cost apart from the designs'.
 
 ## Read the results
 

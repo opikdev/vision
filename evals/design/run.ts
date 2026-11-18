@@ -101,7 +101,7 @@ interface Scored {
   error: string | undefined;
 }
 
-const steps = ['all', 'generate', 'score', 'judge', 'calibrate'] as const;
+const steps = ['all', 'generate', 'score', 'judge', 'summary', 'calibrate'] as const;
 
 async function main(): Promise<void> {
   const { out, round } = options;
@@ -132,6 +132,7 @@ async function main(): Promise<void> {
     const run = step === 'all' || step === 'generate' ? await generate(task) : await readRun(task);
     if (step === 'generate')
       return { brief: task.brief, run, review: undefined, judgements: [], error: undefined };
+    if (step === 'summary') return readScored(task, run);
     return score(task, run, step !== 'judge');
   });
   const summary = summarize(round, briefs, results);
@@ -318,15 +319,33 @@ async function score(task: Task, run: Run | undefined, review: boolean): Promise
   return { brief, run, review: reviewed, judgements, error: undefined };
 }
 
+async function readScored(task: Task, run: Run | undefined): Promise<Scored> {
+  const read = async (name: string): Promise<unknown> =>
+    JSON.parse(await readFile(join(task.dir, name), 'utf8'));
+  return {
+    brief: task.brief,
+    run,
+    review: reviewSchema.parse(await read('review.json')),
+    judgements: judgementSchema.array().parse(await read('judge.json')),
+    error: undefined,
+  };
+}
+
 async function judge(task: Task, review: Review): Promise<Judgement[]> {
   const brief = await readFile(join(briefsDir, `${task.brief}.md`), 'utf8');
   const judgements: Judgement[] = [];
   for (const { id } of review.artboards) {
     const image = join(task.dir, 'screenshots', `${id}.png`);
-    try {
-      judgements.push(await judgeScreenshot({ image, artboard: id, brief, model: options.model }));
-    } catch (error) {
-      log(task, `judging ${id} failed: ${error instanceof Error ? error.message : String(error)}`);
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        judgements.push(
+          await judgeScreenshot({ image, artboard: id, brief, model: options.model }),
+        );
+        break;
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        log(task, `judging ${id} failed (attempt ${attempt}): ${reason}`);
+      }
     }
   }
   return judgementSchema.array().parse(judgements);
