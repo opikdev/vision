@@ -15,7 +15,7 @@ export function registerNodeTools(server: McpServer, activity: ToolActivity): vo
     {
       title: 'Write HTML',
       description:
-        "Convert HTML with Tailwind classes into nodes inside an artboard or frame. Build one section per call. Returns the new nodes' outline with their ids.",
+        "Convert HTML with Tailwind classes into nodes inside an artboard or frame. Write one visible section or component group per call, roughly 10–30 elements, so the canvas fills in step by step. Returns the new nodes' outline with their ids.",
       inputSchema: z.object({
         file,
         parent: id('Id of the artboard or frame to add the nodes to.'),

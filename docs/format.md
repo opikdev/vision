@@ -214,7 +214,7 @@ Write an icon by name instead of drawing its SVG: `<i data-icon="shopping-cart-0
 ### A good loop
 
 1. Call `get_guide` once, then `get_overview`.
-2. Set colors, fonts, radii and shadows with `set_tokens`.
-3. Build the first screen in the starting artboard `desktop`: rename or resize it with `update_artboard` if it should be something else, such as a 390×844 phone screen. Add more screens with `create_artboard`. Build each artboard section by section with `write_html`, with a `data-name` on important elements (`<div data-name="Order summary">`).
+2. Set colors, fonts (from the [bundled fonts](#fonts)), radii and shadows with `set_tokens`.
+3. Build the first screen in the starting artboard `desktop`: rename or resize it with `update_artboard` if it should be something else, such as a 390×844 phone screen. Add more screens with `create_artboard`. Build each artboard section by section: one `write_html` per visible section or component group, such as the navigation, the hero or a row of cards, of roughly 10–30 elements, added to the artboard or to a section frame you wrote before. People watch the canvas fill in step by step, and a mistake costs one section, not the screen. Put a `data-name` on important elements (`<div data-name="Order summary">`) and use [icons by name](#icons).
 4. Check with `validate`, then `review`: fix every error it finds and the warnings that matter, and review again until no errors are left. Then look at each artboard with `screenshot` for what a review can't judge, such as hierarchy, alignment and whether it meets the brief, and refine with `update_node`. Screenshots are scaled down to at most 2000 px on the longest side, so check tall pages section by section, or as narrower artboards.
 5. When the user talks about "the selected layer", "this" or "the selection", call `get_selection` to see what they selected in Vision, then edit it by its `id`.
