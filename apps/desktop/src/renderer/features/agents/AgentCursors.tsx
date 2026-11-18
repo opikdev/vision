@@ -20,6 +20,7 @@ import {
   type Edge,
   type EdgePlacement,
 } from './cursor-geometry';
+import { useGlide } from './use-glide';
 
 const arrows = {
   left: ArrowLeft01Icon,
@@ -73,6 +74,7 @@ function AgentCursor({
 }) {
   const shift = labelShift(target);
   // Panning and zooming move the outer layer at once; only a new target glides.
+  const glide = useGlide(target, viewport.zoom);
   return (
     <div
       aria-hidden="true"
@@ -82,10 +84,7 @@ function AgentCursor({
       )}
       style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})` }}
     >
-      <div
-        className="transition-transform duration-300 ease-in-out motion-reduce:transition-none"
-        style={{ transform: `translate(${target.x}px, ${target.y}px)` }}
-      >
+      <div ref={glide}>
         <div
           className="flex origin-top-left items-start gap-0.5"
           style={{
