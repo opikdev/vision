@@ -1,5 +1,14 @@
 import type { McpServer } from '@modelcontextprotocol/server';
-import { findById, outline, tokenGroups, type Located, type VisionDocument } from '@vision/format';
+import {
+  findById,
+  outline,
+  svgIconName,
+  tokenGroups,
+  type Artboard,
+  type Located,
+  type Node,
+  type VisionDocument,
+} from '@vision/format';
 import { readDesign } from '@vision/format/node';
 import { z } from 'zod';
 import type { ToolActivity } from '../activity/tool-activity';
@@ -98,7 +107,8 @@ export function registerReadTools(server: McpServer, activity: ToolActivity): vo
     'get_node',
     {
       title: 'Get a node',
-      description: 'Get one node, artboard or page as JSON, with all its fields and children.',
+      description:
+        "Get one node, artboard or page as JSON, with all its fields and children. The markup of svg nodes inside it is summarised; get_node on an svg node's own id shows it.",
       inputSchema: z.object({ file, id: id('Id of the node, artboard or page.') }),
       annotations: readOnly,
     },
@@ -137,11 +147,32 @@ function tokensOverview(document: VisionDocument): string[] {
 function valueOf(located: Located): unknown {
   switch (located.kind) {
     case 'page':
-      return located.page;
+      return { ...located.page, artboards: located.page.artboards.map(summariseArtboard) };
     case 'artboard':
-      return located.artboard;
+      return summariseArtboard(located.artboard);
     case 'node':
-      return located.node;
+      return located.node.type === 'svg' ? located.node : summariseSvgs(located.node);
+  }
+}
+
+function summariseArtboard(artboard: Artboard): Artboard {
+  return { ...artboard, children: artboard.children.map(summariseSvgs) };
+}
+
+function summariseSvgs(node: Node): Node {
+  switch (node.type) {
+    case 'svg': {
+      const icon = svgIconName(node.svg);
+      const what = icon === undefined ? 'svg' : `icon ${icon}`;
+      return { ...node, svg: `[${what}: ${node.svg.length} characters of markup not shown]` };
+    }
+    case 'frame':
+      return node.children === undefined
+        ? node
+        : { ...node, children: node.children.map(summariseSvgs) };
+    case 'text':
+    case 'image':
+      return node;
   }
 }
 

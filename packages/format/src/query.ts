@@ -144,8 +144,13 @@ function describeNode(node: Node): string {
     case 'image':
       return head + field('src', node.src) + field('alt', node.alt);
     case 'svg':
-      return head;
+      return head + field('icon', svgIconName(node.svg));
   }
+}
+
+/** The icon name an svg node drawn from `<i data-icon>` keeps in its markup. */
+export function svgIconName(svg: string): string | undefined {
+  return /^\s*<svg\b[^>]*?\sdata-icon="([^"]*)"/.exec(svg)?.[1];
 }
 
 function field(key: string, value: string | undefined): string {

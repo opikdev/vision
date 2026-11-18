@@ -76,6 +76,21 @@ describe('outline', () => {
     );
   });
 
+  it('names the icon of an svg instead of showing its markup', () => {
+    const iconDoc = docWith([
+      {
+        type: 'svg',
+        id: 'cart',
+        name: 'Shopping cart',
+        class: 'size-5',
+        svg: '<svg viewBox="0 0 24 24" data-icon="shopping-cart-01"><path d="M2 3h2"></path></svg>',
+      },
+    ]);
+    expect(outline(iconDoc, 'cart')).toBe(
+      'svg cart name="Shopping cart" class="size-5" icon="shopping-cart-01"',
+    );
+  });
+
   it('throws for an unknown root', () => {
     expect(() => outline(doc, 'nope')).toThrow('No page, artboard or node has id "nope"');
   });

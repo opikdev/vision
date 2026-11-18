@@ -11,6 +11,7 @@
     "typecheck": "tsc -p ."
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "4.4.0",
     "@modelcontextprotocol/server": "2.4.0",
     "@vision/activity": "workspace:*",
     "@vision/format": "workspace:*",

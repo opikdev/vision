@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { plural } from '../design';
 import type { ToolActivity } from '../activity/tool-activity';
 import { runEdit } from '../edit';
+import { resolveIcon } from '../icons/library';
 import { file, id, index } from '../schemas';
 
 const field = (description: string) => z.string().nullable().exactOptional().describe(description);
@@ -21,7 +22,7 @@ export function registerNodeTools(server: McpServer, activity: ToolActivity): vo
         html: z
           .string()
           .describe(
-            'HTML with Tailwind CSS v4 classes, such as <div class="flex flex-col gap-2 p-6"><h1 class="text-2xl font-bold">Cart</h1></div>. No style attributes, scripts or tables; get_guide lists the supported elements.',
+            'HTML with Tailwind CSS v4 classes, such as <div class="flex flex-col gap-2 p-6"><h1 class="text-2xl font-bold">Cart</h1></div>. Icons by name: <i data-icon="shopping-cart-01" class="size-5"></i>. No style attributes, scripts or tables; get_guide lists the supported elements.',
           ),
         index,
         replace: z
@@ -35,7 +36,7 @@ export function registerNodeTools(server: McpServer, activity: ToolActivity): vo
     },
     ({ file, ...options }, ctx) =>
       runEdit(file, activity.editing(ctx, file), (doc) => {
-        const { document, ids } = insertHtml(doc, options);
+        const { document, ids } = insertHtml(doc, { ...options, icon: resolveIcon });
         const tree = ids.map((id) => outline(document, id)).join('\n');
         return {
           document,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { HtmlError, htmlToNodes } from './html';
+import { HtmlError, htmlToNodes, type IconResolver } from './html';
 
 const none = new Set<string>();
 
@@ -209,5 +209,77 @@ describe('htmlToNodes', () => {
   ])('rejects %j', (html, message) => {
     expect(() => htmlToNodes(html, new Set(['taken']))).toThrow(HtmlError);
     expect(() => htmlToNodes(html, new Set(['taken']))).toThrow(message);
+  });
+
+  describe('icons by name', () => {
+    const icon: IconResolver = (name) => {
+      if (name !== 'home-01')
+        throw new HtmlError(`Unknown icon "${name}". Did you mean "home-01"?`);
+      return {
+        name,
+        label: 'Home',
+        svg: '<svg viewBox="0 0 24 24" data-icon="home-01"><path d="M3 10l9-7 9 7"/></svg>',
+      };
+    };
+
+    it('turns <i data-icon> into an svg node named after the icon, keeping its classes', () => {
+      expect(
+        htmlToNodes('<i data-icon="home-01" class="size-5 text-fg-muted"></i>', none, { icon }),
+      ).toEqual([
+        {
+          type: 'svg',
+          id: 'icon-1',
+          name: 'Home',
+          class: 'size-5 text-fg-muted',
+          svg: '<svg viewBox="0 0 24 24" data-icon="home-01"><path d="M3 10l9-7 9 7"></path></svg>',
+        },
+      ]);
+    });
+
+    it('keeps an icon inside text, its id and a data-name', () => {
+      expect(
+        htmlToNodes(
+          '<a class="flex gap-2"><i id="back" data-icon="home-01" data-name="Back icon"></i>Home</a>',
+          none,
+          { icon },
+        ),
+      ).toEqual([
+        {
+          type: 'frame',
+          id: 'a-1',
+          class: 'flex gap-2',
+          children: [
+            {
+              type: 'svg',
+              id: 'back',
+              name: 'Back icon',
+              svg: '<svg viewBox="0 0 24 24" data-icon="home-01"><path d="M3 10l9-7 9 7"></path></svg>',
+            },
+            { type: 'text', id: 'text-1', text: 'Home' },
+          ],
+        },
+      ]);
+    });
+
+    it('passes on the error for an unknown icon', () => {
+      expect(() => htmlToNodes('<i data-icon="hom"></i>', none, { icon })).toThrow(
+        'Unknown icon "hom". Did you mean "home-01"?',
+      );
+    });
+
+    it('asks for a name, and for inline SVG when icons are not available', () => {
+      expect(() => htmlToNodes('<i data-icon=" "></i>', none, { icon })).toThrow(
+        '<i data-icon> needs an icon name, such as <i data-icon="shopping-cart-01">.',
+      );
+      expect(() => htmlToNodes('<i data-icon="home-01"></i>', none)).toThrow(
+        '<i data-icon="home-01"> needs icons by name, which aren\'t available here. Draw the icon with an inline <svg> instead.',
+      );
+    });
+
+    it('still treats <i> without data-icon as italic text', () => {
+      expect(htmlToNodes('<p>Fresh <i>today</i></p>', none, { icon })).toEqual([
+        { type: 'text', id: 'p-1', text: 'Fresh today' },
+      ]);
+    });
   });
 });

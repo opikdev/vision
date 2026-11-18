@@ -3,6 +3,7 @@ import packageJson from '../package.json' with { type: 'json' };
 import type { ActivityReporter } from './activity/reporter';
 import { quietActivity, reportActivity } from './activity/tool-activity';
 import { registerArtboardTools } from './tools/artboards';
+import { registerIconTools } from './tools/icons';
 import { registerNodeTools } from './tools/nodes';
 import { registerReadTools } from './tools/read';
 import { registerReviewTool } from './tools/review';
@@ -20,6 +21,7 @@ export function createServer(reporter?: ActivityReporter): McpServer {
   registerReadTools(server, activity);
   registerArtboardTools(server, activity);
   registerNodeTools(server, activity);
+  registerIconTools(server);
   registerTokenTools(server, activity);
   registerValidateTool(server, activity);
   registerScreenshotTool(server, activity);

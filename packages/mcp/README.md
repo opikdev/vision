@@ -11,7 +11,7 @@ pnpm --filter @vision/mcp build
 node packages/mcp/dist/vision-mcp.mjs
 ```
 
-The build is one self-contained file, `dist/vision-mcp.mjs`, with the format guide and Tailwind's stylesheets embedded. It runs anywhere with Node 24, without `node_modules`.
+The build is one self-contained file, `dist/vision-mcp.mjs`, with the format guide, Tailwind's stylesheets and the [Hugeicons](https://hugeicons.com) free icons embedded. It runs anywhere with Node 24, without `node_modules`. The icons go in as one brotli-compressed blob of their shapes (about 1.3 MB of the file's 3 MB), unpacked the first time `write_html` or `find_icons` needs them.
 
 ## Register it with an AI client
 

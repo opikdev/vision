@@ -10,6 +10,19 @@ export class HtmlError extends Error {
   override name = 'HtmlError';
 }
 
+export interface ResolvedIcon {
+  name: string;
+  label: string;
+  svg: string;
+}
+
+/** Turns an icon name into its SVG, or throws an HtmlError that suggests names. */
+export type IconResolver = (name: string) => ResolvedIcon;
+
+export interface HtmlOptions {
+  icon?: IconResolver;
+}
+
 const frameTags = new Set([
   'div',
   'section',
@@ -56,11 +69,20 @@ const fieldTags = new Set(['input', 'textarea', 'select']);
 const supportedTags =
   'div, section, header, nav, main, footer, aside, article, form, ul, ol, li, button, p, span, h1–h6, label, a, strong, em, small, img, svg, input, textarea and select';
 
-export function htmlToNodes(html: string, takenIds: ReadonlySet<string>): Node[] {
+export function htmlToNodes(
+  html: string,
+  takenIds: ReadonlySet<string>,
+  options: HtmlOptions = {},
+): Node[] {
   const fragment = parseFragment(html);
   const taken = new Set(takenIds);
   for (const child of fragment.childNodes) reserveIds(child, taken, takenIds);
-  return convertChildren(fragment.childNodes, taken);
+  return convertChildren(fragment.childNodes, { taken, options });
+}
+
+interface Context {
+  taken: Set<string>;
+  options: HtmlOptions;
 }
 
 function reserveIds(node: ChildNode, taken: Set<string>, existing: ReadonlySet<string>): void {
@@ -92,7 +114,8 @@ function reserveIds(node: ChildNode, taken: Set<string>, existing: ReadonlySet<s
   for (const child of node.childNodes) reserveIds(child, taken, existing);
 }
 
-function convertChildren(children: ChildNode[], taken: Set<string>): Node[] {
+function convertChildren(children: ChildNode[], context: Context): Node[] {
+  const { taken } = context;
   const nodes: Node[] = [];
   let pending: string[] = [];
   const flush = (): void => {
@@ -107,18 +130,20 @@ function convertChildren(children: ChildNode[], taken: Set<string>): Node[] {
       pending.push('\n');
     } else if (isElement(child)) {
       flush();
-      nodes.push(convertElement(child, taken));
+      nodes.push(convertElement(child, context));
     }
   }
   flush();
   return nodes;
 }
 
-function convertElement(element: Element, taken: Set<string>): Node {
+function convertElement(element: Element, context: Context): Node {
+  const { taken } = context;
   const tag = element.tagName;
   if (isSvgElement(element)) return svgNode(element, taken);
+  if (isIcon(element)) return iconNode(element, context);
   if (frameTags.has(tag))
-    return frameNode(element, convertChildren(element.childNodes, taken), taken);
+    return frameNode(element, convertChildren(element.childNodes, context), taken);
   if (textTags.has(tag)) {
     return isPlainText(element)
       ? textNode(
@@ -128,7 +153,7 @@ function convertElement(element: Element, taken: Set<string>): Node {
           taken,
           nameOf(element),
         )
-      : frameNode(element, convertChildren(element.childNodes, taken), taken);
+      : frameNode(element, convertChildren(element.childNodes, context), taken);
   }
   if (tag === 'img') return imageNode(element, taken);
   if (fieldTags.has(tag)) return fieldNode(element, taken);
@@ -201,6 +226,31 @@ function svgNode(element: Element, taken: Set<string>): Node {
   };
 }
 
+function iconNode(element: Element, { taken, options }: Context): Node {
+  const requested = attribute(element, 'data-icon')?.trim() ?? '';
+  if (options.icon === undefined) {
+    throw new HtmlError(
+      `<i data-icon="${requested}"> needs icons by name, which aren't available here. Draw the icon with an inline <svg> instead.`,
+    );
+  }
+  if (requested === '') {
+    throw new HtmlError(
+      '<i data-icon> needs an icon name, such as <i data-icon="shopping-cart-01">. Call find_icons to search the names.',
+    );
+  }
+  const icon = options.icon(requested);
+  const id = attribute(element, 'id') ?? uniqueId('icon', taken);
+  taken.add(id);
+  const className = classOf(element);
+  return {
+    type: 'svg',
+    id,
+    name: nameOf(element) ?? icon.label,
+    ...(className === undefined ? {} : { class: className }),
+    svg: sanitizeSvg(icon.svg),
+  };
+}
+
 function fieldNode(element: Element, taken: Set<string>): FrameNode {
   const shown = fieldText(element);
   const children = shown === '' ? [] : [textNode(uniqueId('text', taken), undefined, shown, taken)];
@@ -229,8 +279,12 @@ function isPlainText(element: Element): boolean {
     (child) =>
       !isElement(child) ||
       child.tagName === 'br' ||
-      (textTags.has(child.tagName) && isPlainText(child)),
+      (textTags.has(child.tagName) && !isIcon(child) && isPlainText(child)),
   );
+}
+
+function isIcon(element: Element): boolean {
+  return element.tagName === 'i' && attribute(element, 'data-icon') !== undefined;
 }
 
 function textContent(element: Element): string {

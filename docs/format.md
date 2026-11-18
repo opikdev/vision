@@ -76,7 +76,7 @@ checkout.assets/     images referenced by the design (optional)
 - `id` is unique across the whole document (pages, artboards and nodes share one namespace). It matches `[A-Za-z0-9_][A-Za-z0-9_-]*`: letters, digits, `-` and `_`, not starting with `-`.
 - `name` is an optional label for people and AIs reading the file. Vision's layer list shows it; without one, Vision derives a label from the text, image, icon title or id. Give important frames a short `name`, such as "Order summary" or "Checkout button".
 - `src` is a path inside the assets folder (`photos/hero.jpg` means `checkout.assets/photos/hero.jpg`) or an `https:` URL. Paths can't leave the assets folder.
-- `svg` must be a single `<svg>` element. Scripts, styles, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon.
+- `svg` must be a single `<svg>` element. Scripts, styles, event handlers, `foreignObject` and external references are removed. Use `currentColor` so `text-*` classes tint the icon. An icon written as `<i data-icon>` keeps its name in `data-icon` on the `<svg>`.
 
 ## Classes
 
@@ -127,14 +127,14 @@ Warnings don't stop drawing:
 
 ## Writing designs with MCP
 
-`vision-mcp` is a stdio MCP server. Every tool except `get_guide` takes `file`, the absolute path of a `.vis` file. The file doesn't need to exist yet: the first edit creates it with page `page-1` and a 1440×900 artboard `desktop`, then applies the edit.
+`vision-mcp` is a stdio MCP server. Every tool except `get_guide` and `find_icons` takes `file`, the absolute path of a `.vis` file. The file doesn't need to exist yet: the first edit creates it with page `page-1` and a 1440×900 artboard `desktop`, then applies the edit.
 
 | Tool              | Purpose                                                                                            |
 | ----------------- | -------------------------------------------------------------------------------------------------- |
 | `get_guide`       | This page.                                                                                         |
 | `get_overview`    | Pages, artboards, tokens and problem counts.                                                       |
 | `get_tree`        | An outline of the design (3 levels deep unless `depth` is given), or of a page, artboard or frame. |
-| `get_node`        | One node, page or artboard as JSON.                                                                |
+| `get_node`        | One node, page or artboard as JSON; the markup of svg nodes inside it is summarised.               |
 | `create_page`     | Add a page.                                                                                        |
 | `create_artboard` | Add an artboard, placed to the right of the others unless `x`/`y` are given.                       |
 | `update_artboard` | Rename, move, resize or restyle an artboard.                                                       |
@@ -142,6 +142,7 @@ Warnings don't stop drawing:
 | `update_node`     | Change a node's `class`, `text`, `src`, `alt`, `svg` or `name`.                                    |
 | `move_node`       | Move a node to another parent or position.                                                         |
 | `delete`          | Remove a node, artboard or page by id.                                                             |
+| `find_icons`      | Icon names for `<i data-icon>` that match a word or two, such as `cart` or `arrow left`.           |
 | `set_tokens`      | Merge tokens; `null` deletes one.                                                                  |
 | `validate`        | List every error and warning.                                                                      |
 | `screenshot`      | A PNG of an artboard, rendered by Vision, at most 2000 px on its longest side.                     |
@@ -156,6 +157,7 @@ Warnings don't stop drawing:
 | `p`, `span`, `h1`–`h6`, `label`, `a`, `strong`, `em`, `small`                                               | `text` (its text content; `<br>` is a line break)    |
 | `img`                                                                                                       | `image` (`src`, `alt`)                               |
 | `svg`                                                                                                       | `svg` (its markup)                                   |
+| `i` with `data-icon`                                                                                        | `svg` drawing that icon (see [Icons](#icons))        |
 | `input`, `textarea`, `select`                                                                               | `frame` showing the `placeholder` or `value` as text |
 
 `class` and `id` attributes are kept, and `data-name`, `aria-label` or `title` (the first one set) becomes the node's `name`; other attributes are dropped. Missing ids are generated from the tag (`div-1`, `h1-2`), and an `id` that's already used is an error. Whitespace collapses as in a browser.
@@ -165,6 +167,15 @@ Warnings don't stop drawing:
 - A text element that holds an image, an SVG or a block element, such as `<a class="flex gap-2"><svg>…</svg>Back</a>`, becomes a frame instead.
 - An `<svg>`'s `class` and `id` move to its node.
 - `style` attributes, `<script>`, `<style>` and other elements (`table`, `hr`, …) are errors; use `div`s with Tailwind classes.
+
+### Icons
+
+Write an icon by name instead of drawing its SVG: `<i data-icon="shopping-cart-01" class="size-5 text-fg-muted"></i>`. The server swaps in the icon from [Hugeicons](https://hugeicons.com) (the free set of about 6,000, MIT): an `svg` node with your `class` and `id`, `currentColor` strokes 1.5 wide, the name in `data-icon`, and a `name` such as "Shopping cart" unless you give a `data-name`. The file stays self-contained, since the node holds the full SVG.
+
+- Size icons with `size-*` and tint them with `text-*`.
+- Names are kebab-case, such as `home-01`, `credit-card`, `arrow-right-01` or `user`; common names from other icon sets, such as `house`, `x` or `chevron-down`, also work. Call `find_icons` to search.
+- An unknown name is an error that suggests the three closest names, and nothing is written.
+- Pick an icon that matches each item, and keep one family: don't mix named icons with hand-drawn SVG ones.
 
 ### Designing well
 

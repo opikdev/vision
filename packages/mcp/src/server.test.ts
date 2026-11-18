@@ -18,6 +18,7 @@ describe('createServer', () => {
       ['update_node', { destructiveHint: false, idempotentHint: true }],
       ['move_node', { destructiveHint: false, idempotentHint: true }],
       ['delete', { destructiveHint: true, idempotentHint: true }],
+      ['find_icons', { readOnlyHint: true, idempotentHint: true }],
       ['set_tokens', { destructiveHint: false, idempotentHint: true }],
       ['validate', { readOnlyHint: true, idempotentHint: true }],
       ['screenshot', { readOnlyHint: true, idempotentHint: true }],
@@ -26,10 +27,11 @@ describe('createServer', () => {
     ]);
   });
 
-  it('requires file on every tool and describes every input', async () => {
+  it('requires file on every tool that reads or edits a design and describes every input', async () => {
     const { tools } = await session.client.listTools();
     for (const tool of tools) {
-      if (tool.name !== 'get_guide') expect(tool.inputSchema.required, tool.name).toContain('file');
+      if (tool.name !== 'get_guide' && tool.name !== 'find_icons')
+        expect(tool.inputSchema.required, tool.name).toContain('file');
       for (const [name, property] of Object.entries(tool.inputSchema.properties ?? {})) {
         expect(property, `${tool.name}.${name}`).toHaveProperty('description');
       }

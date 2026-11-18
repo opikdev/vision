@@ -1,4 +1,4 @@
-import { HtmlError, htmlToNodes } from '../html';
+import { HtmlError, htmlToNodes, type IconResolver } from '../html';
 import { collectIds, type Container } from '../query';
 import type { Node, VisionDocument } from '../schema';
 import { sanitizeSvg, SvgError } from '../svg';
@@ -9,6 +9,7 @@ export interface InsertHtmlOptions {
   html: string;
   index?: number;
   replace?: boolean;
+  icon?: IconResolver;
 }
 
 export function insertHtml(
@@ -21,7 +22,7 @@ export function insertHtml(
   const document = structuredClone(doc);
   const parent = containerOf(locate(document, options.parent), 'parent');
   if (options.replace === true) parent.children = [];
-  const nodes = convertHtml(options.html, collectIds(document));
+  const nodes = convertHtml(options.html, collectIds(document), options.icon);
   if (nodes.length === 0 && options.replace !== true) {
     throw new EditError('The HTML has no elements or text to insert.');
   }
@@ -33,9 +34,13 @@ export function insertHtml(
   return { document, ids: nodes.map((node) => node.id) };
 }
 
-function convertHtml(html: string, takenIds: ReadonlySet<string>): Node[] {
+function convertHtml(
+  html: string,
+  takenIds: ReadonlySet<string>,
+  icon: IconResolver | undefined,
+): Node[] {
   try {
-    return htmlToNodes(html, takenIds);
+    return htmlToNodes(html, takenIds, icon === undefined ? {} : { icon });
   } catch (error) {
     if (error instanceof HtmlError) throw new EditError(error.message, { cause: error });
     throw error;
