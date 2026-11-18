@@ -2,8 +2,9 @@ import { createTailwindEngine } from '@vision/format';
 import preflight from 'tailwindcss/preflight.css?raw';
 import theme from 'tailwindcss/theme.css?raw';
 import utilities from 'tailwindcss/utilities.css?raw';
+import { bundledFonts } from './fonts';
 
-export const tailwindEngine = createTailwindEngine({ theme, preflight, utilities });
+export const tailwindEngine = createTailwindEngine({ theme, preflight, utilities }, bundledFonts);
 
 export const frameBaseCss = `@layer base {
   html, body { height: 100%; overflow: hidden; }

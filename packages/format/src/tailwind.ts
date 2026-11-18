@@ -1,6 +1,7 @@
 import { __unstable__loadDesignSystem, compile } from 'tailwindcss';
 import { closest } from './closest';
 import type { Diagnostic } from './diagnostics';
+import { fontFaceCss, type BundledFont } from './fonts';
 import { classOf, collectClasses, splitClasses, visit } from './query';
 import type { VisionDocument } from './schema';
 import { tokensToThemeCss } from './tokens';
@@ -19,7 +20,10 @@ export interface TailwindEngine {
 
 const markerPattern = /^(group|peer)(\/[A-Za-z0-9_-]+)?$/;
 
-export function createTailwindEngine(sheets: TailwindStylesheets): TailwindEngine {
+export function createTailwindEngine(
+  sheets: TailwindStylesheets,
+  fonts: readonly BundledFont[] = [],
+): TailwindEngine {
   const options = { base: '/', loadStylesheet: stylesheetLoader(sheets) };
   let lastChecker: { css: string; checker: Promise<ClassChecker> } | undefined;
   const checkerFor = (css: string): Promise<ClassChecker> => {
@@ -29,7 +33,7 @@ export function createTailwindEngine(sheets: TailwindStylesheets): TailwindEngin
   return {
     async css(doc) {
       const compiler = await compile(inputCss(doc), options);
-      return compiler.build(collectClasses(doc));
+      return fontFaceCss(doc.tokens, fonts) + compiler.build(collectClasses(doc));
     },
     async classDiagnostics(doc) {
       const checker = await checkerFor(inputCss(doc));

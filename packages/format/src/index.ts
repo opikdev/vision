@@ -34,6 +34,7 @@ export {
   type ResolvedIcon,
 } from './html';
 export { layerLabel } from './label';
+export { fontFaceCss, type BundledFont, type FontFile } from './fonts';
 export { generateId, idPattern } from './ids';
 export { parseDocument, type ParseResult } from './parse';
 export {

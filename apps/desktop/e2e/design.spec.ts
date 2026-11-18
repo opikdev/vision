@@ -124,3 +124,65 @@ test('opens one window when the same file is opened twice at once', async ({
 
   expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length)).toBe(2);
 });
+
+test('draws bundled fonts and named icons', async ({ launch, dir }) => {
+  const file = join(dir, 'fonts.vis');
+  await writeFile(
+    file,
+    JSON.stringify({
+      format: 'vision',
+      version: 1,
+      tokens: { font: { display: 'Fraunces, Georgia, serif' } },
+      pages: [
+        {
+          id: 'page',
+          name: 'Page',
+          artboards: [
+            {
+              id: 'board',
+              name: 'Fonts',
+              x: 0,
+              y: 0,
+              width: 400,
+              height: 300,
+              children: [
+                { type: 'text', id: 'title', class: 'font-display text-4xl', text: 'Harvest' },
+                {
+                  type: 'svg',
+                  id: 'cart',
+                  name: 'Shopping cart',
+                  class: 'size-6',
+                  svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-icon="shopping-cart-01"><path d="M16 10V13M11 10V13"></path></svg>',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+  );
+  const { window } = await launch(file);
+  const artboard = window.frameLocator('iframe[title="Fonts"]');
+  await expect(artboard.getByText('Harvest', { exact: true })).toBeVisible();
+  await expect(artboard.locator('svg[data-icon="shopping-cart-01"] path')).toHaveCount(1);
+  const frame = await (
+    await window.locator('iframe[title="Fonts"]').elementHandle()
+  ).contentFrame();
+  if (!frame) throw new Error('The artboard has no frame');
+  await expect
+    .poll(() =>
+      frame.evaluate(
+        () =>
+          document.fonts.check('36px "Fraunces"') &&
+          [...document.fonts].some(
+            (face) => face.family.replaceAll('"', '') === 'Fraunces' && face.status === 'loaded',
+          ),
+      ),
+    )
+    .toBe(true);
+  expect(
+    await frame.evaluate(
+      () => getComputedStyle(document.body.querySelector('p') ?? document.body).fontFamily,
+    ),
+  ).toBe('Fraunces, Georgia, serif');
+});

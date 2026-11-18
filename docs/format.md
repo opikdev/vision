@@ -103,7 +103,30 @@ Tokens become Tailwind theme variables, so each one creates classes:
 - Token names match `[a-z0-9]+(-[a-z0-9]+)*`.
 - Values are CSS values: colors in any CSS color syntax, lengths with units (`text`, `radius` and `spacing` need a unit, such as `12px`). Values can't contain `;`, `{`, `}` or `/*`.
 - Tokens extend Tailwind's default theme. A token with a default's name (such as `color.red-500`) replaces it.
-- Fonts must be installed on the machine that views the design; list fallbacks.
+- A `font` token naming one of the [bundled fonts](#fonts) draws with that font everywhere: in the app, in screenshots and in reviews. Any other family must be installed on the machine that views the design, and falls back otherwise; list fallbacks.
+
+### Fonts
+
+Vision ships these families (Latin, variable unless noted), so name them in `font` tokens, such as `"display": "Fraunces, Georgia, serif"`:
+
+| Family                | Weights  | Italic | Character                                                                  |
+| --------------------- | -------- | ------ | -------------------------------------------------------------------------- |
+| `Inter`               | 100–900  | yes    | Neutral, very legible UI sans; the safe default for dense product screens. |
+| `Geist`               | 100–900  | yes    | Crisp, modern grotesk; developer tools and technical products.             |
+| `DM Sans`             | 100–1000 | yes    | Friendly, low-contrast geometric; consumer apps.                           |
+| `Manrope`             | 200–800  | no     | Open, slightly rounded geometric; calm finance and health products.        |
+| `Plus Jakarta Sans`   | 200–800  | yes    | Warm geometric with personality; startups and marketing pages.             |
+| `Space Grotesk`       | 300–700  | no     | Quirky, technical grotesk; bold headlines for tech and creative brands.    |
+| `IBM Plex Sans`       | 100–700  | yes    | Engineered, corporate-technical; enterprise and data-heavy tools.          |
+| `Bricolage Grotesque` | 200–800  | no     | Expressive grotesk with optical sizes; characterful headlines.             |
+| `Fraunces`            | 100–900  | yes    | Soft, old-style display serif; warm editorial, food and lifestyle.         |
+| `Instrument Serif`    | 400 only | yes    | Elegant, condensed display serif; large headlines only.                    |
+| `Newsreader`          | 200–800  | yes    | Readable text serif with optical sizes; editorial body and long reading.   |
+| `Playfair Display`    | 400–900  | yes    | High-contrast display serif; luxury and fashion headlines.                 |
+| `JetBrains Mono`      | 100–800  | yes    | Sturdy coding monospace; code and technical labels.                        |
+| `Geist Mono`          | 100–900  | yes    | Clean modern monospace; figures, labels and developer tools.               |
+
+Pick one family for text and at most one for display that fit the product, rather than the same pair every time.
 
 ## Validation
 

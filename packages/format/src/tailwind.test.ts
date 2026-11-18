@@ -58,6 +58,82 @@ describe('css', () => {
     expect(css).toContain('box-sizing: border-box;');
   });
 
+  it('adds @font-face rules for bundled families that font tokens name', async () => {
+    const fonts = [
+      {
+        family: 'Fraunces',
+        files: [
+          {
+            style: 'normal' as const,
+            weight: '100 900',
+            url: 'app://vision/assets/fraunces.woff2',
+          },
+          {
+            style: 'italic' as const,
+            weight: '100 900',
+            url: 'app://vision/assets/fraunces-i.woff2',
+          },
+        ],
+      },
+      {
+        family: 'Instrument Serif',
+        files: [{ style: 'normal' as const, weight: '400', url: 'app://vision/assets/is.woff2' }],
+      },
+      {
+        family: 'Geist',
+        files: [
+          { style: 'normal' as const, weight: '100 900', url: 'app://vision/assets/geist.woff2' },
+        ],
+      },
+    ];
+    const withFonts = createTailwindEngine(await loadTailwindStylesheets(), fonts);
+    const css = await withFonts.css(
+      docWith([], {
+        tokens: {
+          font: {
+            display: "'instrument serif', serif",
+            serif: 'Fraunces, Georgia, serif',
+            sans: 'Söhne, system-ui, sans-serif',
+          },
+        },
+      }),
+    );
+    expect(css.slice(0, css.indexOf('/*! tailwindcss'))).toBe(
+      [
+        '@font-face {',
+        '  font-family: "Fraunces";',
+        '  font-style: normal;',
+        '  font-weight: 100 900;',
+        '  font-display: block;',
+        '  src: url("app://vision/assets/fraunces.woff2") format("woff2");',
+        '}',
+        '@font-face {',
+        '  font-family: "Fraunces";',
+        '  font-style: italic;',
+        '  font-weight: 100 900;',
+        '  font-display: block;',
+        '  src: url("app://vision/assets/fraunces-i.woff2") format("woff2");',
+        '}',
+        '@font-face {',
+        '  font-family: "Instrument Serif";',
+        '  font-style: normal;',
+        '  font-weight: 400;',
+        '  font-display: block;',
+        '  src: url("app://vision/assets/is.woff2") format("woff2");',
+        '}',
+        '',
+      ].join('\n'),
+    );
+    expect(css).toContain('--font-sans: Söhne, system-ui, sans-serif;');
+  });
+
+  it('adds no @font-face for families it does not bundle', async () => {
+    const css = await engine.css(
+      docWith([], { tokens: { font: { sans: 'Fraunces, Georgia, serif' } } }),
+    );
+    expect(css).not.toContain('@font-face');
+  });
+
   it('starts fresh for each document', async () => {
     await engine.css(docWith([{ type: 'frame', id: 'a', class: 'grid' }]));
     const css = await engine.css(docWith([{ type: 'frame', id: 'a', class: 'flex' }]));
