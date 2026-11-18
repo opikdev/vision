@@ -78,7 +78,23 @@ While an AI works, the app shows its cursor, a status in the top bar and new ele
 
 - **Server.** After each tool call, `vision-mcp` sends `{ v, session, agent, file, at, activity }` to the socket. `activity` is `edit` (the touched node ids, from `diffDocuments` before and after the write), `look` (reading or a screenshot) or `done` (sent when stdin closes). `agent` is the client's display name from `clientInfo`, such as "Claude Code".
 - **Main.** `ActivityServer` validates each line, resolves `file` to its real path and forwards the message to that file's window. A connection that closes sends `done` for its sessions.
-- **Renderer.** On every save, the renderer diffs the artboards that changed and reveals touched nodes one after another, by toggling `data-reveal` on the elements found by `data-node-id` in each artboard's iframe. `AgentTracker` moves each session's cursor to the node being revealed, or to the artboard's name for a `look`, and switches the status to "is thinking" when the step ends. Everything is keyed by session, so two agents get two cursors.
+- **Renderer.** On every save, the renderer diffs the artboards that changed and lists the touched nodes in reading order (a frame before its children). A save belongs to the session whose last `edit` named one of its nodes; `AgentPlayback` plays it in that session's queue (paced playback, below), and plays saves no agent claims, such as a person's, within 1.5 s. Elements are found by `data-node-id` in each artboard's iframe and toggled with `data-reveal`. `AgentTracker` moves each session's cursor to the element being shown, or to the artboard's name for a `look`, and switches the status to "is thinking" when the session's queue is empty. Everything is keyed by session, so two agents get two cursors and two queues.
+
+### Paced playback
+
+An AI writes a whole section per tool call and takes 5–30 s to write it, so edits arrive as rare bursts. The app plays each burst element by element over about the time the agent takes to write the next one, like a video buffer, so the canvas keeps moving and the cursor glides instead of racing ([ADR 009](decisions/009-play-agent-edits-at-the-agents-pace.md)).
+
+| Rule                            | Value                                                                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Budget of a batch               | 1.5 × the longer of the session's last edit-to-edit gap and its smoothed gap (moving average, weight 0.5), between 1.5 and 15 s. The first batch: 3 s. |
+| Step                            | The budget spread over the waiting elements, kept 40–600 ms apart.                                                                                     |
+| A batch arrives while one plays | The waiting elements and the new batch share the new budget; waiting elements only ever speed up, so playback stays at most about one batch behind.    |
+| `done`, pan, zoom, select, page | The rest of every affected queue shows within 300 ms, so the screen matches the file.                                                                  |
+| Idle                            | Nothing to do: a queue empties within its last budget (at most 15 s, or 40 ms an element for huge batches), well before the 60 s idle timeout.         |
+| Reduced motion                  | No playback: every save shows at once, and the cursor jumps.                                                                                           |
+| Artboard not drawn              | No playback for it; it shows complete once it's drawn. The artboard the cursor plays on stays drawn.                                                   |
+
+Waiting elements keep their full layout and only have `opacity: 0` (`data-reveal="hidden"`), so the artboard fills in instead of reflowing; a redraw hides waiting elements again. The layer tree, selection, screenshots and review read the file and the DOM, not the playback, so they're unaffected. To see playback, replay a recorded session: [Measure performance](performance.md#replay-an-ai-session).
 
 ## Selection
 

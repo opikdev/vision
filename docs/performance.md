@@ -6,7 +6,7 @@
 pnpm bench
 ```
 
-This builds the app, then runs [`apps/desktop/bench/canvas.bench.ts`](../apps/desktop/bench/canvas.bench.ts) with Playwright. For each size it generates a seeded stress design in a temp folder, opens it in the built app 5 times and prints a table of the median and p95 of each metric. The windows are shown without focus and fully transparent, so you can keep working while it runs. A full run takes about 2 minutes.
+This builds the app, then runs the benchmarks in [`apps/desktop/bench`](../apps/desktop/bench) with Playwright: `canvas.bench.ts` for big designs and `playback.bench.ts` for [agent playback](#replay-an-ai-session). Name one to run only it, such as `pnpm bench canvas`. For each size, the canvas benchmark generates a seeded stress design in a temp folder, opens it in the built app 5 times and prints a table of the median and p95 of each metric. The windows are shown without focus and fully transparent, so you can keep working while it runs. A full run takes about 3.5 minutes.
 
 | Variable             | Default                | Description                                   |
 | -------------------- | ---------------------- | --------------------------------------------- |
@@ -37,6 +37,39 @@ Each artboard is a 1440×2400 page of card grids nested 8 levels deep, with Tail
 | `zoom to fit from 100%, longest frame` | The longest frame meanwhile, from `requestAnimationFrame`.                                                                                                                                                          |
 
 Times include Playwright's round trips, a few ms each, so compare runs on the same machine rather than reading them as absolute costs. Close other heavy apps first: the numbers move by 10–20% with background load. CI doesn't run the benchmark, because shared runners are too slow and noisy for fixed budgets: run it before and after any change to drawing, saving or the canvas, and put both tables in the pull request.
+
+## Replay an AI session
+
+[`bench/recordings/onboarding.json`](../apps/desktop/bench/recordings/onboarding.json) is a real session of Claude Code designing a three-screen onboarding: each step is the delay since the previous one, the file it saved (if any) and the activity `vision-mcp` sent. Replay it into the app you're running:
+
+```sh
+pnpm dev
+pnpm replay apps/desktop/bench/recordings/onboarding.json
+```
+
+It writes the first snapshot to a temp `.vis` (or `--file <path>`), waits until you open that file in Vision, then saves each snapshot and sends each activity over the activity socket (`VISION_ACTIVITY_SOCKET`, or the default) as `vision-mcp` does. `--speed 4` plays it 4 times faster.
+
+`pnpm bench playback` replays the same session in the built app and prints:
+
+| Metric                                  | What it measures                                                                                            |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| longest still while working             | The longest time with no element shown or changed and no artboard drawn, from the first activity to `done`. |
+| longest gap between elements            | The same, between the first and the last element shown.                                                     |
+| cursor max speed over 100 ms            | The agent cursor's fastest move on screen, over windows of at least 100 ms.                                 |
+| cursor longest jump in one frame        | Its longest move between two frames: a teleport shows up here.                                              |
+| elements shown or changed while working | How many reveals happened before `done`.                                                                    |
+
+| Variable                    | Default    | Description                                                                 |
+| --------------------------- | ---------- | --------------------------------------------------------------------------- |
+| `VISION_BENCH_REPLAY_SPEED` | `1`        | How many times faster than the agent to replay.                             |
+| `VISION_BENCH_VIDEO_DIR`    |            | Folder to save a video of the window to, as `<label>.webm`; needs `ffmpeg`. |
+| `VISION_BENCH_LABEL`        | `playback` | Name of the run in the table and the video file.                            |
+
+To record another session, convert the stream-JSON transcript of a Claude Code run that used `vision-mcp`, such as a [design eval](design-evals.md)'s `transcript-1.jsonl`. It re-applies each edit with `@vision/format` and times the steps from the transcript's timestamps:
+
+```sh
+pnpm replay:record <transcript.jsonl> <recording.json>
+```
 
 ## Profile a slow metric
 
